@@ -205,4 +205,4 @@ This Framework code runs and compiles on and has been tested all the way back to
 Unit tests are in place that run on all versions between 4.0 and 5.1.
 
 Various methods are not available when linking against older SDKs and will return nil when running on older os versions.
-eg. Geocoding is only supported on iOS 5+. You should always use the +[RHAddressBook isGeocodingAvailable] method to check weather geocoding is available before attempting to access geocode information. Methods will however, if available safely return nil / empty arrays.
+eg. Geocoding is only supported on iOS 5+. You should always use the +[RHAddressBook isGeocodingAvailable] method to check whether geocoding is available before attempting to access geocode information. Methods will however, if available safely return nil / empty arrays.
