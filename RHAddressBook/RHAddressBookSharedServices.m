@@ -1,0 +1,470 @@
+//
+//  RHAddressBookSharedServices.m
+//  RHAddressBook
+//
+//  Created by Richard Heard on 11/11/11.
+//  Copyright (c) 2011 Richard Heard. All rights reserved.
+//
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  1. Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
+//  3. The name of the author may not be used to endorse or promote products
+//  derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+//  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+//  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+//  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+//  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+//  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+
+#import "RHAddressBookSharedServices.h"
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+#import "RHAddressBookGeoResult.h"
+#endif //end iOS5+
+
+#import "NSThread+RHBlockAdditions.h"
+#import "RHAddressBook.h"
+#import "RHAddressBookThreadMain.h"
+
+#import <AddressBook/AddressBook.h>
+#import <CoreLocation/CoreLocation.h>
+
+#define PROCESS_ADDRESS_EVERY_SECONDS 5.0 //seconds between each geocode
+
+//private
+@interface RHAddressBookSharedServices ()
+
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+
+//cache
+-(void)loadCache;
+-(void)writeCache;
+-(void)purgeCache;
+-(void)rebuildCache;
+-(NSString*)cacheFilePath;
+
+//geocoding
+-(RHAddressBookGeoResult*)cacheEntryForPersonID:(ABRecordID)pid addressID:(ABPropertyID)aid;
+-(void)processAddressesMissingLocationInfo;
+-(void)processTimerFire;
+
+#endif //end iOS5+
+
+
+//addressbook notifications
+-(void)registerForAddressBookChanges;
+-(void)deregisterForAddressBookChanges;
+void RHAddressBookExternalChangeCallback (ABAddressBookRef addressBook, CFDictionaryRef info, void *context );
+
+
+@end
+
+@implementation RHAddressBookSharedServices {
+    //we have our own instance of the address book
+    ABAddressBookRef _addressBook;
+    NSThread *_addressBookThread; //perform all address book operations on this thread. (AB is not thread safe. :()
+    
+    NSMutableArray *_cache; //array of RHAddressBookGeoResult objects
+    NSTimer *_timer;
+
+}
+
+#pragma mark - singleton
+static RHAddressBookSharedServices *_sharedInstance = nil;
+
+static dispatch_once_t onceToken;
++(id)sharedInstance{
+    dispatch_once(&onceToken, ^{
+        _sharedInstance = [[super allocWithZone:NULL] init];
+    });
+    
+    return _sharedInstance;
+}
+
++(id)allocWithZone:(NSZone *)zone{
+    return [[self sharedInstance] retain];
+}
+
+-(id)init {
+        
+    self = [super init];
+    if (self) {
+        
+        //because NSThread retains its target, we use a placeholder object that contains the threads main method
+        RHAddressBookThreadMain *threadMain = [[[RHAddressBookThreadMain alloc] init] autorelease];
+        _addressBookThread = [[NSThread alloc] initWithTarget:threadMain selector:@selector(threadMain:) object:nil];
+        [_addressBookThread setName:[NSString stringWithFormat:@"RHAddressBookSharedServicesThread for %p", self]];
+        [_addressBookThread start];
+        
+        [_addressBookThread performBlock:^{
+            _addressBook = ABAddressBookCreate();
+        } waitUntilDone:YES];
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+        if ([RHAddressBookSharedServices isGeocodingSupported]){
+            [self loadCache];
+            [self rebuildCache];
+        }
+#endif //end iOS5+
+
+        [self registerForAddressBookChanges];
+
+    }
+    return self;
+}
+
+-(id)copyWithZone:(NSZone *)zone{
+    return self;
+}
+
+-(id)retain{
+    return self;
+}
+
+-(NSUInteger)retainCount{
+    return NSUIntegerMax;  //denotes an object that cannot be released
+}
+
+-(oneway void)release{
+    //do nothing
+}
+
+-(id)autorelease{
+    return self;
+}
+
+#pragma mark - cleanup
+-(void)dealloc {
+    //do stuff (even though we are a singleton)
+    [self deregisterForAddressBookChanges];
+
+    if (_addressBook) { CFRelease(_addressBook); _addressBook = NULL; }
+    [_addressBookThread release]; _addressBookThread = nil;
+
+    [_cache release]; _cache = nil;
+
+    [_timer release];
+    [super dealloc];
+}
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+
+#pragma mark - cache management
+-(void)loadCache{
+    RHLog(@"");
+    [_cache release];
+    
+    _cache = [[NSKeyedUnarchiver unarchiveObjectWithFile:[self cacheFilePath]] retain];
+    
+    //if unarchive failed or on first run
+    if (!_cache) _cache = [[NSMutableArray array] retain];
+    
+}
+
+-(void)writeCache{
+    RHLog(@"");
+    [NSKeyedArchiver archiveRootObject:_cache toFile:[self cacheFilePath]];
+    
+}
+
+-(void)purgeCache{
+    RHLog(@"");
+    [[NSFileManager defaultManager] removeItemAtPath:[self cacheFilePath] error:nil];
+    [self loadCache];
+}
+
+//creates a new cache array, pulling over all existing values from the old cache array that are useable
+-(void)rebuildCache{
+    if (![[NSThread currentThread] isEqual:_addressBookThread]){
+        [self performSelector:_cmd onThread:_addressBookThread withObject:nil waitUntilDone:YES];
+        return;
+    }
+    RHLog(@"");
+    
+    NSMutableArray *newCache = [NSMutableArray array];
+
+    //make sure the address book instance is up to date
+    ABAddressBookRevert(_addressBook);
+    
+    CFArrayRef people = ABAddressBookCopyArrayOfAllPeople(_addressBook);
+    for (CFIndex i = 0; i < CFArrayGetCount(people); i++) {
+        
+        ABRecordRef person = CFArrayGetValueAtIndex(people, i);
+        ABRecordID personID = ABRecordGetRecordID(person);
+        
+        ABMultiValueRef addresses = ABRecordCopyValue(person, kABPersonAddressProperty);
+        for (CFIndex i = 0; i < ABMultiValueGetCount(addresses); i++) {
+            
+            ABPropertyID addressID = ABMultiValueGetIdentifierAtIndex(addresses, i);
+            CFDictionaryRef addressDict = ABMultiValueCopyValueAtIndex(addresses, i);
+            //======================================================================
+
+            //see if we have a valid, old entry
+            RHAddressBookGeoResult* old = [self cacheEntryForPersonID:personID addressID:addressID];
+
+            if (old && [old isValid]){
+                //yes
+                [newCache addObject:old]; // just add it and be done.
+            } else {
+                // not valid, create a new entry
+                RHAddressBookGeoResult* new = [[RHAddressBookGeoResult alloc] initWithPersonID:personID addressID:addressID];
+                [newCache addObject:new];
+                [new release];
+            }
+                        
+            //======================================================================
+            if (addressDict) CFRelease(addressDict);
+        }
+        
+        if (addresses) CFRelease(addresses);
+    }
+    
+    CFRelease(people);
+    
+    //swap old cache with the new
+    [_cache release];
+    _cache = [newCache retain];
+    
+    [self processAddressesMissingLocationInfo];
+    [self writeCache]; //get it to disk asap
+    
+}
+
+
+-(RHAddressBookGeoResult*)cacheEntryForPersonID:(ABRecordID)pid addressID:(ABPropertyID)aid{
+    for (RHAddressBookGeoResult *entry in _cache) {
+        if (entry.personID == pid && entry.addressID == aid){
+            return [[entry retain] autorelease];
+        }
+    }
+    
+    return nil;
+}
+
+-(NSString*)cacheFilePath{
+    
+    //cache
+    NSString *path = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
+    
+    NSString *applicationID = [[[NSBundle mainBundle] infoDictionary] valueForKey:(NSString *)kCFBundleIdentifierKey];
+    path = [path stringByAppendingPathComponent:applicationID];
+    
+    path = [path stringByAppendingPathComponent:@"RHAddressBookGeoCache.cache"];
+    
+    return path;
+}
+
+
+#pragma mark - Geocoding Process
+-(void)processAddressesMissingLocationInfo{
+    
+    //don't do any geocoding if its not available (iOS 5+ only)
+    if (![RHAddressBookSharedServices isGeocodingSupported]) return;
+
+    //if disabled, do nothing
+    if (![self.class isPreemptiveGeocodingEnabled]) return;
+    
+    
+    if (!_timer){
+        _timer = [[NSTimer scheduledTimerWithTimeInterval:PROCESS_ADDRESS_EVERY_SECONDS target:self selector:@selector(processTimerFire) userInfo:nil repeats:YES] retain];
+    }
+}
+
+-(void)processTimerFire{
+        
+    //if we are offline, the geocode fails with a specific error
+    // in that instance we dont set the resultNotFound flag, so next time around we will re-attempt the particular address.
+    //TODO: re weally should handle this better, with our shared servies class oberving some form of reachability and pausing / resuming the timer.
+    
+    //write the cache periodically, not just at the end... incase we... you know..... yea.....
+    [self writeCache];
+    
+    //if we have been disabled, stop working
+    if (![self.class isPreemptiveGeocodingEnabled]){
+        [_timer invalidate];
+        [_timer release];
+        _timer = nil;
+        RHLog(@"Location Lookup has been disabled.");
+        return;
+    }
+    
+    //look for next unprocessed entry
+    for (RHAddressBookGeoResult *entry in _cache) {
+        if (!entry.location && !entry.resultNotFound){
+            //needs processing
+            [entry geocodeAssociatedAddressDictionary]; //if this is called and the entry is already geocoding, its just a no-op and so is an easy way for us to bail
+            return;
+        }
+    }
+    
+    //we are done, all addresses processed
+    [self writeCache];
+    [_timer invalidate];
+    [_timer release];
+    _timer = nil;
+    RHLog(@"Location Lookup Processing done.");
+    
+}
+
+#pragma mark - Geocode Lookup
+//forward
+-(CLPlacemark*)placemarkForPersonID:(ABRecordID)personID addressID:(ABMultiValueIdentifier)addressID{
+    return [[self cacheEntryForPersonID:personID addressID:addressID] placemark];
+}
+
+-(CLLocation*)locationForPersonID:(ABRecordID)personID addressID:(ABMultiValueIdentifier)addressID{
+    return [[self placemarkForPersonID:personID addressID:addressID] location];
+}
+
+//reverse
+-(NSArray*)geoResultsWithinDistance:(CLLocationDistance)distance ofLocation:(CLLocation*)location{
+    NSMutableArray *results = [[NSMutableArray alloc] init];
+    
+    for (RHAddressBookGeoResult *entry in _cache) {
+        if (entry.location) {
+            CLLocationDistance tmpDistance = [entry.location distanceFromLocation:location];
+            if (tmpDistance < distance) {
+                //within radius
+                [results addObject:entry];
+            }
+        }
+    } 
+    
+    return [results autorelease];
+}
+
+-(RHAddressBookGeoResult*)geoResultClosestToLocation:(CLLocation*)location{
+    return [self geoResultClosestToLocation:location distanceOut:nil];
+}
+
+-(RHAddressBookGeoResult*)geoResultClosestToLocation:(CLLocation*)location distanceOut:(CLLocationDistance*)distanceOut{
+
+    CLLocationDistance distance = DBL_MAX;
+    RHAddressBookGeoResult *result = nil;
+
+    for (RHAddressBookGeoResult *entry in _cache) {
+        if (entry.location) {
+            CLLocationDistance tmpDistance = [entry.location distanceFromLocation:location];
+            if (tmpDistance < distance) {
+                //closer point
+                result = entry;
+                distance = tmpDistance;
+            }
+        }
+    } 
+    
+    if (distanceOut) *distanceOut = distance;
+    return result;
+}
+
+#endif //end iOS5+
+
+#pragma mark - geocoding settings
+NSString static * RHAddressBookSharedServicesPreemptiveGeocodingEnabled = @"RHAddressBookSharedServicesPreemptiveGeocodingEnabled";
+
++(BOOL)isPreemptiveGeocodingEnabled{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+    if ([RHAddressBookSharedServices isGeocodingSupported]){
+        return [[NSUserDefaults standardUserDefaults] boolForKey:RHAddressBookSharedServicesPreemptiveGeocodingEnabled];
+    }
+#endif //end iOS5+
+    return NO;
+}
+
++(void)setPreemptiveGeocodingEnabled:(BOOL)enabled{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+    if ([RHAddressBookSharedServices isGeocodingSupported]){
+        [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:RHAddressBookSharedServicesPreemptiveGeocodingEnabled];
+        //for the disabled->enabled case
+        if (_sharedInstance)[_sharedInstance processAddressesMissingLocationInfo];
+    }
+#endif //end iOS5+
+
+}
+
+-(float)preemptiveGeocodingProgress{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+    if ([RHAddressBookSharedServices isGeocodingSupported]){
+        NSInteger incomplete = 0;
+        for (RHAddressBookGeoResult *entry in _cache) {
+            if (!entry.location && !entry.resultNotFound){
+                incomplete++;
+            }
+        }
+
+        if ([_cache count] == 0) return 1.0f;
+        
+        return 1.0f - (incomplete / [_cache count]);
+    }
+#endif //end iOS5+
+
+    return 0.0f;
+}
+
+
++(BOOL)isGeocodingSupported{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+    //the response to selector check is required because iOS4 actually has a private CLGeocoder class. 
+    return ([CLGeocoder class] && [CLGeocoder instancesRespondToSelector:@selector(geocodeAddressDictionary:completionHandler:)]);
+#endif //end iOS5+
+    return NO; //if not compiled with Geocoding, return false, always
+}
+
+#pragma mark - addressbook changes
+
+-(void)registerForAddressBookChanges{
+    if (![[NSThread currentThread] isEqual:_addressBookThread]){
+        [self performSelector:_cmd onThread:_addressBookThread withObject:nil waitUntilDone:YES];
+        return;
+    }
+
+    ABAddressBookRegisterExternalChangeCallback(_addressBook, RHAddressBookExternalChangeCallback, self); //use the context as a pointer to self
+    
+}
+
+-(void)deregisterForAddressBookChanges{
+    if (![[NSThread currentThread] isEqual:_addressBookThread]){
+        [self performSelector:_cmd onThread:_addressBookThread withObject:nil waitUntilDone:YES];
+        return;
+    }
+    
+    // when unregistering a callback both the callback and the context
+    // need to match the ones that were registered.
+    if (_addressBook){
+        ABAddressBookUnregisterExternalChangeCallback(_addressBook,  RHAddressBookExternalChangeCallback, self);
+    }
+    
+}
+
+void RHAddressBookExternalChangeCallback (ABAddressBookRef addressBook, CFDictionaryRef info, void *context ){
+    RHLog(@"AddressBook changed externally. Rebuilding RHABGeoCache");
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+    if ([RHAddressBookSharedServices isGeocodingSupported]){
+        [(RHAddressBookSharedServices*)context rebuildCache]; //use the context as a pointer to self
+    }
+#endif //end iOS5+
+    
+    //post external change notification for public clients, on the main thread
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:RHAddressBookExternalChangeNotification object:nil];
+    });
+}
+
+
+
+
+@end
