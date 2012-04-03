@@ -60,7 +60,7 @@ Getting a list of people.
 
 ```objectivec
     NSArray *allPeople = [ab groups];
-    NSArray *allPeopleSorted = [ab groups];
+    NSArray *allPeopleSorted = [ab peopleOrderedByUsersPreference];
     NSArray *allFreds = [ab peopleWithName:@"Fred"];
     NSArray *allFredsInLastGroup = [lastGroup peopleWithName:@"Fred"];
     RHPerson *person = [allPeople lastObject];
