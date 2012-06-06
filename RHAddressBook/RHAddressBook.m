@@ -43,6 +43,7 @@
 #import "RHAddressBook_private.h"
 
 NSString * const RHAddressBookExternalChangeNotification = @"RHAddressBookExternalChangeNotification";
+NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPersonAddressGeocodeCompleted";
 
 //private
 @interface RHAddressBook ()

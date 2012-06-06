@@ -191,6 +191,16 @@
             
             // we no longer need the geocoder, release it.
             [_geocoder release]; _geocoder = nil;
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //send our notification RHAddressBookPersonAddressGeocodeCompleted
+                NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      [NSNumber numberWithInteger:self.personID], @"personID",
+                                      [NSNumber numberWithInteger:self.addressID], @"addressID",
+                                      nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:RHAddressBookPersonAddressGeocodeCompleted object:nil userInfo:info];
+                
+            });
         }];
             
     });

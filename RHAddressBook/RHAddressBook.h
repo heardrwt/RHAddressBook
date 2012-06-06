@@ -46,6 +46,9 @@
 //Notification fired when the address book is changed externally
 extern NSString * const RHAddressBookExternalChangeNotification;
 
+//notification fired when a person and address pair has been geocoded (info dict contains personID and addressID as [NSNumber integerValue])
+extern NSString * const RHAddressBookPersonAddressGeocodeCompleted;
+
 @interface RHAddressBook : NSObject
 
 -(id)init; //create an instance of the addressbook
