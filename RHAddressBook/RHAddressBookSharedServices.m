@@ -322,7 +322,12 @@ static dispatch_once_t onceToken;
 #pragma mark - Geocode Lookup
 //forward
 -(CLPlacemark*)placemarkForPersonID:(ABRecordID)personID addressID:(ABMultiValueIdentifier)addressID{
-    return [[self cacheEntryForPersonID:personID addressID:addressID] placemark];
+    RHAddressBookGeoResult *cacheEntry = [self cacheEntryForPersonID:personID addressID:addressID];
+    if (cacheEntry && !cacheEntry.placemark && !cacheEntry.resultNotFound && [self.class isGeocodingSupported] && !_timer) {
+        //lets force a geocode for this one address
+        [cacheEntry geocodeAssociatedAddressDictionary];
+    }
+    return [cacheEntry placemark];
 }
 
 -(CLLocation*)locationForPersonID:(ABRecordID)personID addressID:(ABMultiValueIdentifier)addressID{
