@@ -51,7 +51,9 @@ extern NSString * const RHAddressBookPersonAddressGeocodeCompleted;
 
 @interface RHAddressBook : NSObject
 
--(id)init; //create an instance of the addressbook
++(BOOL)addressBookAvailable; // iOS6+ Returns true if the user has granted access to the address book. May promt the user for access. (Pre iOS6, always true)
+
+-(id)init; //create an instance of the addressbook (iOS6+ may return nil, signifying an access error.)
 
 //any access to the underlying ABAddressBook should be done inside this block wrapper below.
 //from the addressbook programming guide... Important: Instances of ABAddressBookRef cannot be used by multiple threads. Each thread must make its own instance by calling ABAddressBookCreate.

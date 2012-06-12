@@ -98,6 +98,20 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     return [super retain];
 }
 
++(BOOL)addressBookAvailable{
+    //in order to test addressbook availability we have to attempt to create an addressbook instance using ABAddressBookCreateWithOptions
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
+    if (ABAddressBookCreateWithOptions != NULL){
+        ABAddressBookRef tmp = ABAddressBookCreateWithOptions(NULL, NULL);
+        if (!tmp) return NO;
+        CFRelease(tmp);
+    }
+#endif //end iOS6+
+
+    //ABAddressBookCreateWithOptions not available or succeeded. return YES;
+    return YES;
+}
+
 
 -(id)init{
     self = [super init];
@@ -109,18 +123,41 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         _addressBookThread = [[NSThread alloc] initWithTarget:threadMain selector:@selector(threadMain:) object:nil];
         [_addressBookThread setName:[NSString stringWithFormat:@"RHAddressBookInstanceThread for instance %p", self]];
         [_addressBookThread start];
-
+        
         _sharedServices = [RHAddressBookSharedServices sharedInstance]; //pointer to singleton (this causes the geo cache to be rebuilt if needed)
-                
-//        //setup
+        
+        //setup
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
+        if (ABAddressBookCreateWithOptions != NULL){
+            __block CFErrorRef error = NULL;
+            [_addressBookThread performBlock:^{
+                _addressBookRef = ABAddressBookCreateWithOptions(nil, &error);
+            }];
+            
+            if (!_addressBookRef){
+                //bail
+                NSLog(@"Error: Failed to create RHAddressBook instance. Underlying ABAddressBookCreateWithOptions() failed with error: %@", error);
+                [self release];
+                return nil;
+            }
+            
+        } else {
+#endif //end iOS6+
+            
+            [_addressBookThread performBlock:^{
+                _addressBookRef = ABAddressBookCreate();
+            }];
+            
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
+        }
+#endif //end iOS5+
+        
         [_addressBookThread performBlock:^{
-            _addressBookRef = ABAddressBookCreate();
-
             //weak linking mutable sets
             _sources = (NSMutableSet *)CFSetCreateMutable(nil, 0, nil);
             _groups = (NSMutableSet *)CFSetCreateMutable(nil, 0, nil);
             _people = (NSMutableSet *)CFSetCreateMutable(nil, 0, nil);
-            
         }];
         
     }
