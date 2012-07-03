@@ -152,7 +152,7 @@
         
     //don't do anything if our address is no longer valid
     if (! [self isValid]){ 
-        NSLog(@"ERROR: %@ is no longer valid. Skipping Geocode Op.", self);
+        RHLog(@"%@ is no longer valid. Skipping Geocode Op.", self);
         return;
     }
     

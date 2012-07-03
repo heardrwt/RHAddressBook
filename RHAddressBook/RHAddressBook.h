@@ -165,3 +165,5 @@ extern NSString * const RHAddressBookPersonAddressGeocodeCompleted;
 #define RHLog(format, ...)
 #endif
 
+#define RHErrorLog(format, ...) NSLog( @"%s:%i %@ ", __PRETTY_FUNCTION__, __LINE__, [NSString stringWithFormat: format, ##__VA_ARGS__])
+

@@ -58,7 +58,7 @@
 -(void)setName:(NSString *)name{
     NSError *error = nil;
     if (![self setBasicValue:(CFStringRef)name forPropertyID:kABGroupNameProperty error:&error]){
-        RHLog(@"-[RHGroup %@] error:%@", NSStringFromSelector(_cmd), error);
+        RHErrorLog(@"-[RHGroup %@] error:%@", NSStringFromSelector(_cmd), error);
     }
 }
 
@@ -84,7 +84,10 @@
     [self performRecordAction:^(ABRecordRef recordRef) {
         CFErrorRef errorRef = NULL;
         success = ABGroupAddMember(recordRef, person.recordRef, &errorRef);
-        if (errorRef) NSLog(@"RHGroup: Error adding member. %@", errorRef);
+        if (!success) {
+            RHErrorLog(@"RHGroup: Error adding member. %@", errorRef);
+            if (errorRef) CFRelease(errorRef);
+        }
     } waitUntilDone:YES];
     return success;
 }
@@ -92,7 +95,12 @@
 -(BOOL)removeMember:(RHPerson*)person{
     __block BOOL success = NO;
     [self performRecordAction:^(ABRecordRef recordRef) {
-        success = ABGroupRemoveMember(recordRef, person.recordRef, nil);
+        CFErrorRef errorRef = NULL;
+        success = ABGroupRemoveMember(recordRef, person.recordRef, &errorRef);
+        if (!success) {
+            RHErrorLog(@"RHGroup: Error removing member. %@", errorRef);
+            if (errorRef) CFRelease(errorRef);
+        }
     } waitUntilDone:YES];
     return success;
 }
@@ -123,7 +131,7 @@
             if (person) {
                 [members addObject:person];
             } else {
-                NSLog(@"Failed to find member");
+                RHLog(@"Failed to find member");
             }
         }
         
@@ -150,7 +158,7 @@
             if (person){
                 [members addObject:person]; 
             } else {
-                NSLog(@"Failed to find member");
+                RHLog(@"Failed to find member");
             }
         }
         CFRelease(memberRefs);

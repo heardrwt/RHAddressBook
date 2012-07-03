@@ -135,7 +135,10 @@
         result = ABRecordSetValue(recordRef, propertyID, value, &cfError);
     } waitUntilDone:YES];
 
-    if (error) *error = (NSError*)cfError;
+    if (!result){
+        if (error) *error = [[(NSError*)cfError retain] autorelease];
+        if (cfError) CFRelease(cfError);
+    }
     return result;
 }
 
@@ -149,7 +152,10 @@
         result = ABRecordRemoveValue(recordRef, propertyID, &cfError);
     } waitUntilDone:YES];
 
-    if (error) *error = (NSError*)cfError;
+    if (!result){
+        if (error) *error = [[(NSError*)cfError retain] autorelease];
+        if (cfError) CFRelease(cfError);
+    }
     return result;
 }
 

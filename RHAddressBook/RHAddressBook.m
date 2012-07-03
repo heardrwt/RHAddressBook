@@ -130,14 +130,15 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
         if (ABAddressBookCreateWithOptions != NULL){
-            __block CFErrorRef error = NULL;
+            __block CFErrorRef errorRef = NULL;
             [_addressBookThread performBlock:^{
-                _addressBookRef = ABAddressBookCreateWithOptions(nil, &error);
+                _addressBookRef = ABAddressBookCreateWithOptions(nil, &errorRef);
             }];
             
             if (!_addressBookRef){
                 //bail
-                NSLog(@"Error: Failed to create RHAddressBook instance. Underlying ABAddressBookCreateWithOptions() failed with error: %@", error);
+                RHErrorLog(@"Error: Failed to create RHAddressBook instance. Underlying ABAddressBookCreateWithOptions() failed with error: %@", errorRef);
+                if (errorRef) CFRelease(errorRef);
                 [self release];
                 return nil;
             }
@@ -151,7 +152,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
             
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
         }
-#endif //end iOS5+
+#endif //end iOS6+
         
         [_addressBookThread performBlock:^{
             //weak linking mutable sets
@@ -604,7 +605,8 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         CFErrorRef errorRef = NULL;
         result = ABAddressBookAddRecord(_addressBookRef, person.recordRef, &errorRef);
         if (!result){
-            RHLog(@"Error: Failed to add RHPerson to AddressBook: error: %@", (NSError*)errorRef);
+            RHErrorLog(@"Error: Failed to add RHPerson to AddressBook: error: %@", errorRef);
+            if (errorRef) CFRelease(errorRef);
         } else {
             if (![_people containsObject:person])[_people addObject:person];
         }
@@ -639,7 +641,8 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         CFErrorRef errorRef = NULL;
         result = ABAddressBookAddRecord(_addressBookRef, group.recordRef, &errorRef);
         if (!result){
-            RHLog(@"Error: Failed to add RHGroup to AddressBook: error: %@", (NSError*)errorRef);
+            RHErrorLog(@"Error: Failed to add RHGroup to AddressBook: error: %@", errorRef);
+            if (errorRef) CFRelease(errorRef);
         } else {
             if (![_groups containsObject:group])[_groups addObject:group];
         }
@@ -711,8 +714,11 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         result = ABAddressBookRemoveRecord(_addressBookRef, person.recordRef, &cfError);
         //if (result)[_people removeObject:person]; //we shouldn't actually remove this object from the cache on removal.. all accesses go via AB record methods so removing now just means the same object is not returned by the cache if the user reverts the removal.
     }];
-
-    if (error) *error = (NSError*)cfError;
+    
+    if (!result){
+        if (error) *error = [[(NSError*)cfError retain] autorelease];
+        if (cfError) CFRelease(cfError);
+    }
     return result;
 }
 
@@ -733,8 +739,10 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 
     }];
 
-    if (error) *error = (NSError*)cfError;
-    
+    if (!result){
+        if (error) *error = [[(NSError*)cfError retain] autorelease];
+        if (cfError) CFRelease(cfError);
+    }    
     return result;
 }
 
@@ -744,7 +752,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     NSError *error = nil;
     BOOL result = [self save:&error];
     if (!result) {
-        RHLog(@"RHAddressBook: Error saving: %@", error);
+        RHErrorLog(@"RHAddressBook: Error saving: %@", error);
     }
     return result;
 }
@@ -758,7 +766,11 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
             result = ABAddressBookSave(_addressBookRef, &cfError);
         }
     }];
-    if (error) *error = (NSError*)cfError;
+    
+    if (!result){
+        if (error) *error = [[(NSError*)cfError retain] autorelease];
+        if (cfError) CFRelease(cfError);
+    }
     return result;
 }
 
