@@ -80,17 +80,17 @@
     CFStringRef nameRef = ABPersonCopyLocalizedPropertyName(propertyID);
     NSString *name = nil;
     if (nameRef){
-        name = [NSString stringWithString:(NSString*)nameRef];
+        name = [NSString stringWithString:(__bridge NSString*)nameRef];
         CFRelease(nameRef);
     }
     return name;
 }
 
 +(NSString*)localizedLabel:(NSString*)label{
-    CFStringRef localizedRef = ABAddressBookCopyLocalizedLabel((CFStringRef)label);
+    CFStringRef localizedRef = ABAddressBookCopyLocalizedLabel((__bridge CFStringRef)label);
     NSString *localized = nil;
     if (localizedRef){
-        localized = [NSString stringWithString:(NSString*)localizedRef];
+        localized = [NSString stringWithString:(__bridge NSString*)localizedRef];
         CFRelease(localizedRef);
     }
     return localized;
@@ -109,7 +109,7 @@
     RHSource *source = [_addressBook sourceForABRecordRef:sourceRef];    
     if (sourceRef) CFRelease(sourceRef);
     
-    return [[source retain] autorelease];
+    return arc_autorelease(arc_retain(source));
 }
 
 
@@ -169,7 +169,7 @@
     
     UIImage *image = nil;
     if (dataRef){
-        image = [UIImage imageWithData:(NSData*)dataRef];
+        image = [UIImage imageWithData:(__bridge NSData*)dataRef];
         CFRelease(dataRef);
     }
     return image;
@@ -180,14 +180,15 @@
     //extern bool ABPersonSetImageData(ABRecordRef person, CFDataRef imageData, CFErrorRef* error);
     __block CFErrorRef errorRef = NULL;
     __block BOOL result = NO;
-    CFDataRef imageData = (CFDataRef)UIImagePNGRepresentation(image);
+    CFDataRef imageDataRef = (CFDataRef) ARCBridgingRetain(UIImagePNGRepresentation(image));
     [self performRecordAction:^(ABRecordRef recordRef) {
-        result = ABPersonSetImageData(recordRef, imageData, &errorRef);
+        result = ABPersonSetImageData(recordRef, imageDataRef, &errorRef);
     } waitUntilDone:YES];
     if (!result) {
         RHErrorLog(@"-[RHPerson %@] error:%@", NSStringFromSelector(_cmd), errorRef);
         if (errorRef) CFRelease(errorRef);
     }
+    if (imageDataRef) CFRelease(imageDataRef);
     return result;
 }
 
@@ -515,13 +516,13 @@
     if (ABPersonCreateVCardRepresentationWithPeople == NULL) return nil; //availability check
     __block CFDataRef vCardDataRef = NULL;
     [self performRecordAction:^(ABRecordRef recordRef) {
-        vCardDataRef = ABPersonCreateVCardRepresentationWithPeople((CFArrayRef)[NSArray arrayWithObject:recordRef]);
+        vCardDataRef = ABPersonCreateVCardRepresentationWithPeople((__bridge CFArrayRef)[NSArray arrayWithObject:(__bridge id)(recordRef)]);
     } waitUntilDone:YES];
     
     if (vCardDataRef){
-        NSData *vCardData = [(NSData*)vCardDataRef copy];
+        NSData *vCardData = [(__bridge NSData*)vCardDataRef copy];
         CFRelease(vCardDataRef);
-        return [vCardData autorelease];
+        return arc_autorelease(vCardData);
     }
     
     return nil;
@@ -530,12 +531,12 @@
 +(NSData*)vCardRepresentationForPeople:(NSArray*)people{
     if (ABPersonCreateVCardRepresentationWithPeople == NULL) return nil; //availability check
     
-    CFDataRef vCardDataRef = ABPersonCreateVCardRepresentationWithPeople((CFArrayRef)people);
+    CFDataRef vCardDataRef = ABPersonCreateVCardRepresentationWithPeople((__bridge CFArrayRef)people);
     
     if (vCardDataRef){
-        NSData *vCardData = [(NSData*)vCardDataRef copy];
+        NSData *vCardData = [(__bridge NSData*)vCardDataRef copy];
         CFRelease(vCardDataRef);
-        return [vCardData autorelease];
+        return arc_autorelease(vCardData);
     }
     
     return nil;

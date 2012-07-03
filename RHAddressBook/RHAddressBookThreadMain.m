@@ -35,21 +35,21 @@
 @implementation RHAddressBookThreadMain
 
 -(void)threadMain:(NSString*)logMessage{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    RHLog(@"spawned thread: %@", [NSThread currentThread]);
-    //schedule a timer on the runloop so it wont return immediately
-    NSTimer *timer = [NSTimer timerWithTimeInterval:10.0 invocation:nil repeats:YES];
-    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-    
-    do {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
-        if (logMessage) RHLog(@"%@", logMessage);
-    } while (![[NSThread currentThread] isCancelled]); //until we are cancelled
-    
-    RHLog(@"terminated thread: %@", [NSThread currentThread]);
-
-    [timer invalidate]; //invalidate the timer that was keeping our runloop alive
-    [pool release];
+    @autoreleasepool {
+        RHLog(@"spawned thread: %@", [NSThread currentThread]);
+        //schedule a timer on the runloop so it wont return immediately
+        NSTimer *timer = [NSTimer timerWithTimeInterval:10.0 invocation:nil repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+        
+        do {
+            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
+            if (logMessage) RHLog(@"%@", logMessage);
+        } while (![[NSThread currentThread] isCancelled]); //until we are cancelled
+        
+        RHLog(@"terminated thread: %@", [NSThread currentThread]);
+        
+        [timer invalidate]; //invalidate the timer that was keeping our runloop alive
+    }
     //done
 }
 

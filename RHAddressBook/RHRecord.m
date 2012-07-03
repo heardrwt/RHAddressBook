@@ -40,7 +40,7 @@
 -(id)initWithAddressBook:(RHAddressBook*)addressBook recordRef:(ABRecordRef)recordRef{
     self = [super init];
     if (self) {
-        _addressBook = [addressBook retain];
+        _addressBook = arc_retain(addressBook);
         _recordRef = CFRetain(recordRef);
 
         //check in so we can be added to the weak link cache
@@ -96,13 +96,16 @@
 }
 
 -(NSString*)compositeName{
-   __block NSString *compositeName = nil;
+   __block CFStringRef compositeNameRef = NULL;
 
     [self performRecordAction:^(ABRecordRef recordRef) {
-        compositeName = (NSString*)ABRecordCopyCompositeName(recordRef);
+        compositeNameRef = ABRecordCopyCompositeName(recordRef);
     } waitUntilDone:YES];
 
-    return [compositeName autorelease];
+    NSString* compositeName = [(__bridge NSString*)compositeNameRef copy];
+    if (compositeNameRef) CFRelease(compositeNameRef);
+    
+    return arc_autorelease(compositeName);
 }
 
 
@@ -117,10 +120,10 @@
         value = ABRecordCopyValue(recordRef, propertyID);
     } waitUntilDone:YES];
 
-    id result = [(id)value copy];
+    id result = [(__bridge id)value copy];
     if (value) CFRelease(value);
     
-    return [result autorelease];
+    return arc_autorelease(result);
 }
 
 
@@ -136,7 +139,7 @@
     } waitUntilDone:YES];
 
     if (!result){
-        if (error) *error = [[(NSError*)cfError retain] autorelease];
+        if (error) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
         if (cfError) CFRelease(cfError);
     }
     return result;
@@ -153,7 +156,7 @@
     } waitUntilDone:YES];
 
     if (!result){
-        if (error) *error = [[(NSError*)cfError retain] autorelease];
+        if (error) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
         if (cfError) CFRelease(cfError);
     }
     return result;
@@ -176,7 +179,7 @@
         multiValue = [[RHMultiValue alloc] initWithMultiValueRef:valueRef];
         CFRelease(valueRef);
     }    
-    return [multiValue autorelease];
+    return arc_autorelease(multiValue);
 }
 
 -(BOOL)setMultiValue:(RHMultiValue*)multiValue forPropertyID:(ABPropertyID)propertyID error:(NSError**)error{
@@ -214,9 +217,9 @@
         [_addressBook _recordCheckOut:self];
     }
     
-    [_addressBook release]; _addressBook = nil;
+    arc_release_nil(_addressBook);
     if (_recordRef) CFRelease(_recordRef);
-    [super dealloc];
+    arc_super_dealloc();
 }
 
 #pragma mark - misc

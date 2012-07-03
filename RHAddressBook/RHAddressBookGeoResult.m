@@ -69,7 +69,7 @@
         _addressID = addressID;
         
         //compute address hash and store it
-        _addressHash = [[RHAddressBookGeoResult hashForDictionary:[self associatedAddressDictionary]] retain];
+        _addressHash = arc_retain([RHAddressBookGeoResult hashForDictionary:[self associatedAddressDictionary]]);
     }
     return self;
 }
@@ -78,10 +78,10 @@
 -(id)initWithCoder:(NSCoder *)coder {
     self = [super init];
     if (self) {
-        _placemark = [[coder decodeObjectForKey:@"placemark"] retain];
+        _placemark = arc_retain([coder decodeObjectForKey:@"placemark"]);
         _personID = [coder decodeInt32ForKey:@"personID"];
         _addressID = [coder decodeInt32ForKey:@"addressID"];
-        _addressHash = [[coder decodeObjectForKey:@"addressHash"] retain];
+        _addressHash = arc_retain([coder decodeObjectForKey:@"addressHash"]);
         _resultNotFound = [coder decodeBoolForKey:@"resultNotFound"];
     }
     return self;
@@ -127,7 +127,7 @@
                 CFDictionaryRef address = ABMultiValueCopyValueAtIndex(addresses, index);
                 if (address){
 
-                    result = [[NSDictionary alloc] initWithDictionary:(NSDictionary*)address];
+                    result = [[NSDictionary alloc] initWithDictionary:(__bridge NSDictionary*)address];
                     CFRelease(address);
                 }
             } else {
@@ -140,7 +140,7 @@
     }
     if (addressBook) CFRelease(addressBook);
 
-    return [result autorelease];
+    return arc_autorelease(result);
 }
 
 
@@ -190,7 +190,7 @@
             }
             
             // we no longer need the geocoder, release it.
-            [_geocoder release]; _geocoder = nil;
+             arc_release_nil(_geocoder);
 
             dispatch_async(dispatch_get_main_queue(), ^{
                 //send our notification RHAddressBookPersonAddressGeocodeCompleted
@@ -208,9 +208,9 @@
 }
 
 -(void)dealloc{
-    [_placemark release]; _placemark = nil;
-    [_addressHash release]; _addressHash = nil;
-    [super dealloc];
+    arc_release_nil(_placemark);
+    arc_release_nil(_addressHash);
+    arc_super_dealloc();
 }
 
 #pragma mark - hashing

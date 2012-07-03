@@ -75,6 +75,7 @@
 		130E2B7414EDE6820024BB17 /* RHAddressBookThreadMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHAddressBookThreadMain.m; sourceTree = "<group>"; };
 		132DF84814F32AB000513B38 /* RHAddressBook_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHAddressBook_Private.h; sourceTree = "<group>"; };
 		132DF84B14F34E3100513B38 /* RHRecord_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHRecord_Private.h; sourceTree = "<group>"; };
+		132FD68615A2D5EE001E0D15 /* RHARCSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RHARCSupport.h; sourceTree = "<group>"; };
 		133DF04F1470EAC5005330C7 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		133DF0931470EE36005330C7 /* RHAddressBookLogicTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RHAddressBookLogicTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		133DF0991470EE36005330C7 /* RHAddressBookLogicTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RHAddressBookLogicTests-Info.plist"; sourceTree = "<group>"; };
@@ -303,6 +304,7 @@
 			isa = PBXGroup;
 			children = (
 				13C9D507146C5A8600327D15 /* RHAddressBook-Prefix.pch */,
+				132FD68615A2D5EE001E0D15 /* RHARCSupport.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";

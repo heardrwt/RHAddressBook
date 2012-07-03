@@ -4,38 +4,8 @@
 
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
-#endif
 
-//ARC
-#if __has_feature(objc_arc)
-#error This file cannot be compiled with ARC. Either turn off ARC for the project or use -fno-objc-arc flag
+//ARC Macro Support
+    #import "RHARCSupport.h"
 #endif
-
-
-#if !__has_feature(objc_arc)
-
-#ifndef __bridge
-#define __bridge
-#endif
-#ifndef __bridge_retained
-#define __bridge_retained
-#endif
-#ifndef __bridge_transfer
-#define __bridge_transfer
-#endif
-#ifndef __autoreleasing
-#define __autoreleasing
-#endif
-#ifndef __strong
-#define __strong
-#endif
-#ifndef __weak
-#define __weak
-#endif
-#ifndef __unsafe_unretained
-#define __unsafe_unretained
-#endif
-
-#endif
-
 

@@ -54,7 +54,7 @@
 //people
 -(NSArray*)people{
 
-    __block NSMutableArray *people = [NSMutableArray array];
+    NSMutableArray *people = [NSMutableArray array];
     
     [_addressBook performAddressBookAction:^(ABAddressBookRef addressBookRef) {
         
@@ -73,7 +73,7 @@
 }
 
 -(NSArray*)peopleOrderedBySortOrdering:(ABPersonSortOrdering)ordering{
-    __block NSMutableArray *people = [NSMutableArray array];
+    NSMutableArray *people = [NSMutableArray array];
     
     [_addressBook performAddressBookAction:^(ABAddressBookRef addressBookRef) {
         

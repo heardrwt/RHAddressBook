@@ -36,7 +36,7 @@
 
 @interface RHRecord : NSObject{
     ABRecordID _recordID;
-    RHAddressBook *_addressBook; //strong, we dont want our addressbook instance going away while we are still alive. ever.
+    __strong RHAddressBook *_addressBook; //strong, we dont want our addressbook instance going away while we are still alive. ever.
     ABRecordRef _recordRef;
 }
 
@@ -44,7 +44,7 @@
 -(void)performRecordAction:(void (^)(ABRecordRef recordRef))actionBlock waitUntilDone:(BOOL)wait;
 
 //accessors
-@property (readonly) RHAddressBook* addressBook; // address book instance that this record is a member of
+@property (readonly, retain) RHAddressBook* addressBook; // address book instance that this record is a member of
 
 @property (readonly) ABRecordID recordID;
 @property (readonly) ABRecordRef recordRef;

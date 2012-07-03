@@ -54,7 +54,7 @@
     if (_multiValueRef) CFRelease(_multiValueRef);
     _multiValueRef = nil;
     
-    [super dealloc];
+    arc_super_dealloc();
 }
 
 #pragma mark - basic accessors
@@ -69,19 +69,19 @@
 
 //values
 -(id)valueAtIndex:(NSUInteger)index{
-    id value = (id)ABMultiValueCopyValueAtIndex(_multiValueRef, index);
-    return [value autorelease];
+    id value = (id)ARCBridgingRelease(ABMultiValueCopyValueAtIndex(_multiValueRef, index));
+    return value;
 }
 
 -(NSArray*)values{
-    NSArray* values = (NSArray*)ABMultiValueCopyArrayOfAllValues(_multiValueRef);
-    return [values autorelease];
+    NSArray* values = (NSArray*)ARCBridgingRelease(ABMultiValueCopyArrayOfAllValues(_multiValueRef));
+    return values;
 }
 
 //labels
 -(NSString*)labelAtIndex:(NSUInteger)index{
-    NSString* label = (NSString*)ABMultiValueCopyLabelAtIndex(_multiValueRef, index);
-    return [label autorelease];
+    NSString* label = (NSString*)ARCBridgingRelease(ABMultiValueCopyLabelAtIndex(_multiValueRef, index));
+    return label;
 }
 
 -(NSString*)localizedLabelAtIndex:(NSUInteger)index{
@@ -99,7 +99,7 @@
 
 //convenience accessor
 -(NSUInteger)firstIndexOfValue:(id)value{
-    return ABMultiValueGetFirstIndexOfValue(_multiValueRef, value);
+    return ABMultiValueGetFirstIndexOfValue(_multiValueRef, (__bridge CFTypeRef)(value));
 }
 
 //mutable copy
@@ -168,13 +168,13 @@
 
 -(ABMultiValueIdentifier)addValue:(id)value withLabel:(NSString *)label{
     ABMultiValueIdentifier idOut = kABMultiValueInvalidIdentifier;
-    ABMultiValueAddValueAndLabel(_multiValueRef, value, (CFStringRef)label, &idOut);
+    ABMultiValueAddValueAndLabel(_multiValueRef, (__bridge CFTypeRef)(value), (__bridge CFStringRef)label, &idOut);
     return idOut;
 }
 
 -(ABMultiValueIdentifier)insertValue:(id)value withLabel:(NSString *)label atIndex:(NSUInteger)index{
     ABMultiValueIdentifier idOut = kABMultiValueInvalidIdentifier;
-    ABMultiValueInsertValueAndLabelAtIndex(_multiValueRef, value, (CFStringRef)label, index, &idOut);
+    ABMultiValueInsertValueAndLabelAtIndex(_multiValueRef, (__bridge CFTypeRef)(value), (__bridge CFStringRef)label, index, &idOut);
     return idOut;
 }
 
@@ -183,11 +183,11 @@
 }
 
 -(BOOL)replaceValueAtIndex:(NSUInteger)index withValue:(id)value{
-    return ABMultiValueReplaceValueAtIndex(_multiValueRef, value, index);
+    return ABMultiValueReplaceValueAtIndex(_multiValueRef, (__bridge CFTypeRef)(value), index);
 }
 
 -(BOOL)replaceLabelAtIndex:(NSUInteger)index withLabel:(NSString*)label{
-    return ABMultiValueReplaceLabelAtIndex(_multiValueRef, (CFStringRef)label, index);
+    return ABMultiValueReplaceLabelAtIndex(_multiValueRef, (__bridge CFStringRef)label, index);
 }
 
 @end
