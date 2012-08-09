@@ -30,18 +30,22 @@ Getting an instance of the addressbook.
 ```objectivec
     RHAddressBook *ab = [[[RHAddressBook alloc] init] autorelease];
 ```
+Support for iOS6+ authorization 
+
+```objectivec
+    //query current status, pre iOS6 always returns Authorized
+    if ([RHAddressBook authorizationStatus] == RHAuthorizationStatusNotDetermined){
+    
+    	//request authorization
+        [ab requestAuthorizationWithCompletion:^(bool granted, NSError *error) {
+            [abViewController setAddressBook:ab];
+        }];
+    }
+```
 Registering for addressbook changes 
 
 ```objectivec
     [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(addressBookChanged:) name:RHAddressBookExternalChangeNotification object:nil];
-```
-Background geocoding
-
-```objectivec
-    if ([RHAddressBook isGeocodingSupported){
-        [RHAddressBook setPreemptiveGeocodingEnabled:YES]; //class method
-    }
-    float progress = [_addressBook preemptiveGeocodingProgress]; // 0.0f - 1.0f
 ```
 Getting sources.
 
@@ -133,6 +137,14 @@ Presenting / editing an RHPerson instance in a ABPersonViewController.
     personViewController.allowsEditing = YES;
 
     [self.navigationController pushViewController:personViewController animated:YES];
+```
+Background geocoding
+
+```objectivec
+    if ([RHAddressBook isGeocodingSupported){
+        [RHAddressBook setPreemptiveGeocodingEnabled:YES]; //class method
+    }
+    float progress = [_addressBook preemptiveGeocodingProgress]; // 0.0f - 1.0f
 ```
 Geocoding results for a person.
 

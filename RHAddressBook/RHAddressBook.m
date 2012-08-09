@@ -95,21 +95,6 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 @synthesize addressBookThread=_addressBookThread;
 
 
-+(BOOL)addressBookAvailable{
-    //in order to test addressbook availability we have to attempt to create an addressbook instance using ABAddressBookCreateWithOptions
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
-    if (ABAddressBookCreateWithOptions != NULL){
-        ABAddressBookRef tmp = ABAddressBookCreateWithOptions(NULL, NULL);
-        if (!tmp) return NO;
-        CFRelease(tmp);
-    }
-#endif //end iOS6+
-
-    //ABAddressBookCreateWithOptions not available or succeeded. return YES;
-    return YES;
-}
-
-
 -(id)init{
     self = [super init];
     if (self){
@@ -177,6 +162,56 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     arc_release_nil(_people);
     arc_super_dealloc();
 }
+
+
+#pragma mark - authorization
+
++(RHAuthorizationStatus)authorizationStatus{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
+    if (ABAddressBookGetAuthorizationStatus != NULL){
+        ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
+        switch (status) {
+            case kABAuthorizationStatusNotDetermined: return RHAuthorizationStatusNotDetermined;
+            case kABAuthorizationStatusRestricted: return RHAuthorizationStatusRestricted;
+            case kABAuthorizationStatusDenied: return RHAuthorizationStatusDenied;
+            case kABAuthorizationStatusAuthorized: return RHAuthorizationStatusAuthorized;
+        }
+    }
+#endif //end iOS6+
+    
+    //Pre iOS6, always return authorized
+    return RHAuthorizationStatusAuthorized;
+}
+
+-(void)requestAuthorizationWithCompletion:(void (^)(bool granted, NSError* error))completion{
+    Block_copy(completion);
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
+    
+    if (ABAddressBookRequestAccessWithCompletion != NULL){
+        
+        [self performAddressBookAction:^(ABAddressBookRef addressBookRef) {
+
+            ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
+                completion(granted, (NSError*)error);
+                if (error)CFRelease(error);
+                Block_release(completion);
+            });
+         
+        } waitUntilDone:YES];
+        
+        return; //if we were able to call ABAddressBookRequestAccessWithCompletion
+    }
+    
+#endif //end iOS6+
+
+    //else, run the completion block async (access is always allowed pre iOS6)
+    dispatch_async(dispatch_get_main_queue(), ^{
+        completion(YES, nil);
+        Block_release(completion);
+    });
+}
+
 
 #pragma mark - threads
 

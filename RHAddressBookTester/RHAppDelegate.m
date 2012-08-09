@@ -36,6 +36,15 @@
     self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
     
+    
+    //if not yet authorized, force an auth.
+    if ([RHAddressBook authorizationStatus] == RHAuthorizationStatusNotDetermined){
+        [ab requestAuthorizationWithCompletion:^(bool granted, NSError *error) {
+            [abViewController setAddressBook:ab];
+        }];
+    }
+
+    
     return YES;
 }
 
