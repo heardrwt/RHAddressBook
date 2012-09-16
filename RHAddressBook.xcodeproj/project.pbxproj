@@ -16,6 +16,7 @@
 		130E2B7814EDFF250024BB17 /* libRHAddressBook.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13C9D500146C5A8600327D15 /* libRHAddressBook.a */; };
 		130E2B7914EDFF380024BB17 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13C9D514146C5F4600327D15 /* AddressBook.framework */; };
 		130E2B7A14EDFF4F0024BB17 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13C9D516146C5F5200327D15 /* CoreLocation.framework */; };
+		1327948916056A5C00349DC5 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1327948816056A5C00349DC5 /* Default-568h@2x.png */; };
 		132DF84914F32AB000513B38 /* RHAddressBook_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 132DF84814F32AB000513B38 /* RHAddressBook_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		132DF84C14F34E3200513B38 /* RHRecord_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 132DF84B14F34E3100513B38 /* RHRecord_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		133DF0941470EE36005330C7 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 133DF04F1470EAC5005330C7 /* SenTestingKit.framework */; };
@@ -73,6 +74,7 @@
 		1308D9F71516AD6800CBCC79 /* UIImage+RHPixelAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RHPixelAdditions.m"; sourceTree = "<group>"; };
 		130E2B7314EDE6820024BB17 /* RHAddressBookThreadMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHAddressBookThreadMain.h; sourceTree = "<group>"; };
 		130E2B7414EDE6820024BB17 /* RHAddressBookThreadMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHAddressBookThreadMain.m; sourceTree = "<group>"; };
+		1327948816056A5C00349DC5 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		132DF84814F32AB000513B38 /* RHAddressBook_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHAddressBook_Private.h; sourceTree = "<group>"; };
 		132DF84B14F34E3100513B38 /* RHRecord_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHRecord_Private.h; sourceTree = "<group>"; };
 		132FD68615A2D5EE001E0D15 /* RHARCSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RHARCSupport.h; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 		133DF0AF1470F273005330C7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1327948816056A5C00349DC5 /* Default-568h@2x.png */,
 				133DF0B01470F273005330C7 /* RHAddressBookTester-Info.plist */,
 				133DF0B11470F273005330C7 /* InfoPlist.strings */,
 				133DF0B41470F273005330C7 /* main.m */,
@@ -442,6 +445,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				133DF0B31470F273005330C7 /* InfoPlist.strings in Resources */,
+				1327948916056A5C00349DC5 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,6 +645,7 @@
 		13C9D50E146C5A8600327D15 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				DSTROOT = /tmp/RHAddressBook.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -659,6 +664,7 @@
 		13C9D50F146C5A8600327D15 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				DSTROOT = /tmp/RHAddressBook.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
