@@ -184,7 +184,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 -(void)requestAuthorizationWithCompletion:(void (^)(bool granted, NSError* error))completion{
-    Block_copy(completion);
+    completion = (__bridge id)Block_copy((__bridge void *)completion);
     
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
     
@@ -193,9 +193,9 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         [self performAddressBookAction:^(ABAddressBookRef addressBookRef) {
 
             ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
-                completion(granted, (NSError*)error);
+                completion(granted, (__bridge NSError*)error);
                 if (error)CFRelease(error);
-                Block_release(completion);
+                Block_release((__bridge void *)completion);
             });
          
         } waitUntilDone:YES];
@@ -208,7 +208,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     //else, run the completion block async (access is always allowed pre iOS6)
     dispatch_async(dispatch_get_main_queue(), ^{
         completion(YES, nil);
-        Block_release(completion);
+        Block_release((__bridge void *)completion);
     });
 }
 
