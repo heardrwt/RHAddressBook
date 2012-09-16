@@ -79,8 +79,8 @@
     //add group
     RHGroup *newGroup = [_ab newGroupInDefaultSource];
     newGroup.name = @"Unit Test GroupD";
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.1 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
         STAssertTrue(groupsCount + 1 == [[_ab groups] count], @"groups count failed to increment pre save");
         STAssertTrue([[_ab groups] containsObject:newGroup], @"new group not in array of groups");
     }
@@ -89,8 +89,8 @@
     NSDictionary *personDict = [self randomPersonDictionary];
     [self populateObject:newPerson UsingDictionary:personDict];
     
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.1 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
         STAssertTrue(peopleCount + 1 == [[_ab people] count], @"people count failed to increment pre save");
         STAssertTrue([[_ab people] containsObject:newPerson], @"new person not in array of people");
     }
@@ -193,8 +193,8 @@
     //add group
     RHGroup *newGroup = [_ab newGroupInDefaultSource];
     newGroup.name = @"Unit Test GroupE";
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.0 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
         STAssertTrue(groupsCount + 1 == [[_ab groups] count], @"groups count failed to increment pre revert");
         STAssertTrue([[_ab groups] containsObject:newGroup], @"new group not in array of groups");
     }    
@@ -203,8 +203,8 @@
     NSDictionary *personDict = [self randomPersonDictionary];
     [self populateObject:newPerson UsingDictionary:personDict];
     
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.0 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
         STAssertTrue(peopleCount + 1 == [[_ab people] count], @"people count failed to increment pre revert");
         STAssertTrue([[_ab people] containsObject:newPerson], @"new person not in array of people");
     }
@@ -466,8 +466,8 @@
     newGroup.name = @"Unit Test GroupI";
 
     //pre save 
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.1 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
         STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
         STAssertTrue([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should contain newGroup");
         STAssertTrue([[[_ab defaultSource] groups] containsObject:newGroup], @"array should contain newGroup");
@@ -543,8 +543,8 @@
     RHGroup *newGroup = [_ab newGroupInDefaultSource];  
     newGroup.name = @"Unit Test GroupA";
     STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.1 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
         STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
     }
     
@@ -558,8 +558,8 @@
     STAssertTrue([_ab addGroup:newGroup], @"add group should return true");
     STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
     STAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.1 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
         STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
      }
     
@@ -811,8 +811,8 @@
     STAssertTrue([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
 
     
-    //work around rdar://11087358 iOS: ABGroupCopyArrayOfAllMembers() includes removed member pre-save if queried before removal.
-    if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.0 hence the conditional)
+    if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"6.0")) {
         [_ab performAddressBookAction:^(ABAddressBookRef addressBookRef) {
             ABAddressBookRevert(addressBookRef);
         } waitUntilDone:YES];
@@ -1196,8 +1196,8 @@
     newPerson = [_ab newPersonInDefaultSource];  
     STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
     STAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.1 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
         STAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
     }
     
@@ -1211,8 +1211,8 @@
     STAssertTrue([_ab addPerson:newPerson], @"add person should return true");
     STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
     STAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not returned from the cache for the given recordID");
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.1 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
         STAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
     }
     
@@ -1360,8 +1360,8 @@
 
         //add
         [newGroup addMember:newPerson1];
-        //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.0 hence the conditional)
-        if (SYSTEM_VERSION_GREATER_THAN(@"5.1")) {
+        //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 6.0 hence the conditional)
+        if (SYSTEM_VERSION_GREATER_THAN(@"6.0")) {
             STAssertTrue([[newGroup membersWithinDistance:5000 ofLocation:location1] containsObject:newPerson1], @"person should be returned via reverse lookup");
         }
         [_ab save];
