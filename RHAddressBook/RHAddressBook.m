@@ -144,12 +144,18 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
             _people = (__bridge_transfer NSMutableSet *)CFSetCreateMutable(nil, 0, nil);
         }];
         
+        //subscribe to external change notifications
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addressBookExternallyChanged:) name:RHAddressBookExternalChangeNotification object:nil];
+        
     }
     
     return self;
 }
 
 -(void)dealloc{
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     _sharedServices = nil; //just throw away our pointer (its a singleton)
 
     [_addressBookThread cancel]; //notify the thread that it is no longer needed
