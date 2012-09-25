@@ -109,7 +109,7 @@ static dispatch_once_t onceToken;
         [_addressBookThread setName:[NSString stringWithFormat:@"RHAddressBookSharedServicesThread for %p", self]];
         [_addressBookThread start];
         
-        [_addressBookThread performBlock:^{
+        [_addressBookThread rh_performBlock:^{
             _addressBook = ABAddressBookCreate();
         } waitUntilDone:YES];
 
