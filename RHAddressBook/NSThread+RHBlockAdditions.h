@@ -37,15 +37,15 @@ typedef void (^VoidBlock)(void);
 
 @interface NSThread (RHBlockAdditions)
 
--(void)performBlock:(VoidBlock)block;
--(void)performBlock:(VoidBlock)block waitUntilDone:(BOOL)wait;
--(void)performBlock:(VoidBlock)block afterDelay:(NSTimeInterval)delay;
+-(void)rh_performBlock:(VoidBlock)block;
+-(void)rh_performBlock:(VoidBlock)block waitUntilDone:(BOOL)wait;
+-(void)rh_performBlock:(VoidBlock)block afterDelay:(NSTimeInterval)delay;
 
-+(void)performBlockOnMainThread:(VoidBlock)block;
-+(void)performBlockOnMainThread:(VoidBlock)block waitUntilDone:(BOOL)wait;
-+(void)performBlockInBackground:(VoidBlock)block;
++(void)rh_performBlockOnMainThread:(VoidBlock)block;
++(void)rh_performBlockOnMainThread:(VoidBlock)block waitUntilDone:(BOOL)wait;
++(void)rh_performBlockInBackground:(VoidBlock)block;
 
 //private
--(void)_performBlock:(void (^)())block;
+-(void)rh__performBlock:(void (^)())block;
 
 @end
