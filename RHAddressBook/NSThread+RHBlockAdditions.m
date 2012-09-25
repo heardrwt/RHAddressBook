@@ -33,37 +33,37 @@
 @implementation NSThread (RHBlockAdditions)
 
 #pragma mark - public
--(void)performBlock:(VoidBlock)block{
-    [self performBlock:block waitUntilDone:YES];
+-(void)rh_performBlock:(VoidBlock)block{
+    [self rh_performBlock:block waitUntilDone:YES];
 }
 
--(void)performBlock:(VoidBlock)block waitUntilDone:(BOOL)wait{
+-(void)rh_performBlock:(VoidBlock)block waitUntilDone:(BOOL)wait{
     //if current thread and wait (run directly)
     if ([[NSThread currentThread] isEqual:self] && wait){
         block(); return;
     }
-	[self performSelector:@selector(_performBlock:) onThread:self withObject:arc_autorelease([block copy]) waitUntilDone:wait];
+	[self performSelector:@selector(rh__performBlock:) onThread:self withObject:arc_autorelease([block copy]) waitUntilDone:wait];
 }
 
--(void)performBlock:(VoidBlock)block afterDelay:(NSTimeInterval)delay{
-    [self performSelector:@selector(performBlock:) withObject:arc_autorelease([block copy]) afterDelay:delay];
+-(void)rh_performBlock:(VoidBlock)block afterDelay:(NSTimeInterval)delay{
+    [self performSelector:@selector(rh_performBlock:) withObject:arc_autorelease([block copy]) afterDelay:delay];
 }
 
 
 #pragma mark - helpers
-+(void)performBlockOnMainThread:(VoidBlock)block{
-    [[NSThread mainThread] performBlock:block];
++(void)rh_performBlockOnMainThread:(VoidBlock)block{
+    [[NSThread mainThread] rh_performBlock:block];
 }
 
-+(void)performBlockOnMainThread:(VoidBlock)block waitUntilDone:(BOOL)wait{
-    [[NSThread mainThread] performBlock:block waitUntilDone:wait];
++(void)rh_performBlockOnMainThread:(VoidBlock)block waitUntilDone:(BOOL)wait{
+    [[NSThread mainThread] rh_performBlock:block waitUntilDone:wait];
 }
 
-+(void)performBlockInBackground:(VoidBlock)block{
-    [NSThread performSelectorInBackground:@selector(_performBlock:) withObject:arc_autorelease([block copy])];
++(void)rh_performBlockInBackground:(VoidBlock)block{
+    [NSThread performSelectorInBackground:@selector(rh__performBlock:) withObject:arc_autorelease([block copy])];
 }
 
--(void)_performBlock:(void (^)())block{
+-(void)rh__performBlock:(void (^)())block{
     if (block) block();
 }
 
