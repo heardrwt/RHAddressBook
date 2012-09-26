@@ -136,7 +136,7 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
         } else {
 #endif //end iOS6+
             
-            [_addressBookThread performBlock:^{
+            [_addressBookThread rh_performBlock:^{
                 _addressBook = ABAddressBookCreate();
             }];
             
