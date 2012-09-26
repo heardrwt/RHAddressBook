@@ -85,11 +85,14 @@ void RHAddressBookExternalChangeCallback (ABAddressBookRef addressBook, CFDictio
 #pragma mark - singleton
 static __strong RHAddressBookSharedServices *_sharedInstance = nil;
 
-static dispatch_once_t onceToken;
 +(id)sharedInstance{
-    dispatch_once(&onceToken, ^{
-        _sharedInstance = [[super allocWithZone:NULL] init];
-    });
+    if (_sharedInstance) return _sharedInstance; //for performance reasons, check outside @synchronized
+    
+    @synchronized([self class]){
+        if (!_sharedInstance){
+            _sharedInstance = [[super allocWithZone:NULL] init];
+        }
+    }
     
     return _sharedInstance;
 }
@@ -108,11 +111,40 @@ static dispatch_once_t onceToken;
         _addressBookThread = [[NSThread alloc] initWithTarget:threadMain selector:@selector(threadMain:) object:nil];
         [_addressBookThread setName:[NSString stringWithFormat:@"RHAddressBookSharedServicesThread for %p", self]];
         [_addressBookThread start];
-        
-        [_addressBookThread rh_performBlock:^{
-            _addressBook = ABAddressBookCreate();
-        } waitUntilDone:YES];
 
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
+        if (ABAddressBookCreateWithOptions != NULL){
+            __block CFErrorRef errorRef = NULL;
+            [_addressBookThread rh_performBlock:^{
+                _addressBook = ABAddressBookCreateWithOptions(nil, &errorRef);
+            }];
+            
+            if (!_addressBook){
+                //bail
+                RHErrorLog(@"Error: Failed to create RHAddressBookSharedServices instance. Underlying ABAddressBookCreateWithOptions() failed with error: %@", errorRef);
+                if (errorRef) CFRelease(errorRef);
+
+                [_addressBookThread cancel];
+                arc_release_nil(_addressBookThread);
+                
+                arc_release_nil(self);
+                
+                return nil;
+            }
+            
+        } else {
+#endif //end iOS6+
+            
+            [_addressBookThread performBlock:^{
+                _addressBook = ABAddressBookCreate();
+            }];
+            
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
+        }
+#endif //end iOS6+
+        
+        
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
         if ([RHAddressBookSharedServices isGeocodingSupported]){
             [self loadCache];
@@ -156,6 +188,8 @@ static dispatch_once_t onceToken;
     [self deregisterForAddressBookChanges];
 
     if (_addressBook) { CFRelease(_addressBook); _addressBook = NULL; }
+    
+    [_addressBookThread cancel];
     arc_release_nil(_addressBookThread);
 
     arc_release_nil(_cache);
