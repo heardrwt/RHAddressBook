@@ -46,6 +46,6 @@ typedef void (^VoidBlock)(void);
 +(void)rh_performBlockInBackground:(VoidBlock)block;
 
 //private
--(void)rh__performBlock:(void (^)())block;
+-(void)_rh_runBlock:(void (^)())block;
 
 @end

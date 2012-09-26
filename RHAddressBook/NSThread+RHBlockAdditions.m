@@ -42,7 +42,7 @@
     if ([[NSThread currentThread] isEqual:self] && wait){
         block(); return;
     }
-	[self performSelector:@selector(rh__performBlock:) onThread:self withObject:arc_autorelease([block copy]) waitUntilDone:wait];
+	[self performSelector:@selector(_rh_runBlock:) onThread:self withObject:arc_autorelease([block copy]) waitUntilDone:wait];
 }
 
 -(void)rh_performBlock:(VoidBlock)block afterDelay:(NSTimeInterval)delay{
@@ -60,10 +60,10 @@
 }
 
 +(void)rh_performBlockInBackground:(VoidBlock)block{
-    [NSThread performSelectorInBackground:@selector(rh__performBlock:) withObject:arc_autorelease([block copy])];
+    [NSThread performSelectorInBackground:@selector(_rh_runBlock:) withObject:arc_autorelease([block copy])];
 }
 
--(void)rh__performBlock:(void (^)())block{
+-(void)_rh_runBlock:(void (^)())block{
     if (block) block();
 }
 
