@@ -63,7 +63,7 @@ typedef enum RHAuthorizationStatus {
 -(id)init; //create an instance of the addressbook (iOS6+ may return nil, signifying an access error. Error is logged to console)
 
 +(RHAuthorizationStatus)authorizationStatus; // pre iOS6+ will always return RHAuthorizationStatusAuthorized
--(void)requestAuthorizationWithCompletion:(void (^)(bool granted, NSError* error))completion; //completion block is always called, you only need to call authorize if ([RHAddressBook authorizatonStatus] != RHAuthorizationStatusAuthorized). Pre, iOS6 completion block is always called with granted=YES.
+-(void)requestAuthorizationWithCompletion:(void (^)(bool granted, NSError* error))completion; //completion block is always called, you only need to call authorize if ([RHAddressBook authorizatonStatus] != RHAuthorizationStatusAuthorized). Pre, iOS6 completion block is always called with granted=YES. The block is called on an arbitrary queue, so dispatch_async to the main queue for any UI updates.
 
 //any access to the underlying ABAddressBook should be done inside this block wrapper below.
 //from the addressbook programming guide... Important: Instances of ABAddressBookRef cannot be used by multiple threads. Each thread must make its own instance by calling ABAddressBookCreate.
