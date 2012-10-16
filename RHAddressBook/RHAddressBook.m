@@ -98,17 +98,17 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 #pragma mark - singleton
 static __strong RHAddressBook* _sharedInstance = nil;
 
+
 +(id)sharedInstance{
     if (_sharedInstance) return _sharedInstance;
     
     @synchronized([self class]){
-            if (!_sharedInstance){
-                        _sharedInstance = [[self alloc] init];
-                    }
+        if (!_sharedInstance){
+            _sharedInstance = [[self alloc] init];
         }
+    }
     return _sharedInstance;
 }
-
 
 -(id)init{
     self = [super init];
