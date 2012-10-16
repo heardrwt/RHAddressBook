@@ -59,6 +59,7 @@ typedef enum RHAuthorizationStatus {
 
 
 @interface RHAddressBook : NSObject
++(id)sharedInstance;
 
 -(id)init; //create an instance of the addressbook (iOS6+ may return nil, signifying an access error. Error is logged to console)
 
