@@ -35,6 +35,7 @@
 		133DF0CF1471047A005330C7 /* RHGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 133DF0CD1471047A005330C7 /* RHGroup.m */; };
 		133DF0D2147104AA005330C7 /* RHPerson.h in Headers */ = {isa = PBXBuildFile; fileRef = 133DF0D0147104AA005330C7 /* RHPerson.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		133DF0D3147104AA005330C7 /* RHPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 133DF0D1147104AA005330C7 /* RHPerson.m */; };
+		134338D51638920100150FE5 /* RHAddressBook.h in Headers */ = {isa = PBXBuildFile; fileRef = 13C9D508146C5A8600327D15 /* RHAddressBook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1371E4BB151B1B5400C0DF49 /* RHPersonLabels.h in Headers */ = {isa = PBXBuildFile; fileRef = 1371E4B9151B117200C0DF49 /* RHPersonLabels.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		137A74671470E02300DDC1D7 /* AddressBook.h in Headers */ = {isa = PBXBuildFile; fileRef = 137A74661470E02300DDC1D7 /* AddressBook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1386B9381505C33C007484E0 /* unit_test_person_image_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1386B9371505C33C007484E0 /* unit_test_person_image_1.jpg */; };
@@ -335,6 +336,7 @@
 				13C9D512146C5D1800327D15 /* RHAddressBookSharedServices.h in Headers */,
 				13C6859A146F4E0E004D4458 /* RHAddressBookGeoResult.h in Headers */,
 				13C9D51F146C74CE00327D15 /* NSThread+RHBlockAdditions.h in Headers */,
+				134338D51638920100150FE5 /* RHAddressBook.h in Headers */,
 				133DF0CE1471047A005330C7 /* RHGroup.h in Headers */,
 				133DF0D2147104AA005330C7 /* RHPerson.h in Headers */,
 				130E2B7514EDE6830024BB17 /* RHAddressBookThreadMain.h in Headers */,
