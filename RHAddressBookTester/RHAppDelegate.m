@@ -6,6 +6,10 @@
 //  Copyright (c) 2011 Richard Heard. All rights reserved.
 //
 
+
+#define PERF_TEST_SETUP 0
+#define PERF_TEST 1
+
 #import "RHAppDelegate.h"
 
 #import "RHAddressBookViewController.h"
@@ -29,12 +33,53 @@
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     // Override point for customization after application launch.
 
-    RHAddressBook *ab = [[[RHAddressBook alloc] init] autorelease];
+    //perf setup. 5000 contacts
+#if PERF_TEST_SETUP
+    RHAddressBook *sab = [[[RHAddressBook alloc] init] autorelease];
+    int count = 5000 - [sab numberOfPeople];
+    while (count > 0) {
+        RHPerson *new = [sab newPersonInDefaultSource];
+        new.firstName = [NSString stringWithFormat:@"T1 %i", count];
+        new.lastName = [NSString stringWithFormat:@"T2 %i", count];
+        count--;
+    }
+    [sab save];
+    NSLog(@"setup complete");
+    exit(EXIT_SUCCESS);
+#endif
+    
+#if PERF_TEST
+    clock_t start_time = 0;
+    clock_t end_time = 0;
+    
+    start_time = clock();
+    RHAddressBook *pab = [[[RHAddressBook alloc] init] autorelease];
+    end_time = clock();
 
+    NSLog(@"PERF: Init took %f seconds.", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+
+    start_time = clock();
+    NSArray *people = [pab people];
+    end_time = clock();
+    
+    NSLog(@"PERF: First people call took %f seconds. (for %i people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, [people count]);
+
+    start_time = clock();
+    NSArray *people2 = [pab people];
+    end_time = clock();
+    
+    NSLog(@"PERF: Second people call took %f seconds. (for %i people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, [people2 count]);
+
+#endif
+
+    RHAddressBook *ab = [[[RHAddressBook alloc] init] autorelease];
     RHAddressBookViewController *abViewController = [[[RHAddressBookViewController alloc] initWithAddressBook:ab] autorelease];
     self.navigationController = [[[UINavigationController alloc] initWithRootViewController:abViewController] autorelease];
     self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
+
+    
+    
     
     
     //if not yet authorized, force an auth.
