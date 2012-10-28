@@ -358,6 +358,14 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     return arc_autorelease(result);
 }
 
+-(long)numberOfGroups{
+    __block long result = 0;
+    [_addressBookThread rh_performBlock:^{
+        result = ABAddressBookGetGroupCount(_addressBookRef);
+    }];
+    return result;
+}
+
 -(NSArray*)groupsInSource:(RHSource*)source{
     __block NSArray *result = nil;
     [_addressBookThread rh_performBlock:^{
@@ -475,6 +483,14 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         }
     }];
     return arc_autorelease(result);
+}
+
+-(long)numberOfPeople{
+    __block long result = 0;
+    [_addressBookThread rh_performBlock:^{
+        result = ABAddressBookGetPersonCount(_addressBookRef);
+    }];
+    return result;
 }
 
 -(NSArray*)peopleOrderedBySortOrdering:(ABPersonSortOrdering)ordering{
