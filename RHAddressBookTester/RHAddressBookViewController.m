@@ -336,7 +336,7 @@
     RHPerson *person = [_addressBook newPersonInDefaultSource];
     person.firstName = NSLocalizedString(@"New Person", nil);
     [_addressBook save];
-    [_people addObject:_people];
+    [_people addObject:person];
     [person release];
 }
 
