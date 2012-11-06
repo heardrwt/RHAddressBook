@@ -57,13 +57,15 @@ Getting a list of groups.
 
 ```objectivec
     NSArray *groups = [ab groups];
+    long numberOfGroups = [ab numberOfGroups];
     NSArray *groupsInSource = [ab groupsInSource:defaultSource];
     RHGroup *lastGroup = [groups lastObject];
 ```
 Getting a list of people.
 
 ```objectivec
-    NSArray *allPeople = [ab groups];
+    NSArray *allPeople = [ab people];
+    long numberOfPeople = [ab numberOfPeople];
     NSArray *allPeopleSorted = [ab peopleOrderedByUsersPreference];
     NSArray *allFreds = [ab peopleWithName:@"Fred"];
     NSArray *allFredsInLastGroup = [lastGroup peopleWithName:@"Fred"];
@@ -179,6 +181,9 @@ Reverting changes on objects. (reverts the entire addressbook instance, not just
 ```
 Remember, save often in order to avoid painful save conflicts.
 
+## Installing
+For instructions on how to get started using this static library see [Using Static iOS Libraries](http://rheard.com/blog/using-static-ios-libraries/) at [rheard.com](http://rheard.com).
+
 ## Licence
 Released under the Modified BSD License. 
 (Attribution Required)
@@ -211,10 +216,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </pre>
 
 
-### iOS Version Support (Executive Summary: Supports iOS 4+, tested on iOS 4.0 - 5.1)
+### iOS Version Support (Executive Summary: Supports iOS 4+, tested on iOS 4.0 - 6.0)
 This Framework code runs and compiles on and has been tested all the way back to iOS 4.0. 
 
-Unit tests are in place that run on all versions between 4.0 and 5.1.
+Unit tests are in place that run on all versions between 4.0 and 6.0.
 
 Various methods are not available when linking against older SDKs and will return nil when running on older os versions.
 eg. Geocoding is only supported on iOS 5+. You should always use the +[RHAddressBook isGeocodingAvailable] method to check whether geocoding is available before attempting to access geocode information. Methods will however, if available safely return nil / empty arrays.
