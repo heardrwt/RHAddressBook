@@ -63,7 +63,7 @@ Getting a list of groups.
 Getting a list of people.
 
 ```objectivec
-    NSArray *allPeople = [ab groups];
+    NSArray *allPeople = [ab people];
     NSArray *allPeopleSorted = [ab peopleOrderedByUsersPreference];
     NSArray *allFreds = [ab peopleWithName:@"Fred"];
     NSArray *allFredsInLastGroup = [lastGroup peopleWithName:@"Fred"];
