@@ -40,7 +40,7 @@
 
 #pragma mark - group creator methods
 +(id)newGroupInSource:(RHSource*)source{
-    ABRecordRef newGroupRef = ABGroupCreate();
+    ABRecordRef newGroupRef = ABGroupCreateInSource(source.recordRef);
     RHGroup *newGroup = nil;
     if (newGroupRef){
         newGroup = [[RHGroup alloc] initWithAddressBook:source.addressBook recordRef:newGroupRef];
