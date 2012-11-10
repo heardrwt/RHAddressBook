@@ -219,6 +219,7 @@
     
     arc_release_nil(_addressBook);
     if (_recordRef) CFRelease(_recordRef);
+    _recordRef = NULL;
     arc_super_dealloc();
 }
 
