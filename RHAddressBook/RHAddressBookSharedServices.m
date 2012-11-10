@@ -323,8 +323,8 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
 -(void)processTimerFire{
         
     //if we are offline, the geocode fails with a specific error
-    // in that instance we dont set the resultNotFound flag, so next time around we will re-attempt the particular address.
-    //TODO: re weally should handle this better, with our shared servies class oberving some form of reachability and pausing / resuming the timer.
+    // in that instance we don't set the resultNotFound flag, so next time around we will re-attempt the particular address.
+    //TODO: we really should handle this better, with our shared services class observing some form of reachability and pausing / resuming the timer.
     
     //write the cache periodically, not just at the end... incase we... you know..... yea.....
     [self writeCache];

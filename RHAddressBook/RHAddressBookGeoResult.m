@@ -178,7 +178,7 @@
             } else {
                 if (error.code == kCLErrorNetwork){
                     //network error, offline
-                    RHLog(@"geocode not found for: %@. A network error occured: %@.", self, error);
+                    RHLog(@"geocode not found for: %@. A network error occurred: %@.", self, error);
                 } else {
                     //we are interested in:
                     //kCLErrorGeocodeFoundNoResult

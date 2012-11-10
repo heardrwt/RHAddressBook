@@ -41,7 +41,7 @@
 @property (readonly) NSString *name;
 @property (readonly) ABSourceType type;
 
-//access groups in the current source (this method just fwds to the equivalent method on RHAddressBook)
+//access groups in the current source (this method just forwards to the equivalent method on RHAddressBook)
 -(NSArray*)groups;
 
 //access people in the current source

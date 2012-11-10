@@ -36,7 +36,7 @@
 
 @interface RHRecord : NSObject{
     ABRecordID _recordID;
-    __strong RHAddressBook *_addressBook; //strong, we dont want our addressbook instance going away while we are still alive. ever.
+    __strong RHAddressBook *_addressBook; //strong, we don't want our addressbook instance going away while we are still alive. ever.
     ABRecordRef _recordRef;
 }
 

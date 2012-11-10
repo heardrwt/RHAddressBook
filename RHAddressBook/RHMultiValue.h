@@ -35,7 +35,7 @@
 @class RHMultiValue;
 @class RHMutableMultiValue;
 
-//some clarifying typedefs. no need for seperate subclasses.
+//some clarifying typedefs. no need for separate subclasses.
 typedef RHMultiValue RHMultiStringValue;
 typedef RHMultiValue RHMultiIntegerValue;
 typedef RHMultiValue RHMultiRealValue;
@@ -53,7 +53,7 @@ typedef RHMutableMultiValue RHMutableMultiDictionaryValue;
     ABMultiValueRef _multiValueRef;
 }
 
-// a multivalue is an ordered collection of key / value pairs. (mutable or immutable.)
+// a multi-value is an ordered collection of key / value pairs. (mutable or immutable.)
 // this is a generic top level collection object. 
 
 @property (readonly) ABMultiValueRef multiValueRef;

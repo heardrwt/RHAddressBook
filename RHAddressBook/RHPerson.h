@@ -145,10 +145,10 @@ typedef enum {
 
 //Social Profile (iOS5 +)
 @property (nonatomic, copy) RHMultiDictionaryValue *socialProfiles;   // kABPersonSocialProfileProperty - (Multi Dictionary) possible dictionary keys are ( kABPersonSocialProfileURLKey, kABPersonSocialProfileServiceKey, kABPersonSocialProfileUsernameKey, kABPersonSocialProfileUserIdentifierKey )
-                                                            // possible kABPersonSocialProfileServiceKey values ( kABPersonSocialProfileServiceTwitter, kABPersonSocialProfileServiceGameCenter, kABPersonSocialProfileServiceFacebook, kABPersonSocialProfileServiceMyspace, kABPersonSocialProfileServiceLinkedIn, kABPersonSocialProfileServiceFlickr )
+                                                            // possible kABPersonSocialProfileServiceKey values ( kABPersonSocialProfileServiceTwitter, kABPersonSocialProfileServiceGameCenter, kABPersonSocialProfileService Facebook, kABPersonSocialProfileServiceMyspace, kABPersonSocialProfileServiceLinkedIn, kABPersonSocialProfileServiceFlickr )
 
-//vCard formating (iOS5 +)
--(NSData*)vCardRepresentation; //the current persons vcard representation
+//vCard formatting (iOS5 +)
+-(NSData*)vCardRepresentation; //the current persons vCard representation
 +(NSData*)vCardRepresentationForPeople:(NSArray*)people; //array of RHPerson Objects.
 
 //geocoding
@@ -159,7 +159,7 @@ typedef enum {
 
 //remove person from addressBook
 -(BOOL)remove;
--(BOOL)hasbeenRemoved; // we check to see if ABAddressBookGetPersonWithRecordID() returns NULL for self.recordID; This is the recomended aproach from the AB docs.
+-(BOOL)hasBeenRemoved; // we check to see if ABAddressBookGetPersonWithRecordID() returns NULL for self.recordID; This is the recommended approach from the AB docs.
 
 
 @end

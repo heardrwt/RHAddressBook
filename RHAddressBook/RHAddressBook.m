@@ -230,7 +230,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 
-#pragma mark - access
+#pragma mark - access - sources
 
 -(NSArray*)sources{
     __block NSArray *result = nil;
@@ -345,6 +345,8 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     return [self sourceForABRecordRef:recordRef];
 }
 
+
+#pragma mark - access - groups
 
 -(NSArray*)groups{
     __block NSArray *result = nil;
@@ -472,6 +474,8 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     return [self groupForABRecordRef:recordRef];
 }
 
+
+#pragma mark - access - people
 
 -(NSArray*)people{
     __block NSArray *result = nil;

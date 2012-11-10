@@ -511,7 +511,7 @@
     }
 }
 
-#pragma mark - vCard formating (iOS5 +)
+#pragma mark - vCard formatting (iOS5 +)
 -(NSData*)vCardRepresentation{
     if (ABPersonCreateVCardRepresentationWithPeople == NULL) return nil; //availability check
     __block CFDataRef vCardDataRef = NULL;
@@ -559,7 +559,7 @@
     return [_addressBook removePerson:self error:nil];
 }
 
--(BOOL)hasbeenRemoved{
+-(BOOL)hasBeenRemoved{
     __block BOOL result = NO;
     [_addressBook performAddressBookAction:^(ABAddressBookRef addressBookRef) {
         result = ( NULL == ABAddressBookGetPersonWithRecordID(addressBookRef, self.recordID));
