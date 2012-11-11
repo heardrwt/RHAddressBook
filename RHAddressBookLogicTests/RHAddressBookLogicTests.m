@@ -837,7 +837,7 @@
     STAssertFalse([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
     STAssertFalse([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
 
-    STAssertTrue([newPerson hasbeenRemoved], @"person should report themselves as having been removed");
+    STAssertTrue([newPerson hasBeenRemoved], @"person should report themselves as having been removed");
 
     //reverting the removal should add them back to the source / group
     [_ab revert];
@@ -879,7 +879,7 @@
     STAssertFalse([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
     STAssertFalse([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
 
-    STAssertTrue([newPerson hasbeenRemoved], @"person should report themselves as having been removed");
+    STAssertTrue([newPerson hasBeenRemoved], @"person should report themselves as having been removed");
 
     //cleanup
     [_ab removeGroup:newGroup];
