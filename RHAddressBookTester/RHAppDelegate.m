@@ -70,6 +70,12 @@
     
     NSLog(@"PERF: Second people call took %f seconds. (for %i people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, [people2 count]);
 
+    start_time = clock();
+    [pab save];
+    end_time = clock();
+    
+    NSLog(@"PERF: Save call took %f seconds. (for %i people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, [people2 count]);
+
 #endif
 
     RHAddressBook *ab = [[[RHAddressBook alloc] init] autorelease];

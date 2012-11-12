@@ -1446,6 +1446,41 @@
     [_ab revert];
 }
 
+
+-(void)testWeakLinkedRefMap{
+    
+    //setup (get ivar refs)
+    CFMutableDictionaryRef _refToRecordMap = (CFMutableDictionaryRef)[self ivar:@"_refToRecordMap" forObject:_ab];
+    
+    if (_refToRecordMap){
+
+        //add a group, make sure its added to map
+        RHGroup *newGroup = nil;
+        RHPerson *newPerson = nil;
+        @autoreleasepool {
+            newGroup = [_ab newGroupInDefaultSource];
+            newGroup.name = @"Unit Test GroupC";
+            newPerson = [_ab newPersonInDefaultSource];
+        }
+        STAssertTrue(CFDictionaryGetValue(_refToRecordMap, newGroup.recordRef) != NULL, @"_refToRecordMap does not contain weak ref to newGroup");
+        STAssertTrue(CFDictionaryGetValue(_refToRecordMap, newPerson.recordRef) != NULL, @"_refToRecordMap does not contain weak ref to newPerson");
+        
+        //release group make sure its removed from map
+        ABRecordRef newGroupRef = newGroup.recordRef;
+        ABRecordRef newPersonRef = newPerson.recordRef;
+        
+        [newGroup release];
+        [newPerson release];
+
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate date]];
+        STAssertFalse(CFDictionaryGetValue(_refToRecordMap, newGroupRef) != NULL, @"_refToRecordMap still contains weak ref to newGroup");
+        STAssertFalse(CFDictionaryGetValue(_refToRecordMap, newPersonRef) != NULL, @"_refToRecordMap still contains weak ref to newPerson");
+    }
+    //cleanup
+    [_ab revert];
+}
+
+
 //we only want these tests to run if linked against 5.0+ hence the defines and also, only if we are running on less that 5.0
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 #pragma mark - running on pre iOS5+ sanity
