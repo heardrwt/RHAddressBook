@@ -139,9 +139,9 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         
         [_addressBookThread rh_performBlock:^{
             //weak linking mutable sets
-            _sources = (__bridge_transfer NSMutableSet *)CFSetCreateMutable(nil, 0, nil);
-            _groups = (__bridge_transfer NSMutableSet *)CFSetCreateMutable(nil, 0, nil);
-            _people = (__bridge_transfer NSMutableSet *)CFSetCreateMutable(nil, 0, nil);
+            _sources = (__bridge_transfer NSMutableSet *)CFSetCreateMutable(NULL, 0, NULL);
+            _groups = (__bridge_transfer NSMutableSet *)CFSetCreateMutable(NULL, 0, NULL);
+            _people = (__bridge_transfer NSMutableSet *)CFSetCreateMutable(NULL, 0, NULL);
         }];
         
         //subscribe to external change notifications
@@ -258,10 +258,10 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 
     if (sourceRef == NULL) return nil; //bail
     
-    
     //if we find the exact ref in the current cache its safe to return that object, however its not save to add a ref directly if not found, instead we use the recordID
     // (this allows us to return not yet saved, newly created objects that have invalid RecordIDs without breaking the multiple ab barrier)
-    // these not yet saved objects are added to the cache via the weak record check in / out system when they are created / dealloc'd 
+    // these not yet saved objects are added to the cache via the weak record check in / out system when they are created / dealloc'd
+
     
     //search for an exact match using recordRef
     __block RHSource *source = nil;
@@ -308,8 +308,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
             
             if (sourceRef){
                 source = [[RHSource alloc] initWithAddressBook:self recordRef:sourceRef];
-                //cache it
-                if (source) [_sources addObject:source];
+                //the record will check in with the addressbook, so its automatically added to the cache and available for future calls..
             }
         }
             
@@ -384,10 +383,10 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     
     if (groupRef == NULL) return nil; //bail
     
-    
     //if we find the exact ref in the current cache its safe to return that object, however its not save to add a ref directly if not found, instead we use the recordID
     // (this allows us to return not yet saved, newly created objects that have invalid RecordIDs without breaking the multiple ab barrier)
-    // these not yet saved objects are added to the cache via the weak record check in / out system when they are created / dealloc'd 
+    // these not yet saved objects are added to the cache via the weak record check in / out system when they are created / dealloc'd
+
     
     //search for an exact match using recordRef
     __block RHGroup *group = nil;
@@ -412,12 +411,11 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     }];
     
     //is valid ?
-    if (groupID == kABRecordInvalidID) return nil; //invalid
-    
+    if (groupID == kABRecordInvalidID) return nil; //invalid, (no further lookup possible, return nil)
+
     
     //search for the actual group via recordID
     [_addressBookThread rh_performBlock:^{
-
 
         //look in the cache
         for (RHGroup *entry in _groups) {
@@ -436,8 +434,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 
             if (groupRef){
                 group = [[RHGroup alloc] initWithAddressBook:self recordRef:groupRef];
-                //cache it
-                if (group) [_groups addObject:group];
+                //the record will check in with the addressbook, so its automatically added to the cache and available for future calls..
             }
         }
         
@@ -547,10 +544,11 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 -(RHPerson*)personForABRecordRef:(ABRecordRef)personRef{
     
     if (personRef == NULL) return nil; //bail
-
+    
     //if we find the exact ref in the current cache its safe to return that object, however its not save to add a ref directly if not found, instead we use the recordID
     // (this allows us to return not yet saved, newly created objects that have invalid RecordIDs without breaking the multiple ab barrier)
-    // these not yet saved objects are added to the cache via the weak record check in / out system when they are created / dealloc'd 
+    // these not yet saved objects are added to the cache via the weak record check in / out system when they are created / dealloc'd
+
     
     //search for an exact match using recordRef
     __block RHPerson *person = nil;
@@ -575,11 +573,10 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     }];
     
     //is valid ?
-    if (personID == kABRecordInvalidID) return nil; //invalid
+    if (personID == kABRecordInvalidID) return nil; //invalid, (no further lookup possible, return nil)
     
     
     //search for the actual person using recordID
-    
     [_addressBookThread rh_performBlock:^{
         
         //look in the cache
@@ -599,8 +596,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
             
             if (personRef){
                 person = [[RHPerson alloc] initWithAddressBook:self recordRef:personRef];
-                //cache it
-                if (person) [_people addObject:person];
+                //the record will check in with the addressbook, so its automatically added to the cache and available for future calls..
             }
         }
         
@@ -664,8 +660,6 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         if (!result){
             RHErrorLog(@"Error: Failed to add RHPerson to AddressBook: error: %@", errorRef);
             if (errorRef) CFRelease(errorRef);
-        } else {
-            if (![_people containsObject:person])[_people addObject:person];
         }
     }];
     return result;
@@ -769,7 +763,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     
     [_addressBookThread rh_performBlock:^{
         result = ABAddressBookRemoveRecord(_addressBookRef, person.recordRef, &cfError);
-        //if (result)[_people removeObject:person]; //we shouldn't actually remove this object from the cache on removal.. all accesses go via AB record methods so removing now just means the same object is not returned by the cache if the user reverts the removal.
+        //don't remove this object from the cache atm. let it check itself out. all accesses go via AB record methods so removing now just means the same object is not returned by the cache if the user reverts the removal.
     }];
     
     if (!result){
@@ -792,7 +786,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     
     [_addressBookThread rh_performBlock:^{
         result = ABAddressBookRemoveRecord(_addressBookRef, group.recordRef, &cfError);
-        //if (result)[_groups removeObject:group]; //we shouldn't actually remove this object from the cache on removal.. all accesses go via AB record methods so removing now just means the same object is not returned by the cache if the user reverts the removal.
+        //don't remove this object from the cache atm. let it check itself out. all accesses go via AB record methods so removing now just means the same object is not returned by the cache if the user reverts the removal.
 
     }];
 
@@ -834,7 +828,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 -(BOOL)hasUnsavedChanges{
     __block BOOL result;
     [_addressBookThread rh_performBlock:^{
-    result = ABAddressBookHasUnsavedChanges(_addressBookRef);
+        result = ABAddressBookHasUnsavedChanges(_addressBookRef);
     }];
     
     return result;
@@ -914,7 +908,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     if (results){
         [_addressBookThread rh_performBlock:^{
             for (RHAddressBookGeoResult *result in results) {
-                RHPerson *person = [self personForABRecordRef:ABAddressBookGetPersonWithRecordID(_addressBookRef, result.personID)];
+                RHPerson *person = [self personForABRecordID:result.personID];
                 if (person) [array addObject:person];
             }
         }];
@@ -927,7 +921,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     __block RHPerson *person = nil;
     if (result){
         [_addressBookThread rh_performBlock:^{
-            person = arc_retain([self personForABRecordRef:ABAddressBookGetPersonWithRecordID(_addressBookRef, result.personID)]);
+            person = arc_retain([self personForABRecordID:result.personID]);
         }];
     }
     return arc_autorelease(person);
@@ -939,7 +933,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     __block RHPerson *person = nil;
     if (result){
         [_addressBookThread rh_performBlock:^{
-            person = arc_retain([self personForABRecordRef:ABAddressBookGetPersonWithRecordID(_addressBookRef, result.personID)]);
+            person = arc_retain([self personForABRecordID:result.personID]);
         }];
     }
     return arc_autorelease(person);
