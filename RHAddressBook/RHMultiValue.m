@@ -39,13 +39,14 @@
 
 #pragma mark - init
 -(id)initWithMultiValueRef:(ABMultiValueRef)multiValueRef{
-    if (!multiValueRef){
-        return nil;
-    }
-
     self = [super init];
     if (self){
-            _multiValueRef = CFRetain(multiValueRef);
+        if (!multiValueRef){
+            arc_release_nil(self);
+            return nil;
+        }
+
+        _multiValueRef = CFRetain(multiValueRef);
     }
     return self;
 }
@@ -108,9 +109,12 @@
     ABMutableMultiValueRef mutableRef = ABMultiValueCreateMutableCopy(_multiValueRef);
     
     //then create a mutable wrapper instance
-    RHMutableMultiValue *new = [[RHMutableMultiValue alloc] initWithMultiValueRef:mutableRef];
-
-    CFRelease(mutableRef);
+    RHMutableMultiValue *new = nil;
+    if (mutableRef){
+        new = [[RHMutableMultiValue alloc] initWithMultiValueRef:mutableRef];
+        CFRelease(mutableRef);
+    }
+    
     return new;
 }
 
@@ -160,8 +164,11 @@
 
 -(id)initWithType:(ABPropertyType)newPropertyType{
     ABMultiValueRef multiValueRef = ABMultiValueCreateMutable(newPropertyType);
-    id new = [self initWithMultiValueRef:multiValueRef];
-    CFRelease(multiValueRef);
+    id new = nil;
+    if (multiValueRef){
+        new = [self initWithMultiValueRef:multiValueRef];
+        CFRelease(multiValueRef);
+    }
     return new;
 }
 
