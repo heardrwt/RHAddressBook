@@ -124,9 +124,6 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
                 //bail
                 RHErrorLog(@"Error: Failed to create RHAddressBookSharedServices instance. Underlying ABAddressBookCreateWithOptions() failed with error: %@", errorRef);
                 if (errorRef) CFRelease(errorRef);
-
-                [_addressBookThread cancel];
-                arc_release_nil(_addressBookThread);
                 
                 arc_release_nil(self);
                 
@@ -161,26 +158,6 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
 -(id)copyWithZone:(NSZone *)zone{
     return self;
 }
-
-#if ARC_IS_NOT_ENABLED
-
--(id)retain{
-    return self;
-}
-
--(NSUInteger)retainCount{
-    return NSUIntegerMax;  //denotes an object that cannot be released
-}
-
--(oneway void)release{
-    //do nothing
-}
-
--(id)autorelease{
-    return self;
-}
-
-#endif // end ARC_IS_NOT_ENABLED
 
 #pragma mark - cleanup
 -(void)dealloc {

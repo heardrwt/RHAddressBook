@@ -95,6 +95,21 @@
         }];
     }
 
+    // warn re being denied access to contacts
+    if ([RHAddressBook authorizationStatus] == RHAuthorizationStatusDenied){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"RHAuthorizationStatusDenied" message:@"Access to the addressbook is currently denied." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }
+
+    // warn re restricted access to contacts
+    if ([RHAddressBook authorizationStatus] == RHAuthorizationStatusRestricted){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"RHAuthorizationStatusRestricted" message:@"Access to the addressbook is currently restricted." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }
+
+    
     
     return YES;
 }
