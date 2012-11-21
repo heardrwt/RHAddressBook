@@ -939,14 +939,20 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 #pragma mark - save
 -(BOOL)save{
     NSError *error = nil;
-    BOOL result = [self save:&error];
+    BOOL result = [self saveWithError:&error];
     if (!result) {
         RHErrorLog(@"RHAddressBook: Error saving: %@", error);
     }
     return result;
 }
 
+//renamed method shim
 -(BOOL)save:(NSError**)error{
+    RHErrorLog(@"RHAddressBook: The save: method has been renamed to saveWithError: You should update your sources appropriately.");
+    return [self saveWithError:error];
+}
+
+-(BOOL)saveWithError:(NSError**)error{
     __block BOOL result = YES;
     __block CFErrorRef cfError = NULL;
     

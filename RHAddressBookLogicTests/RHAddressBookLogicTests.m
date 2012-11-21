@@ -99,7 +99,7 @@
     
     //save
     error = nil;
-    STAssertTrue([_ab save:&error], @"AB save returned false");
+    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
     STAssertNil(error, @"error was set by the AB save operation");
     
     //test
@@ -127,7 +127,7 @@
 
     //save
     error = nil;
-    STAssertTrue([_ab save:&error], @"AB save returned false");
+    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
     STAssertNil(error, @"error was set by the AB save operation");
     
     //test
@@ -155,7 +155,7 @@
 
     //save
     error = nil;
-    STAssertTrue([_ab save:&error], @"AB save returned false");
+    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
     STAssertNil(error, @"error was set by the AB save operation");
 
     
@@ -163,7 +163,7 @@
     STAssertFalse([_ab hasUnsavedChanges], @"AB reports it does has unsaved changes after a save");
     
     error = nil;
-    STAssertTrue([_ab save:&error], @"AB save returned false");
+    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
     STAssertNil(error, @"error was set by the AB save operation");
     
 
@@ -232,7 +232,7 @@
     [_ab addGroup:newGroup];
     [_ab addPerson:newPerson];
     error = nil;
-    STAssertTrue([_ab save:&error], @"AB save returned false");
+    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
     STAssertNil(error, @"error was set by the AB save operation");
     STAssertFalse([_ab hasUnsavedChanges], @"AB reports has unsaved changes after adding a person and group then saving");
     STAssertTrue([[_ab groups] containsObject:newGroup], @"new group should be in array of groups after addGroup: operation");
@@ -296,7 +296,7 @@
     
     //save
     error = nil;
-    STAssertTrue([_ab save:&error], @"AB save returned false");
+    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
     STAssertNil(error, @"error was set by the AB save operation");
     
     

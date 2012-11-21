@@ -66,7 +66,7 @@
 
 //save (convenience methods.. these just forward up to this records addressbook)
 -(BOOL)save;
--(BOOL)save:(NSError**)error;
+-(BOOL)saveWithError:(NSError**)error;
 -(BOOL)hasUnsavedChanges; //addressbook level, not record level
 -(void)revert;
 

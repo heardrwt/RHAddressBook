@@ -197,8 +197,15 @@
 -(BOOL)save{
     return [_addressBook save];
 }
+
+//renamed method shim
 -(BOOL)save:(NSError**)error{
-    return [_addressBook save:error];
+    RHErrorLog(@"RHAddressBook: The save: method has been renamed to saveWithError: You should update your sources appropriately.");
+    return [self saveWithError:error];
+}
+
+-(BOOL)saveWithError:(NSError**)error{
+    return [_addressBook saveWithError:error];
 }
 -(BOOL)hasUnsavedChanges{
     return [_addressBook hasUnsavedChanges];
