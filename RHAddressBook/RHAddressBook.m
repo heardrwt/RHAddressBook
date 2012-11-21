@@ -520,9 +520,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
             ABRecordRef groupRef = CFArrayGetValueAtIndex(groupRefs, i);
             
             RHGroup *group = [self groupForABRecordRef:groupRef];
-            if (group){ [groups addObject:group];} else {
-                RHLog(@"failed to find group for %@", groupRef);
-            }
+            if (group) [groups addObject:group];
         }
     }];
     return [NSArray arrayWithArray:groups];
@@ -786,8 +784,6 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         if (!result){
             RHErrorLog(@"Error: Failed to add RHGroup to AddressBook: error: %@", errorRef);
             if (errorRef) CFRelease(errorRef);
-        } else {
-            if (![_groups containsObject:group])[_groups addObject:group];
         }
     }];
     return result;
@@ -855,7 +851,6 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     
     [_addressBookThread rh_performBlock:^{
         result = ABAddressBookRemoveRecord(_addressBookRef, person.recordRef, &cfError);
-        //don't remove this object from the cache atm. let it check itself out. all accesses go via AB record methods so removing now just means the same object is not returned by the cache if the user reverts the removal.
     }];
     
     if (!result){
@@ -878,8 +873,6 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     
     [_addressBookThread rh_performBlock:^{
         result = ABAddressBookRemoveRecord(_addressBookRef, group.recordRef, &cfError);
-        //don't remove this object from the cache atm. let it check itself out. all accesses go via AB record methods so removing now just means the same object is not returned by the cache if the user reverts the removal.
-
     }];
 
     if (!result){
