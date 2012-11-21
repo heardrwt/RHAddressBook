@@ -740,9 +740,16 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 -(BOOL)addPerson:(RHPerson *)person{
-    __block BOOL result = NO;
-    //first check to make sure person has not already been added to another addressbook, if so bail;
+    if (!person){
+        RHErrorLog(@"Error: Unable to add a nil RHPerson to the AddressBook.");
+        return NO;
+    }
+
+    //check to make sure person has not already been added to another addressbook, if so bail;
     if (person.addressBook != nil && person.addressBook != self) [NSException raise:NSInvalidArgumentException format:@"Person has already been added to another addressbook."];
+
+    __block BOOL result = NO;
+    
     [_addressBookThread rh_performBlock:^{
         
         CFErrorRef errorRef = NULL;
@@ -774,9 +781,16 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 -(BOOL)addGroup:(RHGroup *)group{
-    __block BOOL result = NO;
-    //first check to make sure group has not already been added to another addressbook, if so bail;
+    if (!group){
+        RHErrorLog(@"Error: Unable to add a nil RHGroup to the AddressBook.");
+        return NO;
+    }
+    
+    //check to make sure group has not already been added to another addressbook, if so bail;
     if (group.addressBook != nil && group.addressBook != self) [NSException raise:NSInvalidArgumentException format:@"Group has already been added to another addressbook."];
+
+    __block BOOL result = NO;
+    
     [_addressBookThread rh_performBlock:^{
         
         CFErrorRef errorRef = NULL;
@@ -839,10 +853,20 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 
 #pragma mark - remove
 -(BOOL)removePerson:(RHPerson*)person{
-    return [self removePerson:person error:nil];
+    NSError *error = nil;
+    BOOL result = [self removePerson:person error:&error];
+    if (!result) {
+        RHErrorLog(@"RHAddressBook: Error removing person: %@", error);
+    }
+    return result;
 }
 
 -(BOOL)removePerson:(RHPerson*)person error:(NSError**)error{
+    if (!person){
+        RHErrorLog(@"Error: Unable to remove a nil RHPerson from the AddressBook.");
+        return NO;
+    }
+    
     //need to make sure it is actually part of the current addressbook
     if (person.addressBook != self) [NSException raise:NSInvalidArgumentException format:@"Person does not belong to this addressbook instance."];
     
@@ -861,10 +885,20 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 -(BOOL)removeGroup:(RHGroup*)group{
-    return [self removeGroup:group error:nil];
+    NSError *error = nil;
+    BOOL result = [self removeGroup:group error:&error];
+    if (!result) {
+        RHErrorLog(@"RHAddressBook: Error removing group: %@", error);
+    }
+    return result;
 }
 
 -(BOOL)removeGroup:(RHGroup*)group error:(NSError**)error{
+    if (!group){
+        RHErrorLog(@"Error: Unable to remove a nil RHGroup from the AddressBook.");
+        return NO;
+    }
+    
     //make sure it is actually part of the current addressbook
     if (group.addressBook != self) [NSException raise:NSInvalidArgumentException format:@"Group does not belong to this addressbook instance."];
 

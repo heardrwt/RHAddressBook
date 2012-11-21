@@ -46,6 +46,8 @@
 -(void)testUnsavedChanges;
 -(void)testForRecordRefMethods;
 -(void)testUserPrefs; //sorting & display
+-(void)testGroupsAndPeopleFromAnotherAddressBook;
+-(void)testPassingNilToPublicMethods;
 
 #pragma mark - sources
 -(void)testSources;

@@ -556,7 +556,7 @@
 
 #pragma mark - remove
 -(BOOL)remove{
-    return [_addressBook removePerson:self error:nil];
+    return [_addressBook removePerson:self];
 }
 
 -(BOOL)hasBeenRemoved{

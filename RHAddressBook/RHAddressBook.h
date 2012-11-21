@@ -128,7 +128,7 @@ typedef enum RHAuthorizationStatus {
 
 //save
 -(BOOL)save;
--(BOOL)save:(NSError**)errorOut;
+-(BOOL)save:(NSError**)error;
 -(BOOL)hasUnsavedChanges;
 -(void)revert; //if 
 

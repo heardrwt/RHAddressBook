@@ -202,7 +202,7 @@
 
 #pragma mark - remove
 -(BOOL)remove{
-    return [_addressBook removeGroup:self error:nil];
+    return [_addressBook removeGroup:self];
 }
 
 

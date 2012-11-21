@@ -397,6 +397,34 @@
     
 }
 
+-(void)testPassingNilToPublicMethods{
+
+//TODO: add these methods at some point
+//    -(RHSource*)sourceForABRecordRef:(ABRecordRef)sourceRef; //returns nil if ref not found in the current ab, eg unsaved record from another ab. if the passed recordRef does not belong to the current addressbook, the returned person objects underlying personRef will differ from the passed in value. This is required in-order to maintain thread safety for the underlying AddressBook instance.
+//    -(NSArray*)groupsInSource:(RHSource*)source;
+//    -(RHGroup*)groupForABRecordRef:(ABRecordRef)groupRef; //returns nil if ref not found in the current ab, eg unsaved record from another ab. if the passed recordRef does not belong to the current addressbook, the returned person objects underlying personRef will differ from the passed in value. This is required in-order to maintain thread safety for the underlying AddressBook instance.
+//    -(NSArray*)peopleWithName:(NSString*)name;
+//    -(RHPerson*)personForABRecordRef:(ABRecordRef)personRef; //returns nil if ref not found in the current ab, eg unsaved record from another ab. if the passed recordRef does not belong to the current addressbook, the returned person objects underlying personRef will differ from the passed in value. This is required in-order to maintain thread safety for the underlying AddressBook instance.
+//    
+//#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
+//    //add people from vCard to the current addressbook (iOS5+ : pre iOS5 these methods are no-ops)
+//    -(NSArray*)addPeopleFromVCardRepresentationToDefaultSource:(NSData*)representation; //returns an array of newly created RHPerson objects, nil on error
+//    -(NSArray*)addPeopleFromVCardRepresentation:(NSData*)representation toSource:(RHSource*)source;
+//    -(NSData*)vCardRepresentationForPeople:(NSArray*)people;
+//#endif //end iOS5+
+//
+//    -(RHPerson*)newPersonInSource:(RHSource*)source;
+//    -(RHGroup*)newGroupInSource:(RHSource*)source;
+
+
+    STAssertFalse([_ab removePerson:nil], @"should log and return NO when passed nil.");
+    STAssertFalse([_ab removeGroup:nil], @"should log and return NO when passed nil.");
+    
+    STAssertFalse([_ab addPerson:nil], @"should log and return NO when passed nil.");
+    STAssertFalse([_ab addGroup:nil], @"should log and return NO when passed nil.");
+    
+}
+
 #pragma mark - sources
 -(void)testSources{
     //sources are static on the device, so we just test to make sure we get atleast one back.
