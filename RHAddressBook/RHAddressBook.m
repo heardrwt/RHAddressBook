@@ -739,26 +739,35 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     return newPerson;
 }
 
--(BOOL)addPerson:(RHPerson *)person{
+-(BOOL)addPerson:(RHPerson*)person{
+    NSError *error = nil;
+    BOOL result = [self addPerson:person error:&error];
+    if (!result) {
+        RHErrorLog(@"RHAddressBook: Error adding person: %@", error);
+    }
+    return result;
+}
+
+-(BOOL)addPerson:(RHPerson*)person error:(NSError**)error{
     if (!person){
         RHErrorLog(@"Error: Unable to add a nil RHPerson to the AddressBook.");
         return NO;
     }
-
+    
     //check to make sure person has not already been added to another addressbook, if so bail;
     if (person.addressBook != nil && person.addressBook != self) [NSException raise:NSInvalidArgumentException format:@"Person has already been added to another addressbook."];
-
+    
     __block BOOL result = NO;
+    __block CFErrorRef cfError = NULL;
     
     [_addressBookThread rh_performBlock:^{
-        
-        CFErrorRef errorRef = NULL;
-        result = ABAddressBookAddRecord(_addressBookRef, person.recordRef, &errorRef);
-        if (!result){
-            RHErrorLog(@"Error: Failed to add RHPerson to AddressBook: error: %@", errorRef);
-            if (errorRef) CFRelease(errorRef);
-        }
+        result = ABAddressBookAddRecord(_addressBookRef, person.recordRef, &cfError);
     }];
+    
+    if (!result){
+        if (error) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
+        if (cfError) CFRelease(cfError);
+    }
     return result;
 }
 
@@ -781,6 +790,15 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 -(BOOL)addGroup:(RHGroup *)group{
+    NSError *error = nil;
+    BOOL result = [self addGroup:group error:&error];
+    if (!result) {
+        RHErrorLog(@"RHAddressBook: Error adding group: %@", error);
+    }
+    return result;
+}
+
+-(BOOL)addGroup:(RHGroup *)group error:(NSError**)error{
     if (!group){
         RHErrorLog(@"Error: Unable to add a nil RHGroup to the AddressBook.");
         return NO;
@@ -788,20 +806,21 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     
     //check to make sure group has not already been added to another addressbook, if so bail;
     if (group.addressBook != nil && group.addressBook != self) [NSException raise:NSInvalidArgumentException format:@"Group has already been added to another addressbook."];
-
+    
     __block BOOL result = NO;
+    __block CFErrorRef cfError = NULL;
     
     [_addressBookThread rh_performBlock:^{
-        
-        CFErrorRef errorRef = NULL;
-        result = ABAddressBookAddRecord(_addressBookRef, group.recordRef, &errorRef);
-        if (!result){
-            RHErrorLog(@"Error: Failed to add RHGroup to AddressBook: error: %@", errorRef);
-            if (errorRef) CFRelease(errorRef);
-        }
+        result = ABAddressBookAddRecord(_addressBookRef, group.recordRef, &cfError);
     }];
+    
+    if (!result){
+        if (error) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
+        if (cfError) CFRelease(cfError);
+    }
     return result;
 }
+
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 

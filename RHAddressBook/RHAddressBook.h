@@ -101,6 +101,7 @@ typedef enum RHAuthorizationStatus {
 
 //add a person to the current address book instance (this will thrown an exception if the RHPerson object belongs to another ab, eg by being been added to another ab, or created with a source object that was not from the current addressbook)
 -(BOOL)addPerson:(RHPerson*)person;
+-(BOOL)addPerson:(RHPerson*)person error:(NSError**)error;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 //add people from vCard to the current addressbook (iOS5+ : pre iOS5 these methods are no-ops)
@@ -116,7 +117,7 @@ typedef enum RHAuthorizationStatus {
 
 //add a group to the current address book instance (this will thrown an exception if the RHGroup object belongs to another ab, eg by being been added to another ab, or created with a source object that was not from the current addressbook)
 -(BOOL)addGroup:(RHGroup*)group;
-
+-(BOOL)addGroup:(RHGroup *)group error:(NSError**)error;
 
 //remove
 -(BOOL)removePerson:(RHPerson*)person;
