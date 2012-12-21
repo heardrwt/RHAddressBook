@@ -765,7 +765,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     }];
     
     if (!result){
-        if (error) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
+        if (error && cfError) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
         if (cfError) CFRelease(cfError);
     }
     return result;
@@ -815,7 +815,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     }];
     
     if (!result){
-        if (error) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
+        if (error && cfError) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
         if (cfError) CFRelease(cfError);
     }
     return result;
@@ -897,7 +897,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     }];
     
     if (!result){
-        if (error) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
+        if (error && cfError) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
         if (cfError) CFRelease(cfError);
     }
     return result;
@@ -929,7 +929,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     }];
 
     if (!result){
-        if (error) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
+        if (error && cfError) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
         if (cfError) CFRelease(cfError);
     }
     return result;
@@ -962,7 +962,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         }
     }];
     if (!result){
-        if (error) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
+        if (error && cfError) *error = (NSError*)ARCBridgingRelease(CFRetain(cfError));
         if (cfError) CFRelease(cfError);
     }
 
