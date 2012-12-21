@@ -842,33 +842,41 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     [_addressBookThread rh_performBlock:^{
 
         CFArrayRef peopleRefs = ABPersonCreatePeopleInSourceWithVCardRepresentation(source.recordRef, (__bridge CFDataRef)representation);
-        for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
-            ABRecordRef personRef = CFArrayGetValueAtIndex(peopleRefs, i);
-            if (personRef){
-                BOOL success = ABAddressBookAddRecord(_addressBookRef, personRef, NULL);
 
-                if (success){
-                    RHPerson *person = arc_autorelease([[RHPerson alloc] initWithAddressBook:self recordRef:personRef]);
-                    if (person)[newPeople addObject:person];
+        if (peopleRefs){
+            for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
+                ABRecordRef personRef = CFArrayGetValueAtIndex(peopleRefs, i);
+                if (personRef){
+                    BOOL success = ABAddressBookAddRecord(_addressBookRef, personRef, NULL);
+
+                    if (success){
+                        RHPerson *person = arc_autorelease([[RHPerson alloc] initWithAddressBook:self recordRef:personRef]);
+                        if (person)[newPeople addObject:person];
+                    }
                 }
             }
+            CFRelease(peopleRefs);
         }
-        if (peopleRefs) CFRelease(peopleRefs);
     }];
-    return newPeople;
+    return [NSArray arrayWithArray:newPeople];
 }
 
 -(NSData*)vCardRepresentationForPeople:(NSArray*)people{
     if (!ABPersonCreateVCardRepresentationWithPeople) return nil; //availability check
 
+    NSData *result = nil;
+    
     CFMutableArrayRef refs = CFArrayCreateMutable(NULL, 0, NULL);
-    
-    for (RHPerson*person in people) {
-        CFArrayAppendValue(refs, person.recordRef);
+    if (refs){
+
+        for (RHPerson *person in people) {
+            CFArrayAppendValue(refs, person.recordRef);
+        }
+        
+        result = (__bridge_transfer NSData*)ABPersonCreateVCardRepresentationWithPeople(refs);
+        
+        CFRelease(refs);
     }
-    
-    NSData *result = (__bridge_transfer NSData*)ABPersonCreateVCardRepresentationWithPeople(refs);
-    CFRelease(refs);
     return arc_autorelease(result);
 }
 

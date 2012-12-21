@@ -117,22 +117,24 @@
 -(NSArray*)linkedPeople{
     if (ABPersonCopyArrayOfAllLinkedPeople == NULL) return nil; //availability check
     
+    NSMutableArray *linkedPeople = [NSMutableArray array];
     __block CFArrayRef linkedArrayRef = NULL;
+    
     [self performRecordAction:^(ABRecordRef recordRef) {
         linkedArrayRef = ABPersonCopyArrayOfAllLinkedPeople(recordRef);
     } waitUntilDone:YES];
     
-    NSMutableArray *linkedPeople = [NSMutableArray arrayWithCapacity:CFArrayGetCount(linkedArrayRef)];
-    
-    for (CFIndex i = 0; i < CFArrayGetCount(linkedArrayRef); i++) {
-        ABRecordRef personRef = CFArrayGetValueAtIndex(linkedArrayRef, i);
-        RHPerson *person = [_addressBook personForABRecordRef:personRef];
-        [linkedPeople addObject:person];
+    if (linkedArrayRef){
+        for (CFIndex i = 0; i < CFArrayGetCount(linkedArrayRef); i++) {
+            ABRecordRef personRef = CFArrayGetValueAtIndex(linkedArrayRef, i);
+            RHPerson *person = [_addressBook personForABRecordRef:personRef];
+            [linkedPeople addObject:person];
+        }
+        
+        CFRelease(linkedArrayRef);
     }
-    
-    if (linkedArrayRef) CFRelease(linkedArrayRef);
-    
-    return linkedPeople;
+
+    return [NSArray arrayWithArray:linkedPeople];
 }
 
 #pragma mark - image

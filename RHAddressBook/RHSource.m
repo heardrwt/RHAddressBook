@@ -59,14 +59,16 @@
     [_addressBook performAddressBookAction:^(ABAddressBookRef addressBookRef) {
         
         CFArrayRef peopleRefs = ABAddressBookCopyArrayOfAllPeopleInSource(addressBookRef, _recordRef);
-        for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
-            ABRecordRef personRef = CFArrayGetValueAtIndex(peopleRefs, i);
-            RHPerson *person = [_addressBook personForABRecordRef:personRef]; // this method either pulls from the old cache or creates a new object
-            if (person)[people addObject:person];
-        }
-        
-        if (peopleRefs) CFRelease(peopleRefs);
+
+        if (peopleRefs){
+            for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
+                ABRecordRef personRef = CFArrayGetValueAtIndex(peopleRefs, i);
+                RHPerson *person = [_addressBook personForABRecordRef:personRef]; // this method either pulls from the old cache or creates a new object
+                if (person)[people addObject:person];
+            }
             
+            CFRelease(peopleRefs);
+        }
     } waitUntilDone:YES];
     
     return [NSArray arrayWithArray:people];
@@ -78,14 +80,16 @@
     [_addressBook performAddressBookAction:^(ABAddressBookRef addressBookRef) {
         
         CFArrayRef peopleRefs = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBookRef, _recordRef, ordering);
-        for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
-            ABRecordRef personRef = CFArrayGetValueAtIndex(peopleRefs, i);
-            RHPerson *person = [_addressBook personForABRecordRef:personRef]; // this method either pulls from the old cache or creates a new object
-            if (person)[people addObject:person];
+
+        if (peopleRefs){
+            for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
+                ABRecordRef personRef = CFArrayGetValueAtIndex(peopleRefs, i);
+                RHPerson *person = [_addressBook personForABRecordRef:personRef]; // this method either pulls from the old cache or creates a new object
+                if (person)[people addObject:person];
+            }
+            
+            CFRelease(peopleRefs);
         }
-        
-        if (peopleRefs) CFRelease(peopleRefs);
-        
     } waitUntilDone:YES];
     
     return [NSArray arrayWithArray:people];
