@@ -370,6 +370,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 -(NSArray*)sourcesForABRecordRefs:(CFArrayRef)sourceRefs{
+    if (!sourceRefs) return nil;
     CFRetain(sourceRefs);
     NSMutableArray *sources = [NSMutableArray array];
     
@@ -512,6 +513,8 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 -(NSArray*)groupsForABRecordRefs:(CFArrayRef)groupRefs{
+    if (!groupRefs) return nil;
+
     NSMutableArray *groups = [NSMutableArray array];
     
     [_addressBookThread rh_performBlock:^{
@@ -697,6 +700,8 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 -(NSArray*)peopleForABRecordRefs:(CFArrayRef)peopleRefs{
+    if (!peopleRefs) return nil;
+
     NSMutableArray *people = [NSMutableArray array];
 
     [_addressBookThread rh_performBlock:^{
