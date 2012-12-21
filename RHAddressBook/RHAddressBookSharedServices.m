@@ -214,40 +214,49 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
     ABAddressBookRevert(_addressBook);
     
     CFArrayRef people = ABAddressBookCopyArrayOfAllPeople(_addressBook);
-    for (CFIndex i = 0; i < CFArrayGetCount(people); i++) {
-        
-        ABRecordRef person = CFArrayGetValueAtIndex(people, i);
-        ABRecordID personID = ABRecordGetRecordID(person);
-        
-        ABMultiValueRef addresses = ABRecordCopyValue(person, kABPersonAddressProperty);
-        for (CFIndex i = 0; i < ABMultiValueGetCount(addresses); i++) {
+
+    if (people){
+        for (CFIndex i = 0; i < CFArrayGetCount(people); i++) {
             
-            ABPropertyID addressID = ABMultiValueGetIdentifierAtIndex(addresses, i);
-            CFDictionaryRef addressDict = ABMultiValueCopyValueAtIndex(addresses, i);
-            //======================================================================
+            ABRecordRef person = CFArrayGetValueAtIndex(people, i);
 
-            //see if we have a valid, old entry
-            RHAddressBookGeoResult* old = [self cacheEntryForPersonID:personID addressID:addressID];
-
-            if (old && [old isValid]){
-                //yes
-                [newCache addObject:old]; // just add it and be done.
-            } else {
-                // not valid, create a new entry
-                RHAddressBookGeoResult* new = [[RHAddressBookGeoResult alloc] initWithPersonID:personID addressID:addressID];
-                [newCache addObject:new];
-                arc_release(new);
-            }
+            if (person){
+                
+                ABRecordID personID = ABRecordGetRecordID(person);
+                ABMultiValueRef addresses = ABRecordCopyValue(person, kABPersonAddressProperty);
+                
+                if (addresses){
+                    for (CFIndex i = 0; i < ABMultiValueGetCount(addresses); i++) {
                         
-            //======================================================================
-            if (addressDict) CFRelease(addressDict);
+                        ABPropertyID addressID = ABMultiValueGetIdentifierAtIndex(addresses, i);
+                        CFDictionaryRef addressDict = ABMultiValueCopyValueAtIndex(addresses, i);
+                        //======================================================================
+                        
+                        //see if we have a valid, old entry
+                        RHAddressBookGeoResult* old = [self cacheEntryForPersonID:personID addressID:addressID];
+                        
+                        if (old && [old isValid]){
+                            //yes
+                            [newCache addObject:old]; // just add it and be done.
+                        } else {
+                            // not valid, create a new entry
+                            RHAddressBookGeoResult* new = [[RHAddressBookGeoResult alloc] initWithPersonID:personID addressID:addressID];
+                            [newCache addObject:new];
+                            arc_release(new);
+                        }
+                        
+                        //======================================================================
+                        if (addressDict) CFRelease(addressDict);
+                    }
+                    
+                    CFRelease(addresses);
+                } //addresses
+            } //person
         }
         
-        if (addresses) CFRelease(addresses);
-    }
-    
-    CFRelease(people);
-    
+        CFRelease(people);
+    } //people
+
     //swap old cache with the new
     arc_release(_cache);
     _cache = arc_retain(newCache);
