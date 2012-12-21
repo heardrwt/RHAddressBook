@@ -237,7 +237,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 
             ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
                 completion(granted, (__bridge NSError*)error);
-                if (error)CFRelease(error);
+                if (error) CFRelease(error);
                 Block_release((__bridge void *)completion);
             });
          
@@ -568,8 +568,8 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     [_addressBookThread rh_performBlock:^{
         
         CFArrayRef peopleRefs = ABAddressBookCopyArrayOfAllPeople(_addressBookRef);
+        
         if (peopleRefs){
-
             CFMutableArrayRef mutablePeopleRefs = CFArrayCreateMutableCopy(kCFAllocatorDefault, CFArrayGetCount(peopleRefs), peopleRefs);
             if (mutablePeopleRefs){
 

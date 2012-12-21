@@ -135,7 +135,7 @@
             }
         }
         
-         CFRelease(memberRefs);
+        CFRelease(memberRefs);
     }
     
     return [NSArray arrayWithArray:members];
@@ -161,6 +161,7 @@
                 RHLog(@"Failed to find member");
             }
         }
+        
         CFRelease(memberRefs);
     }
     
