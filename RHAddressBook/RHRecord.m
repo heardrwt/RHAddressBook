@@ -54,10 +54,10 @@
 -(void)performRecordAction:(void (^)(ABRecordRef recordRef))actionBlock waitUntilDone:(BOOL)wait{
     //if we have an address book perform it on that thread
     if (_addressBook){
-        CFRetain(_recordRef);
+        if (_recordRef) CFRetain(_recordRef);
         [_addressBook performAddressBookAction:^(ABAddressBookRef addressBookRef) {
             actionBlock(_recordRef);
-            CFRelease(_recordRef);
+            if (_recordRef) CFRelease(_recordRef);
         } waitUntilDone:wait];
     } else {
         //otherwise, a user created object... just use current thread.

@@ -259,10 +259,10 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 #pragma mark - threads
 
 -(void)performAddressBookAction:(void (^)(ABAddressBookRef addressBookRef))actionBlock waitUntilDone:(BOOL)wait{
-    CFRetain(_addressBookRef);
+   if (_addressBookRef) CFRetain(_addressBookRef);
     [_addressBookThread rh_performBlock:^{
         actionBlock(_addressBookRef);
-        CFRelease(_addressBookRef);
+        if (_addressBookRef) CFRelease(_addressBookRef);
     } waitUntilDone:wait];
 }
 
