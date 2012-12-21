@@ -53,7 +53,7 @@
 
 -(void)dealloc{
     if (_multiValueRef) CFRelease(_multiValueRef);
-    _multiValueRef = nil;
+    _multiValueRef = NULL;
     
     arc_super_dealloc();
 }

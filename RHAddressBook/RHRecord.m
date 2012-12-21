@@ -40,6 +40,12 @@
 -(id)initWithAddressBook:(RHAddressBook*)addressBook recordRef:(ABRecordRef)recordRef{
     self = [super init];
     if (self) {
+        
+        if (!recordRef){
+            arc_release_nil(self);
+            return nil;
+        }
+
         _addressBook = arc_retain(addressBook);
         _recordRef = CFRetain(recordRef);
 
@@ -86,7 +92,7 @@
 
 -(ABRecordType)recordType{
 
-    __block ABRecordType recordType;
+    __block ABRecordType recordType = -1;
     
     [self performRecordAction:^(ABRecordRef recordRef) {
         recordType = ABRecordGetRecordType(recordRef);
