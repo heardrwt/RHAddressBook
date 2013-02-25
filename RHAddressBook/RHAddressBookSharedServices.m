@@ -434,7 +434,7 @@ NSString static * RHAddressBookSharedServicesPreemptiveGeocodingEnabled = @"RHAd
 
         if ([_cache count] == 0) return 1.0f;
         
-        return 1.0f - (incomplete / [_cache count]);
+        return 1.0f - ((float)incomplete / (float)[_cache count]);
     }
 #endif //end iOS5+
 
