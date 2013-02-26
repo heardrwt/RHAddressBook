@@ -232,9 +232,12 @@
 
     } else if (indexPath.section == kRHAddressBookViewControllerLocationSection){
         //toggle location
+#if RH_AB_INCLUDE_GEOCODING
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
         [RHAddressBook setPreemptiveGeocodingEnabled:![RHAddressBook isPreemptiveGeocodingEnabled]];
 #endif
+#endif //end Geocoding
+        
     [[self.tableView cellForRowAtIndexPath:indexPath] setSelected:NO];
         [self.tableView reloadData];
         
@@ -273,6 +276,7 @@
 
     switch (row) {
             
+#if RH_AB_INCLUDE_GEOCODING
         case 0: cell.textLabel.text = [NSString stringWithFormat:@"GeocodingSupported = %i", [RHAddressBook isGeocodingSupported]]; break;
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
         case 2: cell.textLabel.text = [NSString stringWithFormat:@"GeocodingProgress = %f", [_addressBook preemptiveGeocodingProgress]]; break;
@@ -280,6 +284,9 @@
         case 3: cell.textLabel.text = @"Toggle Geocoding"; cell.selectionStyle = UITableViewCellSelectionStyleBlue; break;
 #endif
         default: cell.textLabel.text = NSLocalizedString(@"-", nil);
+#else
+        default: cell.textLabel.text = NSLocalizedString(@"No Geo Support", nil);
+#endif //end Geocoding
     }
     
 }

@@ -72,16 +72,20 @@
 -(void)testPersonLocalization;
 -(void)testPersonImage;
 -(void)testLinkedPeople;
+#if RH_AB_INCLUDE_GEOCODING
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 -(void)testPersonGeocoding;
 #endif //end iOS5+
+#endif //end Geocoding
 -(void)testPersonForABRecordRefMethod;
 
 
+#if RH_AB_INCLUDE_GEOCODING
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 #pragma mark - location services
 -(void)testGeocoding;
 #endif //end iOS5+
+#endif //end Geocoding
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 #pragma mark - running on pre iOS5+ sanity

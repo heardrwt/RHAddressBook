@@ -30,9 +30,11 @@
 
 #import "RHAddressBookSharedServices.h"
 
+#if RH_AB_INCLUDE_GEOCODING
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 #import "RHAddressBookGeoResult.h"
 #endif //end iOS5+
+#endif //end Geocoding
 
 #import "NSThread+RHBlockAdditions.h"
 #import "RHAddressBook.h"
@@ -46,7 +48,7 @@
 //private
 @interface RHAddressBookSharedServices ()
 
-
+#if RH_AB_INCLUDE_GEOCODING
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 
 //cache
@@ -62,6 +64,7 @@
 -(void)processTimerFire;
 
 #endif //end iOS5+
+#endif //end Geocoding
 
 
 //addressbook notifications
@@ -77,8 +80,10 @@ void RHAddressBookExternalChangeCallback (ABAddressBookRef addressBook, CFDictio
     ABAddressBookRef _addressBook;
     NSThread *_addressBookThread; //perform all address book operations on this thread. (AB is not thread safe. :()
     
+#if RH_AB_INCLUDE_GEOCODING
     NSMutableArray *_cache; //array of RHAddressBookGeoResult objects
     NSTimer *_timer;
+#endif //end Geocoding
 
 }
 
@@ -142,12 +147,14 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
 #endif //end iOS6+
         
         
+#if RH_AB_INCLUDE_GEOCODING
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
         if ([RHAddressBookSharedServices isGeocodingSupported]){
             [self loadCache];
             [self rebuildCache];
         }
 #endif //end iOS5+
+#endif //end Geocoding
 
         [self registerForAddressBookChanges];
 
@@ -169,12 +176,15 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
     [_addressBookThread cancel];
     arc_release_nil(_addressBookThread);
 
+#if RH_AB_INCLUDE_GEOCODING
     arc_release_nil(_cache);
-
     arc_release_nil(_timer);
+#endif //end Geocoding
+    
     arc_super_dealloc();
 }
 
+#if RH_AB_INCLUDE_GEOCODING
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 
 #pragma mark - cache management
@@ -450,6 +460,9 @@ NSString static * RHAddressBookSharedServicesPreemptiveGeocodingEnabled = @"RHAd
     return NO; //if not compiled with Geocoding, return false, always
 }
 
+#endif //end Geocoding
+
+
 #pragma mark - addressbook changes
 
 -(void)registerForAddressBookChanges{
@@ -477,6 +490,8 @@ NSString static * RHAddressBookSharedServicesPreemptiveGeocodingEnabled = @"RHAd
 }
 
 void RHAddressBookExternalChangeCallback (ABAddressBookRef addressBook, CFDictionaryRef info, void *context ){
+
+#if RH_AB_INCLUDE_GEOCODING
     RHLog(@"AddressBook changed externally. Rebuilding RHABGeoCache");
     
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
@@ -484,7 +499,8 @@ void RHAddressBookExternalChangeCallback (ABAddressBookRef addressBook, CFDictio
         [(__bridge RHAddressBookSharedServices*)context rebuildCache]; //use the context as a pointer to self
     }
 #endif //end iOS5+
-    
+#endif //end Geocoding
+
     //post external change notification for public clients, on the main thread
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:RHAddressBookExternalChangeNotification object:nil];

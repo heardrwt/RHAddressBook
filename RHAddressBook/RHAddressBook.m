@@ -37,7 +37,11 @@
 #import "RHGroup.h"
 #import "RHPerson.h"
 #import "RHAddressBookSharedServices.h"
+
+#if RH_AB_INCLUDE_GEOCODING
 #import "RHAddressBookGeoResult.h"
+#endif //end Geocoding
+
 #import "NSThread+RHBlockAdditions.h"
 #import "RHAddressBookThreadMain.h"
 #import "RHAddressBook_private.h"
@@ -46,7 +50,10 @@
 #define USE_PERSON_ID_MAP 1
 
 NSString * const RHAddressBookExternalChangeNotification = @"RHAddressBookExternalChangeNotification";
+
+#if RH_AB_INCLUDE_GEOCODING
 NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPersonAddressGeocodeCompleted";
+#endif //end Geocoding
 
 //private
 @interface RHAddressBook ()
@@ -1054,7 +1061,7 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     return [RHAddressBook compositeNameFormat] == kABPersonCompositeNameFormatLastNameFirst;
 }
 
-
+#if RH_AB_INCLUDE_GEOCODING
 +(BOOL)isGeocodingSupported{
     return [RHAddressBookSharedServices isGeocodingSupported];
 }
@@ -1122,6 +1129,8 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 #endif //end iOS5+
+
+#endif //end Geocoding
 
 
 #pragma mark - private

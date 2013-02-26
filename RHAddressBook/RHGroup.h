@@ -61,8 +61,10 @@
 //vCard (iOS5+) pre iOS5 this method is a no-op
 -(NSData*)vCardRepresentationForMembers;
 
+#if RH_AB_INCLUDE_GEOCODING
 //geolocation
 -(NSArray*)membersWithinDistance:(double)distance ofLocation:(CLLocation*)location;
+#endif // Geocoding
 
 #endif //end iOS5+
 

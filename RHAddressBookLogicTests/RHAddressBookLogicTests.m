@@ -1120,6 +1120,7 @@
     [newPerson release];
 }
 
+#if RH_AB_INCLUDE_GEOCODING
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 
 #import <CoreLocation/CoreLocation.h>
@@ -1214,6 +1215,7 @@
     [_ab save];
 }
 #endif //end iOS5+
+#endif //end Geocoding
 
 
 -(void)testPersonForABRecordRefMethod{
@@ -1285,6 +1287,7 @@
 }
 
 
+#if RH_AB_INCLUDE_GEOCODING
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 #pragma mark - location services
 -(void)testGeocoding{
@@ -1414,6 +1417,7 @@
 }
 
 #endif //end iOS5+
+#endif //end Geocoding
 
 
 
@@ -1548,6 +1552,8 @@
         
         
         
+#if RH_AB_INCLUDE_GEOCODING
+
         //sanity geocode person methods:
         //ab
         CLLocation *location = [[[CLLocation alloc] initWithLatitude:122.0 longitude:-5.0] autorelease];
@@ -1564,7 +1570,8 @@
 
         //group
         STAssertTrue([[newGroup membersWithinDistance:50000 ofLocation:location] count] == 0, @"pre iOS5 this should return nil");
-        
+
+#endif //end Geocoding
 
         
         //sanity social person property

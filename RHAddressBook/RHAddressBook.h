@@ -34,6 +34,10 @@
 //enable framework debug logging (by default, enabled if DEBUG is defined, change FALSE to TRUE to enable always)
 #define RH_AB_ENABLE_DEBUG_LOGGING  ( defined(DEBUG) || FALSE )
 
+//include geocoding support in RHAddressbook. (0 == NO; 1 == YES;)
+#define RH_AB_INCLUDE_GEOCODING 1
+
+
 @class RHRecord;
 @class RHSource;
 
@@ -46,8 +50,10 @@
 //Notification fired when the address book is changed externally
 extern NSString * const RHAddressBookExternalChangeNotification;
 
+#if RH_AB_INCLUDE_GEOCODING
 //notification fired when a person and address pair has been geocoded (info dict contains personID and addressID as [NSNumber integerValue])
 extern NSString * const RHAddressBookPersonAddressGeocodeCompleted;
+#endif
 
 //authorization status enum.
 typedef enum RHAuthorizationStatus {
@@ -144,6 +150,7 @@ typedef enum RHAuthorizationStatus {
 +(BOOL)compositeNameFormatLastNameFirst;  // YES if last name comes before first name
 
 
+#if RH_AB_INCLUDE_GEOCODING
 //if geocoding is currently supported (runtime & compile-time check safe)
 +(BOOL)isGeocodingSupported;
 
@@ -166,6 +173,7 @@ typedef enum RHAuthorizationStatus {
 -(RHPerson*)personClosestToLocation:(CLLocation*)location distanceOut:(double*)distanceOut; //distance in meters
 
 #endif //end iOS5+
+#endif //end Geocoding
 
 @end
 

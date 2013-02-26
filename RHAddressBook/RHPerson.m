@@ -546,6 +546,7 @@
 
 #pragma mark - geocoding (iOS5+)
 
+#if RH_AB_INCLUDE_GEOCODING
 -(CLPlacemark*)placemarkForAddressID:(ABMultiValueIdentifier)addressID{
     return [_addressBook placemarkForPerson:self addressID:addressID];
 }
@@ -553,6 +554,7 @@
 -(CLLocation*)locationForAddressID:(ABMultiValueIdentifier)addressID{
     return [_addressBook locationForPerson:self addressID:addressID];
 }
+#endif //end Geocoding
 
 #endif //end iOS5+
 

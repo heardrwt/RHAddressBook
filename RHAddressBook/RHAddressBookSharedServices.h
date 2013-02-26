@@ -32,10 +32,14 @@
 #import <CoreLocation/CoreLocation.h>
 #import <AddressBook/AddressBook.h>
 
+#import "RHAddressBook.h"
+
 @class RHAddressBookGeoResult;
 
 @interface RHAddressBookSharedServices : NSObject
 +(id)sharedInstance;
+
+#if RH_AB_INCLUDE_GEOCODING
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 
@@ -56,5 +60,7 @@
 +(void)setPreemptiveGeocodingEnabled:(BOOL)enabled;
 -(float)preemptiveGeocodingProgress;
 +(BOOL)isGeocodingSupported;
+
+#endif //end Geocoding
 
 @end

@@ -28,9 +28,10 @@
 //  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
-
 #import "RHAddressBookGeoResult.h"
+
+#if RH_AB_INCLUDE_GEOCODING
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 
 #import <CommonCrypto/CommonDigest.h>   //for hashing functions
 #import <CoreLocation/CoreLocation.h>   //for geo
@@ -127,7 +128,6 @@
             //bail
             RHErrorLog(@"Error: Failed to get -[RHAddressBookGeoResult associatedAddressDictionary]. Underlying ABAddressBookCreateWithOptions() failed with error: %@", errorRef);
             if (errorRef) CFRelease(errorRef);
-            arc_release_nil(self);
             
             return nil;
         }
@@ -263,3 +263,4 @@
 @end
 
 #endif //end iOS5+
+#endif //end Geocoding
