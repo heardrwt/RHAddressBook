@@ -1200,19 +1200,19 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 
         //if person, remove from _people
         if ([_safeRecord isKindOfClass:[RHPerson class]]){
-            [_people removeObject:_safeRecord];
+            CFSetRemoveValue((CFMutableSetRef)_people, (__bridge const void *)(_safeRecord));
             return;
         }
 
         //if group, remove from _groups
         if ([_safeRecord isKindOfClass:[RHGroup class]]){
-            [_groups removeObject:_safeRecord];
+            CFSetRemoveValue((CFMutableSetRef)_groups, (__bridge const void *)(_safeRecord));
             return;
         }
 
         //if source, remove from _sources
         if ([_safeRecord isKindOfClass:[RHSource class]]){
-            [_sources removeObject:_safeRecord];
+            CFSetRemoveValue((CFMutableSetRef)_sources, (__bridge const void *)(_safeRecord));
             return;
         }
 
