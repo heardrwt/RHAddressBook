@@ -1512,6 +1512,33 @@
     [_ab revert];
 }
 
+#if ARC_IS_NOT_ENABLED
+//this only works when not built with ARC currently. Long discussion in https://github.com/heardrwt/RHAddressBook/issues/23
+-(void)testWeakLinkedCacheConcurrency{
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue setMaxConcurrentOperationCount:2];
+    
+    if ([RHAddressBook authorizationStatus] == RHAuthorizationStatusNotDetermined){
+        
+        //request authorization
+        [_ab requestAuthorizationWithCompletion:^(bool granted, NSError *error) {
+        }];
+    }
+
+    //if this fails, we will likely crash, hence the test is only available with ARC disabled.
+    for(int i = 0; i < 100; i++) {
+        [queue addOperationWithBlock:^{
+            NSArray *people = _ab.people;
+            NSLog(@" %i people = %@",i, people);
+        }];
+    }
+
+    [queue waitUntilAllOperationsAreFinished];
+    
+    NSAssert(true, @"If we get to here, we passed our test!");
+
+}
+#endif
 
 //we only want these tests to run if linked against 5.0+ hence the defines and also, only if we are running on less that 5.0
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000

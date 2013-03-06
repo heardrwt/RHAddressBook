@@ -36,5 +36,8 @@
 //used by RHRecord objects upon  init / dealloc, so that the addressbook class is made aware of an object being created or destroyed and can add/remove it from its weakly linked cache
 -(void)_recordCheckIn:(RHRecord*)record;
 -(void)_recordCheckOut:(RHRecord*)record;
+
+@property (readonly, retain) NSThread *addressBookThread; // we could possibly make this public... any use?
+
 @end
 

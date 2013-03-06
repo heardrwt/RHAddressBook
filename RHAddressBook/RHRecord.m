@@ -223,6 +223,20 @@
 
 #pragma mark - cleanup
 
+//unfortunately ensuring dealloc occurs on our _addressBook thread is not available under ARC.
+#if ARC_IS_NOT_ENABLED
+-(oneway void)release{
+    //ensure dealloc occurs on our _addressBook thread
+    //we do this to guarantee that we are removed from the weak cache before someone else ends up with us.
+    
+    if (_addressBook.addressBookThread && ![[NSThread currentThread] isEqual:_addressBook.addressBookThread]) {
+        [self performSelector:_cmd onThread:_addressBook.addressBookThread withObject:nil waitUntilDone:NO];
+    } else {
+        [super release];
+    }
+}
+#endif
+
 -(void)dealloc {
     
     //check out so we can be removed from the weak link lookup cache

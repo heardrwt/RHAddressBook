@@ -32,6 +32,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "AddressBook.h"
 #import "UIImage+RHComparingAdditions.h"
+#import "RHARCSupport.h"
 
 @interface RHAddressBookLogicTests : SenTestCase {
     RHAddressBook *_ab;
@@ -86,6 +87,14 @@
 -(void)testGeocoding;
 #endif //end iOS5+
 #endif //end Geocoding
+
+#pragma mark - misc tests
+-(void)testAddingPersonToGroupFromOtherAddressBook;
+-(void)testWeakLinkedCache;
+-(void)testWeakLinkedRefMap;
+#if ARC_IS_NOT_ENABLED
+-(void)testWeakLinkedCacheConcurrency;
+#endif
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 #pragma mark - running on pre iOS5+ sanity

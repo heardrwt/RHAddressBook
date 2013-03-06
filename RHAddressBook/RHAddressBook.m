@@ -57,7 +57,6 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 
 //private
 @interface RHAddressBook ()
-@property (readonly, retain) NSThread *addressBookThread; // we could possibly make this public... any use?
 -(NSArray*)sourcesForABRecordRefs:(CFArrayRef)sourceRefs; //bulk performer
 -(NSArray*)groupsForABRecordRefs:(CFArrayRef)groupRefs; //bulk performer
 -(NSArray*)peopleForABRecordRefs:(CFArrayRef)peopleRefs; //bulk performer
