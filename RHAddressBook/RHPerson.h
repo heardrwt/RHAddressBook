@@ -88,6 +88,7 @@ typedef enum {
 -(BOOL)removeImage;
 
 //personal properties
+@property (readonly) NSString *name;                        // alias for compositeName
 @property (nonatomic, copy) NSString *firstName;            // kABPersonFirstNameProperty
 @property (nonatomic, copy) NSString *lastName;             // kABPersonLastNameProperty
 @property (nonatomic, copy) NSString *middleName;           // kABPersonMiddleNameProperty
@@ -103,7 +104,7 @@ typedef enum {
 @property (nonatomic, copy) NSString *jobTitle;             // kABPersonJobTitleProperty
 @property (nonatomic, copy) NSString *department;           // kABPersonDepartmentProperty
 
-@property (nonatomic, copy) RHMultiStringValue *emails;           // kABPersonEmailProperty - (Multi String) 
+@property (nonatomic, copy) RHMultiStringValue *emails;     // kABPersonEmailProperty - (Multi String)
 @property (nonatomic, copy) NSDate *birthday;               // kABPersonBirthdayProperty
 @property (nonatomic, copy) NSString *note;                 // kABPersonNoteProperty
 

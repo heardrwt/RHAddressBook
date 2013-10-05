@@ -209,6 +209,11 @@
 
 
 #pragma mark - personal properties
+
+-(NSString*)name{
+    return [self.compositeName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+}
+
 // kABPersonFirstNameProperty
 -(NSString*)firstName{ 
     return [self getBasicValueForPropertyID:kABPersonFirstNameProperty];
