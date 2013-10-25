@@ -135,7 +135,10 @@
     } else {
 #endif //end iOS6+
         
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         addressBookRef = ABAddressBookCreate();
+#pragma clang diagnostic pop
         
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
     }
