@@ -165,4 +165,9 @@ typedef enum {
 -(BOOL)hasBeenRemoved; // we check to see if ABAddressBookGetPersonWithRecordID() returns NULL for self.recordID; This is the recommended approach from the AB docs.
 
 
+//composite name format for this explicit record
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
+-(ABPersonCompositeNameFormat)compositeNameFormat; // at runtime, if you are running on a pre ios 7 device, we return the default system preference
+#endif //end iOS7+
+
 @end

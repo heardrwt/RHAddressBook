@@ -577,5 +577,18 @@
     return result;
 }
 
+#pragma mark - composite name format
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
+-(ABPersonCompositeNameFormat)compositeNameFormat{
+    __block ABPersonCompositeNameFormat format = [RHAddressBook compositeNameFormat];
+    if (ABPersonGetCompositeNameFormatForRecord != NULL){
+        [self performRecordAction:^(ABRecordRef recordRef) {
+            format = ABPersonGetCompositeNameFormatForRecord(recordRef);
+        } waitUntilDone:YES];
+    }
+    return format;
+}
+#endif //end iOS7+
+
 
 @end

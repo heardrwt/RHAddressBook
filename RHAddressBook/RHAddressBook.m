@@ -1053,7 +1053,21 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
 }
 
 +(ABPersonCompositeNameFormat)compositeNameFormat{
-    return ABPersonGetCompositeNameFormat();
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
+    if (ABPersonGetCompositeNameFormatForRecord != NULL){
+        return ABPersonGetCompositeNameFormatForRecord(NULL);
+    } else {
+#endif //end iOS7+
+        
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        return ABPersonGetCompositeNameFormat();
+#pragma clang diagnostic pop
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
+    }
+#endif //end iOS7+
+    
 }
 
 +(BOOL)compositeNameFormatFirstNameFirst{
