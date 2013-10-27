@@ -409,6 +409,11 @@
 			attributes = {
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Richard Heard";
+				TargetAttributes = {
+					133DF0921470EE36005330C7 = {
+						TestTargetID = 133DF0A71470F273005330C7;
+					};
+				};
 			};
 			buildConfigurationList = 13C9D4FA146C5A8600327D15 /* Build configuration list for PBXProject "RHAddressBook" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -534,6 +539,7 @@
 		133DF0A21470EE36005330C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RHAddressBookTester.app/RHAddressBookTester";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
@@ -543,6 +549,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "RHAddressBookLogicTests/RHAddressBookLogicTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -550,6 +557,7 @@
 		133DF0A31470EE36005330C7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RHAddressBookTester.app/RHAddressBookTester";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
@@ -559,6 +567,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "RHAddressBookLogicTests/RHAddressBookLogicTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
