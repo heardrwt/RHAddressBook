@@ -42,6 +42,7 @@
 
 #import <AddressBook/AddressBook.h>
 #import <CoreLocation/CoreLocation.h>
+#import <float.h>
 
 #define PROCESS_ADDRESS_EVERY_SECONDS 5.0 //seconds between each geocode
 
