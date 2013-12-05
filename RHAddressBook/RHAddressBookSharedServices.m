@@ -393,7 +393,7 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
 
 -(RHAddressBookGeoResult*)geoResultClosestToLocation:(CLLocation*)location distanceOut:(CLLocationDistance*)distanceOut{
 
-    CLLocationDistance distance = DBL_MAX;
+    CLLocationDistance distance = FLT_MAX;
     RHAddressBookGeoResult *result = nil;
 
     for (RHAddressBookGeoResult *entry in _cache) {
