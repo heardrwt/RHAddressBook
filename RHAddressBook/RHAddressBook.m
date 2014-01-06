@@ -564,6 +564,37 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
     return arc_autorelease(result);
 }
 
+-(NSDictionary*)emails {
+    __block NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    [_addressBookThread rh_performBlock:^{
+        CFArrayRef allContacts = ABAddressBookCopyArrayOfAllPeople(_addressBookRef);
+        CFIndex numberOfContacts  = ABAddressBookGetPersonCount(_addressBookRef);
+        for(int i = 0; i < numberOfContacts; i++){
+            NSString* name = @"";
+            ABRecordRef aPerson = CFArrayGetValueAtIndex(allContacts, i);
+            ABMultiValueRef fnameProperty = ABRecordCopyValue(aPerson, kABPersonFirstNameProperty);
+            ABMultiValueRef lnameProperty = ABRecordCopyValue(aPerson, kABPersonLastNameProperty);
+            ABMultiValueRef emailProperty = ABRecordCopyValue(aPerson, kABPersonEmailProperty);
+            
+            NSArray *emailArray = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(emailProperty);
+            if (fnameProperty != nil) {
+                name = [NSString stringWithFormat:@"%@", fnameProperty];
+            }
+            if (lnameProperty != nil) {
+                name = [name stringByAppendingString:[NSString stringWithFormat:@" %@", lnameProperty]];
+            }
+            
+            if ([emailArray count] > 0) {
+                for (int i = 0; i < [emailArray count]; i++) {
+                    [result setValue:name forKey:[emailArray objectAtIndex:i]];
+                }
+            }
+        }
+    }];
+    
+    return result;
+}
+
 -(long)numberOfPeople{
     __block long result = 0;
     [_addressBookThread rh_performBlock:^{
@@ -617,6 +648,27 @@ NSString * const RHAddressBookPersonAddressGeocodeCompleted = @"RHAddressBookPer
         }
     }];
     return arc_autorelease(result);
+}
+
+- (RHPerson *)personWithEmail:(NSString *)email withContacts:(NSDictionary *)contacts inAddressBook:(RHAddressBook *)addressbook {
+    if([email length] > 0) {
+        NSArray *peopleWithname = [addressbook peopleWithName:contacts[email]];
+        BOOL found = FALSE;
+        for(RHPerson *person in peopleWithname) {
+            if(!found) {
+                RHMultiStringValue *emailField = [person emails];
+                if(emailField.count > 0) {
+                    for(NSString *emailValue in [emailField values]) {
+                        if([emailValue isEqualToString:email]) {
+                            return person;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return nil;
 }
 
 -(RHPerson*)personForABRecordRef:(ABRecordRef)personRef{

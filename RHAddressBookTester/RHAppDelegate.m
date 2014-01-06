@@ -57,6 +57,14 @@
     end_time = clock();
 
     NSLog(@"PERF: Init took %f seconds.", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+    
+    start_time = clock();
+    NSDictionary *emails = [pab emails];
+    end_time = clock();
+    
+    NSLog(@"PERF: Getting emails took %f seconds. (for %i emails)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, [emails count]);
+    
+    NSLog(@"Full print of emails >> %@", emails);
 
     start_time = clock();
     NSArray *people = [pab people];
