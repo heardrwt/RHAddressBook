@@ -13,7 +13,8 @@ Pod::Spec.new do |s|
   s.platform     = :ios
 
   s.source       = { :git => "https://github.com/LeonKeijzer/RHAddressBook.git", :tag => "1.0.5" }
-  s.source_files  = 'RHAddressBook/*.{h,m}'
+  s.source_files = 'RHAddressBook/*.{h,m}'
+  s.requires_arc = false
 
   s.frameworks  = 'AddressBook', 'AddressBookUI', 'CoreLocation'
 
