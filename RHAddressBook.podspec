@@ -15,6 +15,10 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/LeonKeijzer/RHAddressBook.git", :tag => "1.0.5" }
   s.source_files = 'RHAddressBook/*.{h,m}'
   s.requires_arc = false
+  s.subspec 'no-arc' do |sna|
+    sna.requires_arc = false
+    sna.source_files = non_arc_files
+  end
 
   s.frameworks  = 'AddressBook', 'AddressBookUI', 'CoreLocation'
 
