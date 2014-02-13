@@ -9,5 +9,5 @@ Pod::Spec.new do |s|
   s.source = {
     :git => 'https://github.com/LeonKeijzer/RHAddressBook'
   }
-  s.source_files = 'Source/*.{h,m}'
+  s.source_files = '*.{h,m}'
 end
