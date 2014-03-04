@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>RHAddressBook by heardrwt</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>RHAddressBook</h1>
+        <h2>A Cocoa / Objective-C library for interfacing with the iOS AddressBook.</h2>
+        <a href="https://github.com/heardrwt/RHAddressBook" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>
+<a name="rhaddressbook" class="anchor" href="#rhaddressbook"><span class="octicon octicon-link"></span></a>RHAddressBook</h2>
+
+<p>A Cocoa / Objective-C library for interfacing with the iOS AddressBook with added geocoding support. </p>
+
+<ul>
+<li>All attributes on various objects are exposed as properties, allowing for simple Obj-C code. (No more dealing with CF methods etc )</li>
+<li>Built in support for background Geocoding with an in-built persistent cache. (iOS5+ only) </li>
+<li>vCard import and export for single and multiple people.</li>
+<li>Access to all underlying ABRecordRefs &amp; ABAddressBookRefs etc.</li>
+<li>Maintains an underlying thread for each ab instance in-order to ensure thread safety.</li>
+<li>Sends NSNotifications when ab has changed.</li>
+<li>Geocoding is disabled by default. (See RH_AB_INCLUDE_GEOCODING)</li>
+</ul><h3>
+<a name="bonus-features" class="anchor" href="#bonus-features"><span class="octicon octicon-link"></span></a>Bonus Features</h3>
+
+<ul>
+<li>Unit Tests.</li>
+<li>Basic Demo App.</li>
+</ul><h2>
+<a name="classes" class="anchor" href="#classes"><span class="octicon octicon-link"></span></a>Classes</h2>
+
+<ul>
+<li>RHAddressBook</li>
+<li>RHSource - Representation of various address-book sources found on the iPhone</li>
+<li>RHGroup</li>
+<li>RHPerson - Represents a person in the addressbook. </li>
+<li>RHMultiValue - Represents multiple key/value pairs. Used for RHPersons addresses etc.</li>
+</ul><h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>Include RHAddressBook in your iOS project.</p>
+
+<div class="highlight highlight-objectivec"><pre><span class="cp">    #import &lt;RHAddressBook/AddressBook.h&gt;</span>
+</pre></div>
+
+<p>Getting an instance of the addressbook.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">RHAddressBook</span> <span class="o">*</span><span class="n">ab</span> <span class="o">=</span> <span class="p">[[[</span><span class="n">RHAddressBook</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">]</span> <span class="n">autorelease</span><span class="p">];</span>
+</pre></div>
+
+<p>Support for iOS6+ authorization </p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="c1">//query current status, pre iOS6 always returns Authorized</span>
+    <span class="k">if</span> <span class="p">([</span><span class="n">RHAddressBook</span> <span class="n">authorizationStatus</span><span class="p">]</span> <span class="o">==</span> <span class="n">RHAuthorizationStatusNotDetermined</span><span class="p">){</span>
+
+        <span class="c1">//request authorization</span>
+        <span class="p">[</span><span class="n">ab</span> <span class="n">requestAuthorizationWithCompletion</span><span class="o">:^</span><span class="p">(</span><span class="kt">bool</span> <span class="n">granted</span><span class="p">,</span> <span class="n">NSError</span> <span class="o">*</span><span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">[</span><span class="n">abViewController</span> <span class="n">setAddressBook</span><span class="o">:</span><span class="n">ab</span><span class="p">];</span>
+        <span class="p">}];</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>Registering for addressbook changes </p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="p">[[</span><span class="n">NSNotificationCenter</span> <span class="n">defaultCenter</span><span class="p">]</span>  <span class="n">addObserver</span><span class="o">:</span><span class="n">self</span> <span class="n">selector</span><span class="o">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">addressBookChanged</span><span class="o">:</span><span class="p">)</span> <span class="n">name</span><span class="o">:</span><span class="n">RHAddressBookExternalChangeNotification</span> <span class="n">object</span><span class="o">:</span><span class="nb">nil</span><span class="p">];</span>
+</pre></div>
+
+<p>Getting sources.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">NSArray</span> <span class="o">*</span><span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">sources</span><span class="p">];</span>
+    <span class="n">RHSource</span> <span class="o">*</span><span class="n">defaultSource</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">defaultSource</span><span class="p">];</span>
+</pre></div>
+
+<p>Getting a list of groups.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">NSArray</span> <span class="o">*</span><span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">groups</span><span class="p">];</span>
+    <span class="kt">long</span> <span class="n">numberOfGroups</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">numberOfGroups</span><span class="p">];</span>
+    <span class="n">NSArray</span> <span class="o">*</span><span class="n">groupsInSource</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">groupsInSource</span><span class="o">:</span><span class="n">defaultSource</span><span class="p">];</span>
+    <span class="n">RHGroup</span> <span class="o">*</span><span class="n">lastGroup</span> <span class="o">=</span> <span class="p">[</span><span class="n">groups</span> <span class="n">lastObject</span><span class="p">];</span>
+</pre></div>
+
+<p>Getting a list of people.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">NSArray</span> <span class="o">*</span><span class="n">allPeople</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">people</span><span class="p">];</span>
+    <span class="kt">long</span> <span class="n">numberOfPeople</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">numberOfPeople</span><span class="p">];</span>
+    <span class="n">NSArray</span> <span class="o">*</span><span class="n">allPeopleSorted</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">peopleOrderedByUsersPreference</span><span class="p">];</span>
+    <span class="n">NSArray</span> <span class="o">*</span><span class="n">allFreds</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">peopleWithName</span><span class="o">:</span><span class="s">@"Fred"</span><span class="p">];</span>
+    <span class="n">NSArray</span> <span class="o">*</span><span class="n">allFredsInLastGroup</span> <span class="o">=</span> <span class="p">[</span><span class="n">lastGroup</span> <span class="n">peopleWithName</span><span class="o">:</span><span class="s">@"Fred"</span><span class="p">];</span>
+    <span class="n">RHPerson</span> <span class="o">*</span><span class="n">person</span> <span class="o">=</span> <span class="p">[</span><span class="n">allPeople</span> <span class="n">lastObject</span><span class="p">];</span>
+</pre></div>
+
+<p>Getting basic properties on on a person.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">NSString</span> <span class="o">*</span><span class="n">department</span> <span class="o">=</span> <span class="p">[</span><span class="n">person</span> <span class="n">department</span><span class="p">];</span>
+    <span class="n">UIImage</span> <span class="o">*</span><span class="n">thumbnail</span> <span class="o">=</span> <span class="p">[</span><span class="n">person</span> <span class="n">thumbnail</span><span class="p">];</span>
+    <span class="kt">BOOL</span> <span class="n">isCompany</span> <span class="o">=</span> <span class="p">[</span><span class="n">person</span> <span class="n">isOrganization</span><span class="p">];</span>
+</pre></div>
+
+<p>Setting basic properties on a person.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">person</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">@"Freddie"</span><span class="p">;</span>
+    <span class="p">[</span><span class="n">person</span> <span class="n">setImage</span><span class="o">:</span><span class="p">[</span><span class="n">UIImage</span> <span class="n">imageNames</span><span class="o">:</span><span class="s">@"hahaha.jpg"</span><span class="p">]];</span>
+    <span class="n">person</span><span class="p">.</span><span class="n">kind</span> <span class="o">=</span> <span class="n">kABPersonKindOrganization</span><span class="p">;</span>
+    <span class="p">[</span><span class="n">person</span> <span class="n">save</span><span class="p">];</span>
+</pre></div>
+
+<p>Getting MultiValue properties on a person.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">RHMultiDictionaryValue</span> <span class="o">*</span><span class="n">addressesMultiValue</span> <span class="o">=</span> <span class="p">[</span><span class="n">person</span> <span class="n">addresses</span><span class="p">];</span>
+    <span class="n">NSString</span> <span class="o">*</span><span class="n">firstAddressLabel</span> <span class="o">=</span> <span class="p">[</span><span class="n">RHPerson</span> <span class="n">localizedLabel</span><span class="o">:</span><span class="p">[</span><span class="n">addressesMultiValue</span> <span class="n">labelAtIndex</span><span class="p">]];</span> <span class="c1">//eg Home</span>
+    <span class="n">NSDictionary</span> <span class="o">*</span><span class="n">firstAddress</span> <span class="o">=</span> <span class="p">[</span><span class="n">addressesMultiValue</span> <span class="n">valueAtIndex</span><span class="o">:</span><span class="mi">0</span><span class="p">];</span>
+</pre></div>
+
+<p>Setting MultiValue properties on a person.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">RHMultiStringValue</span> <span class="o">*</span><span class="n">phoneMultiValue</span> <span class="o">=</span> <span class="p">[</span><span class="n">person</span> <span class="n">phoneNumbers</span><span class="p">];</span>
+    <span class="n">RHMutableMultiStringValue</span> <span class="o">*</span><span class="n">mutablePhoneMultiValue</span> <span class="o">=</span> <span class="p">[[</span><span class="n">phoneMultiValue</span> <span class="n">mutableCopy</span><span class="p">]</span> <span class="n">autorelease</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="n">mutablePhoneMultiValue</span><span class="p">)</span> <span class="n">mutablePhoneMultiValue</span> <span class="o">=</span> <span class="p">[[[</span><span class="n">RHMutableMultiStringValue</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">initWithType</span><span class="o">:</span><span class="n">kABMultiStringPropertyType</span><span class="p">]</span> <span class="n">autorelease</span><span class="p">];</span>
+
+    <span class="c1">//RHPersonPhoneIPhoneLabel casts kABPersonPhoneIPhoneLabel to the correct toll free bridged type, see RHPersonLabels.h</span>
+    <span class="n">mutablePhoneMultiValue</span> <span class="n">addValue</span><span class="o">:</span><span class="s">@"+14086655555"</span> <span class="n">withLabel</span><span class="o">:</span><span class="n">RHPersonPhoneIPhoneLabel</span><span class="p">];</span> 
+    <span class="n">person</span><span class="p">.</span><span class="n">phonenumbers</span> <span class="o">=</span> <span class="n">mutablePhoneMultiValue</span><span class="p">;</span>
+    <span class="p">[</span><span class="n">person</span> <span class="n">save</span><span class="p">];</span>
+</pre></div>
+
+<p>Creating a new person.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">RHPerson</span> <span class="o">*</span><span class="n">newPerson</span> <span class="o">=</span> <span class="p">[[</span><span class="n">ab</span> <span class="n">newPersonInDefaultSource</span><span class="p">]</span> <span class="n">autorelease</span><span class="p">];</span> <span class="c1">//added to ab</span>
+    <span class="n">RHPerson</span> <span class="o">*</span><span class="n">newPerson2</span>  <span class="o">=</span> <span class="p">[[[</span><span class="n">RHPerson</span> <span class="n">newPersonInSource</span><span class="o">:</span><span class="p">[</span><span class="n">ab</span> <span class="n">defaultSource</span><span class="p">]]</span> <span class="n">autorelease</span><span class="p">];</span> <span class="c1">//not added to ab</span>
+    <span class="p">[</span><span class="n">ab</span> <span class="n">addPerson</span><span class="o">:</span><span class="n">newPerson2</span><span class="p">];</span>
+    <span class="n">NSError</span><span class="o">*</span> <span class="n">error</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">[</span><span class="n">ab</span> <span class="n">save</span><span class="o">:&amp;</span><span class="n">error</span><span class="p">])</span> <span class="n">NSLog</span><span class="p">(</span><span class="s">@"error saving: %@"</span><span class="p">,</span> <span class="n">error</span><span class="p">);</span>
+</pre></div>
+
+<p>Getting an RHPerson object for an ABRecordRef for editing. (note: RHPerson might not be associated with the same addressbook as the original ABRecordRef)</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">ABRecordRef</span> <span class="n">personRef</span> <span class="o">=</span> <span class="p">...;</span>
+    <span class="n">RHPerson</span> <span class="o">*</span><span class="n">person</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">personForRecordRef</span><span class="o">:</span><span class="n">personRef</span><span class="p">];</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">person</span><span class="p">){</span>
+        <span class="n">person</span><span class="p">.</span><span class="n">firstName</span> <span class="o">=</span> <span class="s">@"Paul"</span><span class="p">;</span>
+        <span class="n">person</span><span class="p">.</span><span class="n">lastName</span> <span class="o">=</span> <span class="s">@"Frank"</span><span class="p">;</span>
+        <span class="p">[</span><span class="n">person</span> <span class="n">save</span><span class="p">];</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>Presenting / editing an RHPerson instance in a ABPersonViewController.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">ABPersonViewController</span> <span class="o">*</span><span class="n">personViewController</span> <span class="o">=</span> <span class="p">[[[</span><span class="n">ABPersonViewController</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">]</span> <span class="n">autorelease</span><span class="p">];</span>   
+
+    <span class="c1">//setup (tell the view controller to use our underlying address book instance, so our person object is directly updated on our behalf)</span>
+     <span class="p">[</span><span class="n">person</span><span class="p">.</span><span class="n">addressBook</span> <span class="n">performAddressBookAction</span><span class="o">:^</span><span class="p">(</span><span class="n">ABAddressBookRef</span> <span class="n">addressBookRef</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">personViewController</span><span class="p">.</span><span class="n">addressBook</span> <span class="o">=</span><span class="n">addressBookRef</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">waitUntilDone</span><span class="o">:</span><span class="nb">YES</span><span class="p">];</span>
+
+    <span class="n">personViewController</span><span class="p">.</span><span class="n">displayedPerson</span> <span class="o">=</span> <span class="n">person</span><span class="p">.</span><span class="n">recordRef</span><span class="p">;</span>
+    <span class="n">personViewController</span><span class="p">.</span><span class="n">allowsEditing</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
+
+    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">navigationController</span> <span class="n">pushViewController</span><span class="o">:</span><span class="n">personViewController</span> <span class="n">animated</span><span class="o">:</span><span class="nb">YES</span><span class="p">];</span>
+</pre></div>
+
+<p>Background geocoding</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="k">if</span> <span class="p">([</span><span class="n">RHAddressBook</span> <span class="n">isGeocodingSupported</span><span class="p">){</span>
+        <span class="p">[</span><span class="n">RHAddressBook</span> <span class="n">setPreemptiveGeocodingEnabled</span><span class="o">:</span><span class="nb">YES</span><span class="p">];</span> <span class="c1">//class method</span>
+    <span class="p">}</span>
+    <span class="kt">float</span> <span class="n">progress</span> <span class="o">=</span> <span class="p">[</span><span class="n">_addressBook</span> <span class="n">preemptiveGeocodingProgress</span><span class="p">];</span> <span class="c1">// 0.0f - 1.0f</span>
+</pre></div>
+
+<p>Geocoding results for a person.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">CLLocation</span> <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="p">[</span><span class="n">person</span> <span class="n">locationForAddressID</span><span class="o">:</span><span class="mi">0</span><span class="p">];</span>
+    <span class="n">CLPlacemark</span> <span class="o">*</span><span class="n">placemark</span> <span class="o">=</span> <span class="p">[</span><span class="n">person</span> <span class="n">placemarkForAddressID</span><span class="o">:</span><span class="mi">0</span><span class="p">];</span>
+</pre></div>
+
+<p>Finding people within distance of a location.</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="n">NSArray</span> <span class="o">*</span><span class="n">inRangePeople</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">peopleWithinDistance</span><span class="o">:</span><span class="mi">5000</span> <span class="n">ofLocation</span><span class="o">:</span><span class="n">location</span><span class="p">];</span>
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@"people:%@"</span><span class="p">,</span> <span class="n">inRangePeople</span><span class="p">);</span>
+</pre></div>
+
+<p>Saving. (all of the below are equivalent)</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="kt">BOOL</span> <span class="n">changes</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">hasUnsavedChanges</span><span class="p">];</span>
+    <span class="kt">BOOL</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">ab</span> <span class="n">save</span><span class="p">];</span>
+    <span class="kt">BOOL</span> <span class="n">result</span> <span class="o">=</span><span class="p">[</span><span class="n">source</span> <span class="n">save</span><span class="p">];</span>
+    <span class="kt">BOOL</span> <span class="n">result</span> <span class="o">=</span><span class="p">[</span><span class="n">group</span> <span class="n">save</span><span class="p">];</span>
+    <span class="kt">BOOL</span> <span class="n">result</span> <span class="o">=</span><span class="p">[</span><span class="n">person</span> <span class="n">save</span><span class="p">];</span>
+</pre></div>
+
+<p>Reverting changes on objects. (reverts the entire addressbook instance, not just the object revert is called on.)</p>
+
+<div class="highlight highlight-objectivec"><pre>    <span class="p">[</span><span class="n">ab</span> <span class="n">revert</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">source</span> <span class="n">revert</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">group</span> <span class="n">revert</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">person</span> <span class="n">revert</span><span class="p">];</span>
+</pre></div>
+
+<p>Remember, save often in order to avoid painful save conflicts.</p>
+
+<h2>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
+
+<p>For instructions on how to get started using this static library see <a href="http://rheard.com/blog/using-static-ios-libraries/">Using Static iOS Libraries</a> at <a href="http://rheard.com">rheard.com</a>.</p>
+
+<h2>
+<a name="licence" class="anchor" href="#licence"><span class="octicon octicon-link"></span></a>Licence</h2>
+
+<p>Released under the Modified BSD License. 
+(Attribution Required)</p>
+
+<pre>
+RHAddressBook
+
+Copyright (c) 2011-2012 Richard Heard. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+3. The name of the author may not be used to endorse or promote products
+derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</pre>
+
+<h3>
+<a name="ios-version-support-executive-summary-supports-ios-4-tested-on-ios-40---71" class="anchor" href="#ios-version-support-executive-summary-supports-ios-4-tested-on-ios-40---71"><span class="octicon octicon-link"></span></a>iOS Version Support (Executive Summary: Supports iOS 4+, tested on iOS 4.0 - 7.1)</h3>
+
+<p>This Framework code runs and compiles on and has been tested all the way back to iOS 4.0. </p>
+
+<p>Unit tests are in place that run on all versions between 4.0 and 7.1.</p>
+
+<p>Various methods are not available when linking against older SDKs and will return nil when running on older os versions.
+eg. Geocoding is only supported on iOS 5+. You should always use the +[RHAddressBook isGeocodingAvailable] method to check whether geocoding is available before attempting to access geocode information. Methods will however, if available safely return nil / empty arrays.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/heardrwt/RHAddressBook/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/heardrwt/RHAddressBook/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/heardrwt/RHAddressBook"></a> is maintained by <a href="https://github.com/heardrwt">heardrwt</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
