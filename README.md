@@ -2,11 +2,13 @@
 A Cocoa / Objective-C library for interfacing with the iOS AddressBook with added geocoding support. 
 
 * All attributes on various objects are exposed as properties, allowing for simple Obj-C code. (No more dealing with CF methods etc )
-* Built in support for background Geocoding with an in-built persistent cache. (iOS5+ only)
+* Built in support for background Geocoding with an in-built persistent cache. (iOS5+ only) 
 * vCard import and export for single and multiple people.
 * Access to all underlying ABRecordRefs & ABAddressBookRefs etc.
 * Maintains an underlying thread for each ab instance in-order to ensure thread safety.
 * Sends NSNotifications when ab has changed.
+* Geocoding is disabled by default. (See RH_AB_INCLUDE_GEOCODING)
+
 
 ### Bonus Features
 * Unit Tests.
@@ -216,10 +218,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </pre>
 
 
-### iOS Version Support (Executive Summary: Supports iOS 4+, tested on iOS 4.0 - 6.0)
+### iOS Version Support (Executive Summary: Supports iOS 4+, tested on iOS 4.0 - 7.1)
 This Framework code runs and compiles on and has been tested all the way back to iOS 4.0. 
 
-Unit tests are in place that run on all versions between 4.0 and 6.0.
+Unit tests are in place that run on all versions between 4.0 and 7.1.
 
 Various methods are not available when linking against older SDKs and will return nil when running on older os versions.
 eg. Geocoding is only supported on iOS 5+. You should always use the +[RHAddressBook isGeocodingAvailable] method to check whether geocoding is available before attempting to access geocode information. Methods will however, if available safely return nil / empty arrays.
