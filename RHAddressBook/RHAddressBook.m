@@ -616,7 +616,7 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
             if (mutablePeopleRefs){
 
                 //sort 
-                CFArraySortValues(mutablePeopleRefs, CFRangeMake(0, CFArrayGetCount(mutablePeopleRefs)), (CFComparatorFunction) ABPersonComparePeopleByName, (void*) ordering);
+                CFArraySortValues(mutablePeopleRefs, CFRangeMake(0, CFArrayGetCount(mutablePeopleRefs)), (CFComparatorFunction) ABPersonComparePeopleByName, (void*) (long) ordering);
                 result = arc_retain([self peopleForABRecordRefs:mutablePeopleRefs]);
                 CFRelease(mutablePeopleRefs);
                 

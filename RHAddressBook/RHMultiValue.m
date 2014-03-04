@@ -127,14 +127,14 @@
     NSUInteger index = [self count];
     while (index > 0) {
         index--;
-        result = [NSString stringWithFormat:@"\t%u) %@=%@\n%@", index, [self labelAtIndex:index], [self valueAtIndex:index], result];
+        result = [NSString stringWithFormat:@"\t%lu) %@=%@\n%@", (unsigned long)index, [self labelAtIndex:index], [self valueAtIndex:index], result];
     }
 
     return result;
 }
 
 -(NSString*)description{
-    return [NSString stringWithFormat:@"%@: <%p> type:%@ count:%u contents:{%@}", NSStringFromClass([self class]), self, [RHRecord descriptionForPropertyType:[self propertyType]], [self count], [self contentDescription]];
+    return [NSString stringWithFormat:@"%@: <%p> type:%@ count:%lu contents:{%@}", NSStringFromClass([self class]), self, [RHRecord descriptionForPropertyType:[self propertyType]], (unsigned long)[self count], [self contentDescription]];
 }
 
 -(BOOL)isEqual:(id)object{
