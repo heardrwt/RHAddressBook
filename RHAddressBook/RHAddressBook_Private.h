@@ -37,7 +37,15 @@
 -(void)_recordCheckIn:(RHRecord*)record;
 -(void)_recordCheckOut:(RHRecord*)record;
 
-@property (readonly, retain) NSThread *addressBookThread; // we could possibly make this public... any use?
+@property (nonatomic, readonly) dispatch_queue_t addressBookQueue; //serial queue for thread safety.
 
 @end
+
+//use this, in combination with  addressBookQueue for thread safety when messing with the ab directly
+extern void rh_dispatch_sync_for_addressbook(RHAddressBook *addressbook, dispatch_block_t block);
+
+//returns YES if currently being executed on the addressbooks addressBookQueue, otherwise NO.
+extern BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook);
+
+
 

@@ -223,14 +223,15 @@
 
 #pragma mark - cleanup
 
-//unfortunately ensuring dealloc occurs on our _addressBook thread is not available under ARC.
+//unfortunately ensuring dealloc occurs on our _addressBook queue is not available under ARC.
 #if ARC_IS_NOT_ENABLED
 -(oneway void)release{
-    //ensure dealloc occurs on our _addressBook thread
+    //ensure dealloc occurs on our ABs addressBookQueue
     //we do this to guarantee that we are removed from the weak cache before someone else ends up with us.
-    
-    if (_addressBook.addressBookThread && ![[NSThread currentThread] isEqual:_addressBook.addressBookThread]) {
-        [self performSelector:_cmd onThread:_addressBook.addressBookThread withObject:nil waitUntilDone:NO];
+    if (_addressBook && !rh_dispatch_is_current_queue_for_addressbook(_addressBook)){
+        dispatch_async(_addressBook.addressBookQueue, ^{
+            [self release];
+        });
     } else {
         [super release];
     }
