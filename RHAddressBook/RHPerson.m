@@ -155,6 +155,26 @@
 }
 
 -(UIImage*)imageWithFormat:(ABPersonImageFormat)imageFormat{
+    NSData *imgData = [self imageDataWithFormat:imageFormat];
+    
+    UIImage *image = nil;
+    if (imgData){
+        image = [UIImage imageWithData:imgData];
+    }
+    return image;
+}
+
+-(NSData*)thumbnailData{
+    return [self imageDataWithFormat:kABPersonImageFormatThumbnail];
+}
+
+-(NSData*)originalImageData{
+    return [self imageDataWithFormat:kABPersonImageFormatOriginalSize];
+}
+
+-(NSData*)imageDataWithFormat:(ABPersonImageFormat)imageFormat{
+    NSData *imageData = nil;
+    
     __block CFDataRef dataRef = NULL;
     [self performRecordAction:^(ABRecordRef recordRef) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40100
@@ -169,12 +189,10 @@
 #endif
     } waitUntilDone:YES];
     
-    UIImage *image = nil;
-    if (dataRef){
-        image = [UIImage imageWithData:(__bridge NSData*)dataRef];
-        CFRelease(dataRef);
+    if(dataRef){
+        imageData = (__bridge NSData*)dataRef;
     }
-    return image;
+    return arc_autorelease(imageData);
 }
 
 
