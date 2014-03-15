@@ -71,7 +71,7 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
     if (dispatch_get_specific != NULL){
         void *context = dispatch_get_specific(&RHAddressBookDispatchQueueIdentifier);
-        return context == addressBook;
+        return context == (__bridge void *)(addressBook);
     } else {
 #endif //end iOS5+
         return dispatch_get_current_queue() == addressBook.addressBookQueue;
@@ -156,7 +156,7 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
         //ios5+ set our queues abcontext to self
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
         if (dispatch_queue_set_specific != NULL){
-            dispatch_queue_set_specific(_addressBookQueue, &RHAddressBookDispatchQueueIdentifier, self, NULL);
+            dispatch_queue_set_specific(_addressBookQueue, &RHAddressBookDispatchQueueIdentifier, (__bridge void *)(self), NULL);
         }
 #endif
         
