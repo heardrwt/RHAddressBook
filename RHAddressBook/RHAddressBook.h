@@ -92,6 +92,7 @@ typedef enum RHAuthorizationStatus {
 -(RHGroup*)groupForABRecordID:(ABRecordID)groupID; //returns nil if not found in the current ab, eg unsaved record from another ab.
 
 -(NSArray*)people;
+-(NSDictionary*)emails;
 -(long)numberOfPeople;
 -(NSArray*)peopleOrderedBySortOrdering:(ABPersonSortOrdering)ordering;
 -(NSArray*)peopleOrderedByUsersPreference; //preferred
@@ -99,6 +100,7 @@ typedef enum RHAuthorizationStatus {
 -(NSArray*)peopleOrderedByLastName;
 
 -(NSArray*)peopleWithName:(NSString*)name;
+-(RHPerson *)personWithEmail:(NSString *)email withContacts:(NSDictionary *)contacts inAddressBook:(RHAddressBook *)addressbook; //returns contact based on given email address
 -(RHPerson*)personForABRecordRef:(ABRecordRef)personRef; //returns nil if ref not found in the current ab, eg unsaved record from another ab. if the passed recordRef does not belong to the current addressbook, the returned person objects underlying personRef will differ from the passed in value. This is required in-order to maintain thread safety for the underlying AddressBook instance.
 -(RHPerson*)personForABRecordID:(ABRecordID)personID; //returns nil if not found in the current ab, eg unsaved record from another ab.
 
