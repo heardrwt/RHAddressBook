@@ -44,12 +44,12 @@
 -(void)performRecordAction:(void (^)(ABRecordRef recordRef))actionBlock waitUntilDone:(BOOL)wait;
 
 //accessors
-@property (readonly, retain) RHAddressBook* addressBook; // address book instance that this record is a member of
+@property (retain, readonly) RHAddressBook* addressBook; // address book instance that this record is a member of
 
 @property (readonly) ABRecordID recordID;
 @property (readonly) ABRecordRef recordRef;
 @property (readonly) ABRecordType recordType;
-@property (readonly) NSString *compositeName;
+@property (copy, readonly) NSString *compositeName;
 
 //generic property accessors (only safe for toll free bridged values)
 -(id)getBasicValueForPropertyID:(ABPropertyID)propertyID;

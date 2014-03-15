@@ -655,7 +655,7 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
 -(NSArray*)peopleWithEmail:(NSString*)email{
     NSString *formattedEmail = [[email stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] lowercaseString];
 
-    __block NSMutableArray *result = [NSMutableArray array];
+    NSMutableArray *result = [NSMutableArray array];
     rh_dispatch_sync_for_addressbook(self, ^{
         for(RHPerson *person in [self people]) {
             NSArray *emails = [[person.emails values] valueForKey:@"lowercaseString"];

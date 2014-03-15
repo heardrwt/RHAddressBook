@@ -42,13 +42,13 @@
 
 @interface RHAddressBookGeoResult : NSObject <NSCoding>
 
-@property (readonly, assign) ABRecordID personID;
-@property (readonly, assign) ABMultiValueIdentifier addressID;
-@property (readonly, retain) NSString *addressHash;
+@property (assign, readonly) ABRecordID personID;
+@property (assign, readonly) ABMultiValueIdentifier addressID;
+@property (retain, readonly) NSString *addressHash;
 
-@property (readonly, retain) CLLocation *location;
-@property (readonly, retain) CLPlacemark *placemark; //we only store the most accurate placemark
-@property (readonly, assign) BOOL resultNotFound;
+@property (retain, readonly) CLLocation *location;
+@property (retain, readonly) CLPlacemark *placemark; //we only store the most accurate placemark
+@property (assign, readonly) BOOL resultNotFound;
 
 //initializer... only time the ids can be set, auto calculates its address hash
 -(id)initWithPersonID:(ABRecordID)personID addressID:(ABMultiValueIdentifier)addressID;
