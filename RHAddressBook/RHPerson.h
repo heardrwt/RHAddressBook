@@ -84,6 +84,9 @@ typedef enum {
 -(UIImage*)thumbnail;
 -(UIImage*)originalImage;
 -(UIImage*)imageWithFormat:(ABPersonImageFormat)imageFormat;
+-(NSData*)thumbnailData;
+-(NSData*)originalImageData;
+-(NSData*)imageDataWithFormat:(ABPersonImageFormat)imageFormat;
 -(BOOL)setImage:(UIImage*)image;
 -(BOOL)removeImage;
 
