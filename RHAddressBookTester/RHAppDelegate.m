@@ -108,8 +108,6 @@
         [alert show];
         [alert release];
     }
-
-    
     
     return YES;
 }

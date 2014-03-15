@@ -939,6 +939,32 @@
     
 }
 
+-(void)testPeopleWithEmail{
+    NSString *testEmail = @"test@me.com";
+    RHPerson *newPerson = [_ab newPersonInDefaultSource];
+    
+    RHMutableMultiStringValue *multi = [[[RHMutableMultiStringValue alloc] initWithType:kABMultiStringPropertyType] autorelease];
+    [multi addValue:testEmail withLabel:@"testLabel"];
+    newPerson.emails = multi;
+    [_ab save];
+    
+    STAssertTrue([[_ab peopleWithEmail:testEmail] containsObject:newPerson], @"person should be found by email");
+    
+    [newPerson remove];
+    
+    STAssertFalse([[_ab peopleWithEmail:testEmail] containsObject:newPerson], @"person should not be found by email");
+    
+    [_ab save];
+    
+    STAssertFalse([[_ab peopleWithEmail:testEmail] containsObject:newPerson], @"person should not be found by email");
+    
+    //cleanup
+    [_ab removePerson:newPerson];
+    [newPerson release];
+    
+    [_ab save];
+    
+}
 
 -(void)testPersonProperties{
     //setup
