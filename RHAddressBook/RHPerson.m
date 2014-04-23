@@ -537,34 +537,27 @@
 }
 
 #pragma mark - vCard formatting (iOS5 +)
--(NSData*)vCardRepresentation{
-    if (ABPersonCreateVCardRepresentationWithPeople == NULL) return nil; //availability check
-    __block CFDataRef vCardDataRef = NULL;
-    [self performRecordAction:^(ABRecordRef recordRef) {
-        vCardDataRef = ABPersonCreateVCardRepresentationWithPeople((__bridge CFArrayRef)[NSArray arrayWithObject:(__bridge id)(recordRef)]);
-    } waitUntilDone:YES];
-    
-    if (vCardDataRef){
-        NSData *vCardData = [(__bridge NSData*)vCardDataRef copy];
-        CFRelease(vCardDataRef);
-        return arc_autorelease(vCardData);
-    }
-    
-    return nil;
+-(NSData*)vCardRepresentation{    
+    return [[self class] vCardRepresentationForPeople:[NSArray arrayWithObject:self]];
 }
 
 +(NSData*)vCardRepresentationForPeople:(NSArray*)people{
     if (ABPersonCreateVCardRepresentationWithPeople == NULL) return nil; //availability check
     
-    CFDataRef vCardDataRef = ABPersonCreateVCardRepresentationWithPeople((__bridge CFArrayRef)people);
+    NSData *result = nil;
     
-    if (vCardDataRef){
-        NSData *vCardData = [(__bridge NSData*)vCardDataRef copy];
-        CFRelease(vCardDataRef);
-        return arc_autorelease(vCardData);
+    CFMutableArrayRef refs = CFArrayCreateMutable(NULL, 0, NULL);
+    if (refs){
+        
+        for (RHPerson *person in people) {
+            CFArrayAppendValue(refs, person.recordRef);
+        }
+        
+        result = (__bridge_transfer NSData*)ABPersonCreateVCardRepresentationWithPeople(refs);
+        
+        CFRelease(refs);
     }
-    
-    return nil;
+    return arc_autorelease(result);
 }
 
 #pragma mark - geocoding (iOS5+)

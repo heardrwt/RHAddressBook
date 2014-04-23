@@ -925,21 +925,7 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
 
 -(NSData*)vCardRepresentationForPeople:(NSArray*)people{
     if (!ABPersonCreateVCardRepresentationWithPeople) return nil; //availability check
-
-    NSData *result = nil;
-    
-    CFMutableArrayRef refs = CFArrayCreateMutable(NULL, 0, NULL);
-    if (refs){
-
-        for (RHPerson *person in people) {
-            CFArrayAppendValue(refs, person.recordRef);
-        }
-        
-        result = (__bridge_transfer NSData*)ABPersonCreateVCardRepresentationWithPeople(refs);
-        
-        CFRelease(refs);
-    }
-    return arc_autorelease(result);
+    return [RHPerson vCardRepresentationForPeople:people];
 }
 
 #endif //end iOS5+
