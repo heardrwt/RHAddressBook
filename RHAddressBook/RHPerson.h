@@ -84,11 +84,14 @@ typedef enum {
 -(UIImage*)thumbnail;
 -(UIImage*)originalImage;
 -(UIImage*)imageWithFormat:(ABPersonImageFormat)imageFormat;
+-(NSData*)thumbnailData;
+-(NSData*)originalImageData;
+-(NSData*)imageDataWithFormat:(ABPersonImageFormat)imageFormat;
 -(BOOL)setImage:(UIImage*)image;
 -(BOOL)removeImage;
 
 //personal properties
-@property (readonly) NSString *name;                        // alias for compositeName
+@property (nonatomic, copy, readonly) NSString *name;       // alias for compositeName
 @property (nonatomic, copy) NSString *firstName;            // kABPersonFirstNameProperty
 @property (nonatomic, copy) NSString *lastName;             // kABPersonLastNameProperty
 @property (nonatomic, copy) NSString *middleName;           // kABPersonMiddleNameProperty
@@ -108,8 +111,8 @@ typedef enum {
 @property (nonatomic, copy) NSDate *birthday;               // kABPersonBirthdayProperty
 @property (nonatomic, copy) NSString *note;                 // kABPersonNoteProperty
 
-@property (nonatomic, readonly) NSDate *created;            // kABPersonCreationDateProperty
-@property (nonatomic, readonly) NSDate *modified;           // kABPersonModificationDateProperty
+@property (nonatomic, copy, readonly) NSDate *created;      // kABPersonCreationDateProperty
+@property (nonatomic, copy, readonly) NSDate *modified;     // kABPersonModificationDateProperty
 
 // (For more info on the keys and values for MultiValue objects check out <AddressBook/ABPerson.h> )
 // (Also check out RHPersonLabels.h, it casts a bunch of CF labels into their toll free bridged counterparts for ease of use with this class )

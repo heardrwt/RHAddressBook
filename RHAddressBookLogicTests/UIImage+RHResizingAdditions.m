@@ -52,7 +52,7 @@ UIImage * UIImageResizeImageToSize(UIImage *image, CGSize size){
     if (! context) {
         //likely an image in a unsupported bitmap parameter combination, try again with a standard set
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-        context = CGBitmapContextCreate(NULL,  size.width,  size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedLast);
+        context = CGBitmapContextCreate(NULL,  size.width,  size.height, 8, 0, colorSpace, (CGBitmapInfo)kCGImageAlphaPremultipliedLast);
         CGColorSpaceRelease(colorSpace);
     }
     

@@ -16,10 +16,10 @@
 		130E2B7814EDFF250024BB17 /* libRHAddressBook.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13C9D500146C5A8600327D15 /* libRHAddressBook.a */; };
 		130E2B7914EDFF380024BB17 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13C9D514146C5F4600327D15 /* AddressBook.framework */; };
 		130E2B7A14EDFF4F0024BB17 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13C9D516146C5F5200327D15 /* CoreLocation.framework */; };
+		130F5E1B18D45E350028B4FD /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 130F5E1A18D45E350028B4FD /* XCTest.framework */; };
 		1327948916056A5C00349DC5 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1327948816056A5C00349DC5 /* Default-568h@2x.png */; };
 		132DF84914F32AB000513B38 /* RHAddressBook_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 132DF84814F32AB000513B38 /* RHAddressBook_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		132DF84C14F34E3200513B38 /* RHRecord_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 132DF84B14F34E3100513B38 /* RHRecord_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		133DF0941470EE36005330C7 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 133DF04F1470EAC5005330C7 /* SenTestingKit.framework */; };
 		133DF0961470EE36005330C7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13C9D503146C5A8600327D15 /* Foundation.framework */; };
 		133DF09C1470EE36005330C7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 133DF09A1470EE36005330C7 /* InfoPlist.strings */; };
 		133DF09F1470EE36005330C7 /* RHAddressBookLogicTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 133DF09E1470EE36005330C7 /* RHAddressBookLogicTests.m */; };
@@ -75,12 +75,12 @@
 		1308D9F71516AD6800CBCC79 /* UIImage+RHPixelAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RHPixelAdditions.m"; sourceTree = "<group>"; };
 		130E2B7314EDE6820024BB17 /* RHAddressBookThreadMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHAddressBookThreadMain.h; sourceTree = "<group>"; };
 		130E2B7414EDE6820024BB17 /* RHAddressBookThreadMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHAddressBookThreadMain.m; sourceTree = "<group>"; };
+		130F5E1A18D45E350028B4FD /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		1327948816056A5C00349DC5 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		132DF84814F32AB000513B38 /* RHAddressBook_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHAddressBook_Private.h; sourceTree = "<group>"; };
 		132DF84B14F34E3100513B38 /* RHRecord_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHRecord_Private.h; sourceTree = "<group>"; };
 		132FD68615A2D5EE001E0D15 /* RHARCSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RHARCSupport.h; sourceTree = "<group>"; };
-		133DF04F1470EAC5005330C7 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		133DF0931470EE36005330C7 /* RHAddressBookLogicTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RHAddressBookLogicTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		133DF0931470EE36005330C7 /* RHAddressBookLogicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RHAddressBookLogicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		133DF0991470EE36005330C7 /* RHAddressBookLogicTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RHAddressBookLogicTests-Info.plist"; sourceTree = "<group>"; };
 		133DF09B1470EE36005330C7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		133DF09D1470EE36005330C7 /* RHAddressBookLogicTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RHAddressBookLogicTests.h; sourceTree = "<group>"; };
@@ -136,13 +136,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				130F5E1B18D45E350028B4FD /* XCTest.framework in Frameworks */,
 				1308D9E81512CE3600CBCC79 /* CoreGraphics.framework in Frameworks */,
 				13C2B76214FE1E6600B7D658 /* AddressBookUI.framework in Frameworks */,
 				138AB0FE14F2332800103968 /* UIKit.framework in Frameworks */,
 				130E2B7A14EDFF4F0024BB17 /* CoreLocation.framework in Frameworks */,
 				130E2B7914EDFF380024BB17 /* AddressBook.framework in Frameworks */,
 				130E2B7814EDFF250024BB17 /* libRHAddressBook.a in Frameworks */,
-				133DF0941470EE36005330C7 /* SenTestingKit.framework in Frameworks */,
 				133DF0961470EE36005330C7 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -254,7 +254,7 @@
 			isa = PBXGroup;
 			children = (
 				13C9D500146C5A8600327D15 /* libRHAddressBook.a */,
-				133DF0931470EE36005330C7 /* RHAddressBookLogicTests.octest */,
+				133DF0931470EE36005330C7 /* RHAddressBookLogicTests.xctest */,
 				133DF0A81470F273005330C7 /* RHAddressBookTester.app */,
 			);
 			name = Products;
@@ -263,10 +263,10 @@
 		13C9D502146C5A8600327D15 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				130F5E1A18D45E350028B4FD /* XCTest.framework */,
 				13C9D516146C5F5200327D15 /* CoreLocation.framework */,
 				13C9D514146C5F4600327D15 /* AddressBook.framework */,
 				13C9D503146C5A8600327D15 /* Foundation.framework */,
-				133DF04F1470EAC5005330C7 /* SenTestingKit.framework */,
 				138AB0FD14F2332800103968 /* UIKit.framework */,
 				133DF0AC1470F273005330C7 /* CoreGraphics.framework */,
 			);
@@ -364,8 +364,8 @@
 			);
 			name = RHAddressBookLogicTests;
 			productName = RHAddressBookLogicTests;
-			productReference = 133DF0931470EE36005330C7 /* RHAddressBookLogicTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = 133DF0931470EE36005330C7 /* RHAddressBookLogicTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		133DF0A71470F273005330C7 /* RHAddressBookTester */ = {
 			isa = PBXNativeTarget;
@@ -407,7 +407,7 @@
 		13C9D4F7146C5A8600327D15 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Richard Heard";
 				TargetAttributes = {
 					133DF0921470EE36005330C7 = {
@@ -542,7 +542,8 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RHAddressBookTester.app/RHAddressBookTester";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RHAddressBookLogicTests/RHAddressBookLogicTests-Prefix.pch";
@@ -550,7 +551,6 @@
 				INFOPLIST_FILE = "RHAddressBookLogicTests/RHAddressBookLogicTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -560,7 +560,8 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RHAddressBookTester.app/RHAddressBookTester";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RHAddressBookLogicTests/RHAddressBookLogicTests-Prefix.pch";
@@ -568,7 +569,6 @@
 				INFOPLIST_FILE = "RHAddressBookLogicTests/RHAddressBookLogicTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -613,8 +613,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
@@ -628,11 +630,15 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 			};
@@ -642,17 +648,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";

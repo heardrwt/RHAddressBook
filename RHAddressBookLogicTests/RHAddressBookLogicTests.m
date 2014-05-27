@@ -41,7 +41,7 @@
     
     // Set-up code here.
     _ab = [[RHAddressBook alloc] init];
-    STAssertNotNil(_ab, @"Could not create addressbook instance");
+    XCTAssertNotNil(_ab, @"Could not create addressbook instance");
 
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -64,7 +64,7 @@
 
     //init
     [_ab revert];
-    STAssertFalse([_ab hasUnsavedChanges], @"AB reports it has unsaved changes after a revert");
+    XCTAssertFalse([_ab hasUnsavedChanges], @"AB reports it has unsaved changes after a revert");
 
     
     //setup 
@@ -79,60 +79,60 @@
     //add group
     RHGroup *newGroup = [_ab newGroupInDefaultSource];
     newGroup.name = @"Unit Test GroupD";
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"7.0.3")) {
-        STAssertTrue(groupsCount + 1 == [[_ab groups] count], @"groups count failed to increment pre save");
-        STAssertTrue([[_ab groups] containsObject:newGroup], @"new group not in array of groups");
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.1 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"7.1.0")) {
+        XCTAssertTrue(groupsCount + 1 == [[_ab groups] count], @"groups count failed to increment pre save");
+        XCTAssertTrue([[_ab groups] containsObject:newGroup], @"new group not in array of groups");
     }
     //add person
     RHPerson *newPerson = [_ab newPersonInDefaultSource];
     NSDictionary *personDict = [self randomPersonDictionary];
     [self populateObject:newPerson UsingDictionary:personDict];
     
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"7.0.3")) {
-        STAssertTrue(peopleCount + 1 == [[_ab people] count], @"people count failed to increment pre save");
-        STAssertTrue([[_ab people] containsObject:newPerson], @"new person not in array of people");
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.1 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"7.1.0")) {
+        XCTAssertTrue(peopleCount + 1 == [[_ab people] count], @"people count failed to increment pre save");
+        XCTAssertTrue([[_ab people] containsObject:newPerson], @"new person not in array of people");
     }
 
-    STAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes");
+    XCTAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes");
     
     //save
     error = nil;
-    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
-    STAssertNil(error, @"error was set by the AB save operation");
+    XCTAssertTrue([_ab saveWithError:&error], @"AB save returned false");
+    XCTAssertNil(error, @"error was set by the AB save operation");
     
     //test
-    STAssertTrue(groupsCount + 1 == [[_ab groups] count], @"groups count failed to increment post save");
-    STAssertTrue(peopleCount + 1 == [[_ab people] count], @"people count failed to increment post save");
+    XCTAssertTrue(groupsCount + 1 == [[_ab groups] count], @"groups count failed to increment post save");
+    XCTAssertTrue(peopleCount + 1 == [[_ab people] count], @"people count failed to increment post save");
 
     //===== REMOVE
 
     
     //remove group
     error = nil;
-    STAssertTrue([_ab removeGroup:newGroup error:&error], @"AB remove group returned false");
-    STAssertNil(error, @"error was set by the AB remove group operation");
-    STAssertTrue(groupsCount == [[_ab groups] count], @"groups count failed to decrement pre save");
-    STAssertFalse([[_ab groups] containsObject:newGroup], @"removed group should not be in array of groups");
+    XCTAssertTrue([_ab removeGroup:newGroup error:&error], @"AB remove group returned false");
+    XCTAssertNil(error, @"error was set by the AB remove group operation");
+    XCTAssertTrue(groupsCount == [[_ab groups] count], @"groups count failed to decrement pre save");
+    XCTAssertFalse([[_ab groups] containsObject:newGroup], @"removed group should not be in array of groups");
 
     //remove person
     error = nil;
-    STAssertTrue([_ab removePerson:newPerson error:&error], @"AB remove person returned false");
-    STAssertNil(error, @"error was set by the AB remove person operation");
-    STAssertTrue(peopleCount == [[_ab people] count], @"person count failed to decrement pre save");
-    STAssertFalse([[_ab people] containsObject:newPerson], @"removed person should not be in array of people");
+    XCTAssertTrue([_ab removePerson:newPerson error:&error], @"AB remove person returned false");
+    XCTAssertNil(error, @"error was set by the AB remove person operation");
+    XCTAssertTrue(peopleCount == [[_ab people] count], @"person count failed to decrement pre save");
+    XCTAssertFalse([[_ab people] containsObject:newPerson], @"removed person should not be in array of people");
 
-    STAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes");
+    XCTAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes");
 
     //save
     error = nil;
-    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
-    STAssertNil(error, @"error was set by the AB save operation");
+    XCTAssertTrue([_ab saveWithError:&error], @"AB save returned false");
+    XCTAssertNil(error, @"error was set by the AB save operation");
     
     //test
-    STAssertTrue(groupsCount == [[_ab groups]count], @"groups count failed to decrement post save");
-    STAssertTrue(peopleCount == [[_ab people] count], @"people count failed to decrement post save");
+    XCTAssertTrue(groupsCount == [[_ab groups]count], @"groups count failed to decrement post save");
+    XCTAssertTrue(peopleCount == [[_ab people] count], @"people count failed to decrement post save");
 
     //===== misc
     
@@ -141,30 +141,30 @@
 
     //remove group
     error = nil;
-    STAssertTrue([_ab removeGroup:newGroup error:&error], @"AB remove already removed group returned false");
-    STAssertNil(error, @"error was set by the AB remove  already removed group operation");
-    STAssertTrue(groupsCount == [[_ab groups] count], @"groups count changed when removing an already removed group");
-    STAssertFalse([[_ab groups] containsObject:newGroup], @"removed group should not be in array of groups");
+    XCTAssertTrue([_ab removeGroup:newGroup error:&error], @"AB remove already removed group returned false");
+    XCTAssertNil(error, @"error was set by the AB remove  already removed group operation");
+    XCTAssertTrue(groupsCount == [[_ab groups] count], @"groups count changed when removing an already removed group");
+    XCTAssertFalse([[_ab groups] containsObject:newGroup], @"removed group should not be in array of groups");
 
     //remove person
     error = nil;
-    STAssertTrue([_ab removePerson:newPerson error:&error], @"AB remove  already removed person returned false");
-    STAssertNil(error, @"error was set by the AB remove  already removed person operation");
-    STAssertTrue(peopleCount == [[_ab people] count], @"people count changed when removing an already removed group");
-    STAssertFalse([[_ab people] containsObject:newPerson], @"removed person should not be in array of people");
+    XCTAssertTrue([_ab removePerson:newPerson error:&error], @"AB remove  already removed person returned false");
+    XCTAssertNil(error, @"error was set by the AB remove  already removed person operation");
+    XCTAssertTrue(peopleCount == [[_ab people] count], @"people count changed when removing an already removed group");
+    XCTAssertFalse([[_ab people] containsObject:newPerson], @"removed person should not be in array of people");
 
     //save
     error = nil;
-    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
-    STAssertNil(error, @"error was set by the AB save operation");
+    XCTAssertTrue([_ab saveWithError:&error], @"AB save returned false");
+    XCTAssertNil(error, @"error was set by the AB save operation");
 
     
     //test saving with no changes.
-    STAssertFalse([_ab hasUnsavedChanges], @"AB reports it does has unsaved changes after a save");
+    XCTAssertFalse([_ab hasUnsavedChanges], @"AB reports it does has unsaved changes after a save");
     
     error = nil;
-    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
-    STAssertNil(error, @"error was set by the AB save operation");
+    XCTAssertTrue([_ab saveWithError:&error], @"AB save returned false");
+    XCTAssertNil(error, @"error was set by the AB save operation");
     
 
     
@@ -179,7 +179,7 @@
 -(void)testReverting{
     //init
     [_ab revert];
-    STAssertFalse([_ab hasUnsavedChanges], @"AB reports it has unsaved changes after a revert");
+    XCTAssertFalse([_ab hasUnsavedChanges], @"AB reports it has unsaved changes after a revert");
     
     
     //setup 
@@ -193,35 +193,35 @@
     //add group
     RHGroup *newGroup = [_ab newGroupInDefaultSource];
     newGroup.name = @"Unit Test GroupE";
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"7.0.3")) {
-        STAssertTrue(groupsCount + 1 == [[_ab groups] count], @"groups count failed to increment pre revert");
-        STAssertTrue([[_ab groups] containsObject:newGroup], @"new group not in array of groups");
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.1 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"7.1.0")) {
+        XCTAssertTrue(groupsCount + 1 == [[_ab groups] count], @"groups count failed to increment pre revert");
+        XCTAssertTrue([[_ab groups] containsObject:newGroup], @"new group not in array of groups");
     }    
     //add person
     RHPerson *newPerson = [_ab newPersonInDefaultSource];
     NSDictionary *personDict = [self randomPersonDictionary];
     [self populateObject:newPerson UsingDictionary:personDict];
     
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"7.0.3")) {
-        STAssertTrue(peopleCount + 1 == [[_ab people] count], @"people count failed to increment pre revert");
-        STAssertTrue([[_ab people] containsObject:newPerson], @"new person not in array of people");
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.1 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"7.1.0")) {
+        XCTAssertTrue(peopleCount + 1 == [[_ab people] count], @"people count failed to increment pre revert");
+        XCTAssertTrue([[_ab people] containsObject:newPerson], @"new person not in array of people");
     }
     
-    STAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes after adding a person and group");
+    XCTAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes after adding a person and group");
     
     //revert
     [_ab revert];
 
-    STAssertFalse([_ab hasUnsavedChanges], @"AB reports has unsaved changes after adding a person and group then reverting");
+    XCTAssertFalse([_ab hasUnsavedChanges], @"AB reports has unsaved changes after adding a person and group then reverting");
 
 
     //test
-    STAssertTrue(groupsCount == [[_ab groups] count], @"groups count changed post revert");
-    STAssertTrue(peopleCount == [[_ab people] count], @"people count changed post revert");
-    STAssertFalse([[_ab groups] containsObject:newGroup], @"new group should not be in array of groups after revert");
-    STAssertFalse([[_ab people] containsObject:newPerson], @"new person should not be in array of people after revert");
+    XCTAssertTrue(groupsCount == [[_ab groups] count], @"groups count changed post revert");
+    XCTAssertTrue(peopleCount == [[_ab people] count], @"people count changed post revert");
+    XCTAssertFalse([[_ab groups] containsObject:newGroup], @"new group should not be in array of groups after revert");
+    XCTAssertFalse([[_ab people] containsObject:newPerson], @"new person should not be in array of people after revert");
 
     
     
@@ -232,11 +232,11 @@
     [_ab addGroup:newGroup];
     [_ab addPerson:newPerson];
     error = nil;
-    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
-    STAssertNil(error, @"error was set by the AB save operation");
-    STAssertFalse([_ab hasUnsavedChanges], @"AB reports has unsaved changes after adding a person and group then saving");
-    STAssertTrue([[_ab groups] containsObject:newGroup], @"new group should be in array of groups after addGroup: operation");
-    STAssertTrue([[_ab people] containsObject:newPerson], @"new person should be in array of people after addPerson: operation");
+    XCTAssertTrue([_ab saveWithError:&error], @"AB save returned false");
+    XCTAssertNil(error, @"error was set by the AB save operation");
+    XCTAssertFalse([_ab hasUnsavedChanges], @"AB reports has unsaved changes after adding a person and group then saving");
+    XCTAssertTrue([[_ab groups] containsObject:newGroup], @"new group should be in array of groups after addGroup: operation");
+    XCTAssertTrue([[_ab people] containsObject:newPerson], @"new person should be in array of people after addPerson: operation");
 
     
     
@@ -248,60 +248,60 @@
 
     //remove group
     error = nil;
-    STAssertTrue([_ab removeGroup:newGroup error:&error], @"AB remove group returned false");
-    STAssertNil(error, @"error was set by the AB remove group operation");
+    XCTAssertTrue([_ab removeGroup:newGroup error:&error], @"AB remove group returned false");
+    XCTAssertNil(error, @"error was set by the AB remove group operation");
     //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.0 hence the conditional)
     if (SYSTEM_VERSION_GREATER_THAN(@"5.0")) {
-        STAssertTrue(groupsCount - 1 == [[_ab groups] count], @"groups count failed to decrement pre revert");
-        STAssertFalse([[_ab groups] containsObject:newGroup], @"new group should not be in array of groups after removeGroup: operation");
+        XCTAssertTrue(groupsCount - 1 == [[_ab groups] count], @"groups count failed to decrement pre revert");
+        XCTAssertFalse([[_ab groups] containsObject:newGroup], @"new group should not be in array of groups after removeGroup: operation");
     }
     
     //remove person
     error = nil;
-    STAssertTrue([_ab removePerson:newPerson error:&error], @"AB remove person returned false");
-    STAssertNil(error, @"error was set by the AB remove person operation");
+    XCTAssertTrue([_ab removePerson:newPerson error:&error], @"AB remove person returned false");
+    XCTAssertNil(error, @"error was set by the AB remove person operation");
     //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 5.0 hence the conditional)
     if (SYSTEM_VERSION_GREATER_THAN(@"5.0")) {
-        STAssertTrue(peopleCount - 1 == [[_ab people] count], @"person count failed to decrement pre revert");
-        STAssertFalse([[_ab people] containsObject:newPerson], @"new person not be in array of people after removePerson: operation");
+        XCTAssertTrue(peopleCount - 1 == [[_ab people] count], @"person count failed to decrement pre revert");
+        XCTAssertFalse([[_ab people] containsObject:newPerson], @"new person not be in array of people after removePerson: operation");
     }
-    STAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes");
+    XCTAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes");
 
     //revert
     [_ab revert];
     
-    STAssertFalse([_ab hasUnsavedChanges], @"AB reports it has unsaved changes after reverting a person and group delete");
+    XCTAssertFalse([_ab hasUnsavedChanges], @"AB reports it has unsaved changes after reverting a person and group delete");
     
     
     //test
-    STAssertTrue(groupsCount == [[_ab groups] count], @"groups count changed post revert");
-    STAssertTrue(peopleCount == [[_ab people] count], @"people count changed post revert");
-    STAssertTrue([[_ab groups] containsObject:newGroup], @"new group should be in array of groups after revert");
-    STAssertTrue([[_ab people] containsObject:newPerson], @"new person should be in array of people after revert");
+    XCTAssertTrue(groupsCount == [[_ab groups] count], @"groups count changed post revert");
+    XCTAssertTrue(peopleCount == [[_ab people] count], @"people count changed post revert");
+    XCTAssertTrue([[_ab groups] containsObject:newGroup], @"new group should be in array of groups after revert");
+    XCTAssertTrue([[_ab people] containsObject:newPerson], @"new person should be in array of people after revert");
 
 
     //cleanup
     //remove group
     error = nil;
-    STAssertTrue([_ab removeGroup:newGroup error:&error], @"AB remove group returned false");
-    STAssertNil(error, @"error was set by the AB remove group operation");
-    STAssertTrue(groupsCount - 1 == [[_ab groups] count], @"failed to remove test group");
+    XCTAssertTrue([_ab removeGroup:newGroup error:&error], @"AB remove group returned false");
+    XCTAssertNil(error, @"error was set by the AB remove group operation");
+    XCTAssertTrue(groupsCount - 1 == [[_ab groups] count], @"failed to remove test group");
     
     //remove person
     error = nil;
-    STAssertTrue([_ab removePerson:newPerson error:&error], @"AB remove  already removed person returned false");
-    STAssertNil(error, @"error was set by the AB remove  already removed person operation");
-    STAssertTrue(peopleCount - 1 == [[_ab people] count], @"people count changed when removing an already removed group");
+    XCTAssertTrue([_ab removePerson:newPerson error:&error], @"AB remove  already removed person returned false");
+    XCTAssertNil(error, @"error was set by the AB remove  already removed person operation");
+    XCTAssertTrue(peopleCount - 1 == [[_ab people] count], @"people count changed when removing an already removed group");
 
     
     //save
     error = nil;
-    STAssertTrue([_ab saveWithError:&error], @"AB save returned false");
-    STAssertNil(error, @"error was set by the AB save operation");
+    XCTAssertTrue([_ab saveWithError:&error], @"AB save returned false");
+    XCTAssertNil(error, @"error was set by the AB save operation");
     
     
     //make sure we have no unsaved changes
-    STAssertFalse([_ab hasUnsavedChanges], @"AB reports it does has unsaved changes after a save");
+    XCTAssertFalse([_ab hasUnsavedChanges], @"AB reports it does has unsaved changes after a save");
 
     //cleanup
     [newGroup release];
@@ -310,7 +310,7 @@
 }
 
 -(void)testUnsavedChanges{
-    STAssertFalse([_ab hasUnsavedChanges], @"AB reports it has unsaved changes");
+    XCTAssertFalse([_ab hasUnsavedChanges], @"AB reports it has unsaved changes");
     //This is mostly covered in the save and revert comprehensive tests
     
 }
@@ -326,28 +326,28 @@
     NSDictionary *personDict = [self randomPersonDictionary];
     [self populateObject:newPerson UsingDictionary:personDict];
     
-    STAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes after adding a person and group");
+    XCTAssertTrue([_ab hasUnsavedChanges], @"AB reports it does not have unsaved changes after adding a person and group");
     
     
     //test pre-save refs
-    STAssertTrue([newGroup isEqual:[_ab groupForABRecordRef:newGroup.recordRef]], @"group for unsaved groupRef did not match");
-    STAssertTrue([newPerson isEqual:[_ab personForABRecordRef:newPerson.recordRef]], @"person for unsaved personRef did not match");
+    XCTAssertTrue([newGroup isEqual:[_ab groupForABRecordRef:newGroup.recordRef]], @"group for unsaved groupRef did not match");
+    XCTAssertTrue([newPerson isEqual:[_ab personForABRecordRef:newPerson.recordRef]], @"person for unsaved personRef did not match");
     
     
     [_ab save];
     
     //test post-save refs
-    STAssertTrue([newGroup isEqual:[_ab groupForABRecordRef:newGroup.recordRef]], @"group for saved groupRef did not match");
-    STAssertTrue([newPerson isEqual:[_ab personForABRecordRef:newPerson.recordRef]], @"person for saved personRef did not match");
+    XCTAssertTrue([newGroup isEqual:[_ab groupForABRecordRef:newGroup.recordRef]], @"group for saved groupRef did not match");
+    XCTAssertTrue([newPerson isEqual:[_ab personForABRecordRef:newPerson.recordRef]], @"person for saved personRef did not match");
     
     //negative tests (personRef from another addressbook should not have their objects match)
     RHAddressBook *_ab2 = [[RHAddressBook alloc] init];
-    STAssertFalse([newGroup isEqual:[_ab2 groupForABRecordRef:newGroup.recordRef]], @"group for saved groupRef in another ab did match");
-    STAssertFalse([newPerson isEqual:[_ab2 personForABRecordRef:newPerson.recordRef]], @"person for saved personRef in another ab did match");
+    XCTAssertFalse([newGroup isEqual:[_ab2 groupForABRecordRef:newGroup.recordRef]], @"group for saved groupRef in another ab did match");
+    XCTAssertFalse([newPerson isEqual:[_ab2 personForABRecordRef:newPerson.recordRef]], @"person for saved personRef in another ab did match");
     
     //but their recordIDs should
-    STAssertTrue(newGroup.recordID == [_ab2 groupForABRecordRef:newGroup.recordRef].recordID , @"group recordID for saved groupRef in another ab did not match");
-    STAssertTrue(newPerson.recordID == [_ab2 personForABRecordRef:newPerson.recordRef].recordID, @"person recordID for saved personRef in another ab did not match");
+    XCTAssertTrue(newGroup.recordID == [_ab2 groupForABRecordRef:newGroup.recordRef].recordID , @"group recordID for saved groupRef in another ab did not match");
+    XCTAssertTrue(newPerson.recordID == [_ab2 personForABRecordRef:newPerson.recordRef].recordID, @"person recordID for saved personRef in another ab did not match");
     
     
     //cleanup
@@ -363,10 +363,10 @@
 
 -(void)testUserPrefs{
     //test sort order
-    STAssertTrue([RHAddressBook orderByFirstName] != [RHAddressBook orderByLastName], @"order by should never match");
+    XCTAssertTrue([RHAddressBook orderByFirstName] != [RHAddressBook orderByLastName], @"order by should never match");
 
     //test display order
-    STAssertTrue([RHAddressBook compositeNameFormatFirstNameFirst] != [RHAddressBook compositeNameFormatLastNameFirst], @"display by should never match");
+    XCTAssertTrue([RHAddressBook compositeNameFormatFirstNameFirst] != [RHAddressBook compositeNameFormatLastNameFirst], @"display by should never match");
 
 }
 
@@ -380,15 +380,15 @@
     RHGroup *newGroup = [_ab2 newGroupInDefaultSource];
     newGroup.name = @"Unit Test GroupG";
     RHPerson *newPerson = [_ab2 newPersonInDefaultSource];
-    STAssertNotNil(newGroup, @"group should not be nil");
-    STAssertNotNil(newPerson, @"person should not be nil");
+    XCTAssertNotNil(newGroup, @"group should not be nil");
+    XCTAssertNotNil(newPerson, @"person should not be nil");
     
     //revert to make sure _ab2 no longer refs the _ab
     [_ab2 revert];
     
     //test
-    STAssertThrows([_ab addPerson:newPerson], @"should prevent adding a person from another ab");
-    STAssertThrows([_ab addGroup:newGroup], @"should prevent adding a group from another ab");
+    XCTAssertThrows([_ab addPerson:newPerson], @"should prevent adding a person from another ab");
+    XCTAssertThrows([_ab addGroup:newGroup], @"should prevent adding a group from another ab");
     
     //cleanup
     [newGroup release];
@@ -417,11 +417,11 @@
 //    -(RHGroup*)newGroupInSource:(RHSource*)source;
 
 
-    STAssertFalse([_ab removePerson:nil], @"should log and return NO when passed nil.");
-    STAssertFalse([_ab removeGroup:nil], @"should log and return NO when passed nil.");
+    XCTAssertFalse([_ab removePerson:nil], @"should log and return NO when passed nil.");
+    XCTAssertFalse([_ab removeGroup:nil], @"should log and return NO when passed nil.");
     
-    STAssertFalse([_ab addPerson:nil], @"should log and return NO when passed nil.");
-    STAssertFalse([_ab addGroup:nil], @"should log and return NO when passed nil.");
+    XCTAssertFalse([_ab addPerson:nil], @"should log and return NO when passed nil.");
+    XCTAssertFalse([_ab addGroup:nil], @"should log and return NO when passed nil.");
     
 }
 
@@ -429,49 +429,49 @@
 -(void)testSources{
     //sources are static on the device, so we just test to make sure we get atleast one back.
     NSArray *sources = [_ab sources];
-    STAssertNotNil(sources, @"sources was nil");
-    STAssertTrue([sources count] > 0, @"empty sources array");    
+    XCTAssertNotNil(sources, @"sources was nil");
+    XCTAssertTrue([sources count] > 0, @"empty sources array");    
  
     //validate default source is one of the returned sources
-    STAssertTrue([sources containsObject:[_ab defaultSource]], @"default source not in returned sources");
+    XCTAssertTrue([sources containsObject:[_ab defaultSource]], @"default source not in returned sources");
 
     RHSource *source = [sources lastObject];
     
-    STAssertTrue([source isKindOfClass:[RHSource class]], @"source is not of class source");
+    XCTAssertTrue([source isKindOfClass:[RHSource class]], @"source is not of class source");
     
     //test source name and type
-    STAssertNoThrow([source name], @"source name threw exception");
-    STAssertNoThrow([source type], @"source type threw exception");
+    XCTAssertNoThrow([source name], @"source name threw exception");
+    XCTAssertNoThrow([source type], @"source type threw exception");
     
     
     
     //test groups
-    STAssertTrue([[source groups] isEqualToArray:[_ab groupsInSource:source]], @"groups array for source and from _ab are different");
+    XCTAssertTrue([[source groups] isEqualToArray:[_ab groupsInSource:source]], @"groups array for source and from _ab are different");
         
     //test people accessors
-    STAssertNotNil([source people], nil);
-    STAssertNotNil([source peopleOrderedBySortOrdering:kABPersonSortByFirstName], nil);
-    STAssertNotNil([source peopleOrderedBySortOrdering:kABPersonSortByLastName], nil);
-    STAssertNotNil([source peopleOrderedByFirstName], nil);
-    STAssertNotNil([source peopleOrderedByLastName], nil);
-    STAssertNotNil([source peopleOrderedByUsersPreference], nil);
+    XCTAssertNotNil([source people]);
+    XCTAssertNotNil([source peopleOrderedBySortOrdering:kABPersonSortByFirstName]);
+    XCTAssertNotNil([source peopleOrderedBySortOrdering:kABPersonSortByLastName]);
+    XCTAssertNotNil([source peopleOrderedByFirstName]);
+    XCTAssertNotNil([source peopleOrderedByLastName]);
+    XCTAssertNotNil([source peopleOrderedByUsersPreference]);
     
 
     //test the pass through methods on RHSource
     RHGroup *newGroup = [source newGroup];
     newGroup.name = @"Unit Test GroupH";
-    STAssertNotNil(newGroup, nil);
+    XCTAssertNotNil(newGroup);
     [newGroup release];
     
     RHPerson *newPerson = [source newPerson];
-    STAssertNotNil(newPerson, nil);
+    XCTAssertNotNil(newPerson);
     [newPerson release];
     
     
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
     //vcard
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
-        STAssertNotNil([source vCardRepresentationForPeople], nil);
+        XCTAssertNotNil([source vCardRepresentationForPeople]);
     }    
 #endif //end iOS5+
     
@@ -485,57 +485,57 @@
 #pragma mark - groups
 -(void)testGroups{
 
-    STAssertNotNil([_ab groups], @"groups should return an array");
-    STAssertNotNil([_ab groupsInSource:[_ab defaultSource]], @"groups should return an array");
-    STAssertNotNil([[_ab defaultSource] groups], @"groups should return an array");
+    XCTAssertNotNil([_ab groups], @"groups should return an array");
+    XCTAssertNotNil([_ab groupsInSource:[_ab defaultSource]], @"groups should return an array");
+    XCTAssertNotNil([[_ab defaultSource] groups], @"groups should return an array");
     
     
     RHGroup *newGroup = [_ab newGroupInDefaultSource];
     newGroup.name = @"Unit Test GroupI";
 
     //pre save 
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"7.0.3")) {
-        STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
-        STAssertTrue([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should contain newGroup");
-        STAssertTrue([[[_ab defaultSource] groups] containsObject:newGroup], @"array should contain newGroup");
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.1 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"7.1")) {
+        XCTAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
+        XCTAssertTrue([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should contain newGroup");
+        XCTAssertTrue([[[_ab defaultSource] groups] containsObject:newGroup], @"array should contain newGroup");
     }
 
     //save
-    STAssertTrue([_ab save], @"save ab should return true");
+    XCTAssertTrue([_ab save], @"save ab should return true");
     
     //post save
-    STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
-    STAssertTrue([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should contain newGroup");
-    STAssertTrue([[[_ab defaultSource] groups] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([[[_ab defaultSource] groups] containsObject:newGroup], @"array should contain newGroup");
 
 
     //test removing group
-    STAssertTrue([_ab removeGroup:newGroup], @"removeGroup should return true");
+    XCTAssertTrue([_ab removeGroup:newGroup], @"removeGroup should return true");
 
     //pre save 
-    STAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
-    STAssertFalse([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should contain newGroup");
-    STAssertFalse([[[_ab defaultSource] groups] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
+    XCTAssertFalse([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertFalse([[[_ab defaultSource] groups] containsObject:newGroup], @"array should contain newGroup");
     
     //revert revert
     [_ab revert];
     
-    STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
-    STAssertTrue([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should contain newGroup");
-    STAssertTrue([[[_ab defaultSource] groups] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([[[_ab defaultSource] groups] containsObject:newGroup], @"array should contain newGroup");
 
     
     //try again 
     [_ab removeGroup:newGroup];
 
     //save
-    STAssertTrue([_ab save], @"save ab should return true");
+    XCTAssertTrue([_ab save], @"save ab should return true");
     
     //post save
-    STAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
-    STAssertFalse([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should not contain newGroup");
-    STAssertFalse([[[_ab defaultSource] groups] containsObject:newGroup], @"array should not contain newGroup");
+    XCTAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
+    XCTAssertFalse([[_ab groupsInSource:[_ab defaultSource]] containsObject:newGroup], @"array should not contain newGroup");
+    XCTAssertFalse([[[_ab defaultSource] groups] containsObject:newGroup], @"array should not contain newGroup");
     
     //cleanup
     [newGroup release];
@@ -547,14 +547,14 @@
     NSString *newName = @"Unit Test GroupJ";
 
     //test name
-    STAssertNoThrow(newGroup.name = newName, @"setting name should not throw an exception");
-    STAssertTrue([newGroup.name isEqualToString:newName], @"name should match");
+    XCTAssertNoThrow(newGroup.name = newName, @"setting name should not throw an exception");
+    XCTAssertTrue([newGroup.name isEqualToString:newName], @"name should match");
     
     //test source 
-    STAssertTrue(newGroup.source == [_ab defaultSource], @"should be part of the default source");
+    XCTAssertTrue(newGroup.source == [_ab defaultSource], @"should be part of the default source");
 
     //test count
-    STAssertTrue(newGroup.count == 0, @"group should be empty");
+    XCTAssertTrue(newGroup.count == 0, @"group should be empty");
     
     //cleanup
     [_ab removeGroup:newGroup];
@@ -570,57 +570,57 @@
     //create a new group
     RHGroup *newGroup = [_ab newGroupInDefaultSource];  
     newGroup.name = @"Unit Test GroupA";
-    STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"7.0.3")) {
-        STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.1 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"7.1.0")) {
+        XCTAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
     }
     
     //revert the addition
     [_ab revert];
-    STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
-    STAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
+    XCTAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
+    XCTAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
     
     // re-add the group 
-    STAssertTrue([_ab addGroup:newGroup], @"add group should return true");
-    STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"7.0.3")) {
-        STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([_ab addGroup:newGroup], @"add group should return true");
+    XCTAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.1 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"7.1.0")) {
+        XCTAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
      }
     
     //save
-    STAssertTrue([_ab save], @"save ab should return true");
-    STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab groupForABRecordID:newGroup.recordID] == newGroup, @"groupobject should be returned from the cache for the given recordID");
-    STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([_ab save], @"save ab should return true");
+    XCTAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab groupForABRecordID:newGroup.recordID] == newGroup, @"groupobject should be returned from the cache for the given recordID");
+    XCTAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
     
     // remove group 
     //?? should the group be in the cache at this point? i think yes... they wont actually be vended because the ab methods wont return their recordRef
-    STAssertTrue([_ab removeGroup:newGroup], @"remove group should return true");
-    STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
-    STAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
+    XCTAssertTrue([_ab removeGroup:newGroup], @"remove group should return true");
+    XCTAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
+    XCTAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
     
     //revert removal 
     [_ab revert];
-    STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab groupForABRecordID:newGroup.recordID] == newGroup, @"groupobject should be returned from the cache for the given recordID");
-    STAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
+    XCTAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab groupForABRecordID:newGroup.recordID] == newGroup, @"groupobject should be returned from the cache for the given recordID");
+    XCTAssertTrue([[_ab groups] containsObject:newGroup], @"array should contain newGroup");
     
     // remove again 
-    STAssertTrue([_ab removeGroup:newGroup], @"remove group should return true");
-    STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
-    STAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
+    XCTAssertTrue([_ab removeGroup:newGroup], @"remove group should return true");
+    XCTAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
+    XCTAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
     
     //save
-    STAssertTrue([_ab save], @"save ab should return true");
-    STAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
-    STAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should still be returned from the cache for the given recordRef, as it has a +1 retain count atm");
-    STAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
+    XCTAssertTrue([_ab save], @"save ab should return true");
+    XCTAssertFalse([[_ab groups] containsObject:newGroup], @"array should not contain newGroup");
+    XCTAssertTrue([_ab groupForABRecordRef:newGroup.recordRef] == newGroup, @"groupobject should still be returned from the cache for the given recordRef, as it has a +1 retain count atm");
+    XCTAssertTrue([_ab groupForABRecordID:newGroup.recordID] == nil, @"groupobject should not be returned from the cache for the given recordID");
     
     //we test to make sure the group is removed from the weak cache in the testWeakLinkedCache test
     
@@ -641,18 +641,18 @@
 
     //test
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
-        STAssertTrue([[person vCardRepresentation] length] > 0, @"pre-save vCard Representation was empty data.");
+        XCTAssertTrue([[person vCardRepresentation] length] > 0, @"pre-save vCard Representation was empty data.");
     } else {
-        STAssertNil([person vCardRepresentation], @"pre-save vCard Representation should be nil when run on less than 5.0.");    
+        XCTAssertNil([person vCardRepresentation], @"pre-save vCard Representation should be nil when run on less than 5.0.");    
     }
     //save
     [_ab save];
 
     //test post save
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
-        STAssertTrue([[person vCardRepresentation] length] > 0, @"post-save vCard Representation was empty data.");
+        XCTAssertTrue([[person vCardRepresentation] length] > 0, @"post-save vCard Representation was empty data.");
     } else {
-        STAssertNil([person vCardRepresentation], @"ost-save vCard Representation should be nil when run on less than 5.0.");    
+        XCTAssertNil([person vCardRepresentation], @"ost-save vCard Representation should be nil when run on less than 5.0.");    
     }
     
     //cleanup
@@ -673,9 +673,9 @@
     //test
     NSData *data = [_ab vCardRepresentationForPeople:[NSArray arrayWithObjects:person, person2, nil]];
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
-        STAssertTrue([data length] > 0, @"pre-save vCard Representation was empty data.");
+        XCTAssertTrue([data length] > 0, @"pre-save vCard Representation was empty data.");
     } else {
-        STAssertNil(data, @"pre-save vCard Representation should be nil when run on less than 5.0.");    
+        XCTAssertNil(data, @"pre-save vCard Representation should be nil when run on less than 5.0.");    
     }
     //save
     [_ab save];
@@ -683,9 +683,9 @@
     //test post save
     data = [_ab vCardRepresentationForPeople:[NSArray arrayWithObjects:person, person2, nil]];
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")) {
-        STAssertTrue([data length] > 0, @"post-save vCard Representation was empty data.");
+        XCTAssertTrue([data length] > 0, @"post-save vCard Representation was empty data.");
     } else {
-        STAssertNil(data, @"pre-save vCard Representation should be nil when run on less than 5.0.");    
+        XCTAssertNil(data, @"pre-save vCard Representation should be nil when run on less than 5.0.");    
     }
     
     //cleanup
@@ -707,7 +707,7 @@
     
     //test
     NSData *data = [person vCardRepresentation];
-    STAssertTrue([data length] > 0, @" vCard Representation was empty data.");
+    XCTAssertTrue([data length] > 0, @" vCard Representation was empty data.");
 
     //revert
     [_ab revert];
@@ -717,18 +717,18 @@
 
     //test import    
     NSArray *addedPeople = [_ab addPeopleFromVCardRepresentationToDefaultSource:data];    
-    STAssertTrue([addedPeople count] == 1, @"1 person should have been added to the AB");
+    XCTAssertTrue([addedPeople count] == 1, @"1 person should have been added to the AB");
 
     //test import from source
     NSArray *addedPeople2 = [[_ab defaultSource] addPeopleFromVCardRepresentation:data];    
-    STAssertTrue([addedPeople2 count] == 1, @"1 person should have been added to the AB");
+    XCTAssertTrue([addedPeople2 count] == 1, @"1 person should have been added to the AB");
 
     //save
     [_ab save];
     
     //make sure the person is still there.
-    STAssertTrue([[[_ab defaultSource] people] containsObject:[addedPeople lastObject]], @"default source does not contain newly added vcard person");
-    STAssertTrue([[[_ab defaultSource] people] containsObject:[addedPeople2 lastObject]], @"default source does not contain newly added vcard person");
+    XCTAssertTrue([[[_ab defaultSource] people] containsObject:[addedPeople lastObject]], @"default source does not contain newly added vcard person");
+    XCTAssertTrue([[[_ab defaultSource] people] containsObject:[addedPeople2 lastObject]], @"default source does not contain newly added vcard person");
 
     
     //cleanup
@@ -757,7 +757,7 @@
     
     //test
     NSData *data = [_ab vCardRepresentationForPeople:[NSArray arrayWithObjects:person, person2, nil]];
-    STAssertTrue([data length] > 0, @"vCard Representation was empty data.");
+    XCTAssertTrue([data length] > 0, @"vCard Representation was empty data.");
 
     
     //revert
@@ -772,7 +772,7 @@
     //test import 
     NSArray *addedPeople = [_ab addPeopleFromVCardRepresentation:data toSource:[_ab defaultSource]];
     
-    STAssertTrue([addedPeople count] == 2, @"2 people should have been added to the AB");
+    XCTAssertTrue([addedPeople count] == 2, @"2 people should have been added to the AB");
     
     //cleanup
     for (RHPerson *person in addedPeople) {
@@ -788,15 +788,15 @@
 
 -(void)testPeople{
 
-    STAssertNotNil([_ab people], @"people should return an array");
-    STAssertNotNil([_ab peopleOrderedByFirstName], @"people should return an array");
-    STAssertNotNil([_ab peopleOrderedByLastName], @"people should return an array");
-    STAssertNotNil([_ab peopleOrderedByUsersPreference], @"people should return an array");
+    XCTAssertNotNil([_ab people], @"people should return an array");
+    XCTAssertNotNil([_ab peopleOrderedByFirstName], @"people should return an array");
+    XCTAssertNotNil([_ab peopleOrderedByLastName], @"people should return an array");
+    XCTAssertNotNil([_ab peopleOrderedByUsersPreference], @"people should return an array");
 
-    STAssertNotNil([[_ab defaultSource] people], @"people should return an array");
-    STAssertNotNil([[_ab defaultSource] peopleOrderedByFirstName], @"people should return an array");
-    STAssertNotNil([[_ab defaultSource] peopleOrderedByLastName], @"people should return an array");
-    STAssertNotNil([[_ab defaultSource] peopleOrderedByUsersPreference], @"people should return an array");
+    XCTAssertNotNil([[_ab defaultSource] people], @"people should return an array");
+    XCTAssertNotNil([[_ab defaultSource] peopleOrderedByFirstName], @"people should return an array");
+    XCTAssertNotNil([[_ab defaultSource] peopleOrderedByLastName], @"people should return an array");
+    XCTAssertNotNil([[_ab defaultSource] peopleOrderedByUsersPreference], @"people should return an array");
     
     //add a person
     RHPerson *newPerson = [_ab newPersonInDefaultSource];
@@ -808,35 +808,35 @@
     newGroup.name = @"Unit Test GroupB";
 
     //save
-    STAssertTrue([newPerson save], @"save should be true");
+    XCTAssertTrue([newPerson save], @"save should be true");
 
     //add person to group
-    STAssertTrue([newGroup addMember:newPerson], @"add person to groupshould return true");
-    STAssertTrue([newPerson save], @"save should be true");
+    XCTAssertTrue([newGroup addMember:newPerson], @"add person to groupshould return true");
+    XCTAssertTrue([newPerson save], @"save should be true");
     
     
-    STAssertTrue([[newGroup members] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup members] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
     
-    STAssertTrue([newPerson save], @"save should be true");
+    XCTAssertTrue([newPerson save], @"save should be true");
 
     //test post save
-    STAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[_ab peopleOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[_ab peopleOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[_ab peopleOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[_ab peopleOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[_ab peopleOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[_ab peopleOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
     
-    STAssertTrue([[[_ab defaultSource] people] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[[_ab defaultSource] peopleOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[[_ab defaultSource] peopleOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[[_ab defaultSource] peopleOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[[_ab defaultSource] people] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[[_ab defaultSource] peopleOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[[_ab defaultSource] peopleOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[[_ab defaultSource] peopleOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
     
-    STAssertTrue([[newGroup members] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup members] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
 
     
     //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
@@ -847,67 +847,67 @@
     }
         
     // removing a person should remove them from the source
-    STAssertTrue([_ab removePerson:newPerson], @"remove person should return true");
+    XCTAssertTrue([_ab removePerson:newPerson], @"remove person should return true");
     
     //test
-    STAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[_ab peopleOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[_ab peopleOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[_ab peopleOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[_ab peopleOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[_ab peopleOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[_ab peopleOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
     
-    STAssertFalse([[[_ab defaultSource] people] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[[_ab defaultSource] peopleOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[[_ab defaultSource] peopleOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[[_ab defaultSource] peopleOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[[_ab defaultSource] people] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[[_ab defaultSource] peopleOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[[_ab defaultSource] peopleOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[[_ab defaultSource] peopleOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
     
-    STAssertFalse([[newGroup members] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[newGroup members] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
 
-    STAssertTrue([newPerson hasBeenRemoved], @"person should report themselves as having been removed");
+    XCTAssertTrue([newPerson hasBeenRemoved], @"person should report themselves as having been removed");
 
     //reverting the removal should add them back to the source / group
     [_ab revert];
 
     
-    STAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[_ab peopleOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[_ab peopleOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[_ab peopleOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[_ab peopleOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[_ab peopleOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[_ab peopleOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
     
-    STAssertTrue([[[_ab defaultSource] people] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[[_ab defaultSource] peopleOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[[_ab defaultSource] peopleOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[[_ab defaultSource] peopleOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[[_ab defaultSource] people] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[[_ab defaultSource] peopleOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[[_ab defaultSource] peopleOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[[_ab defaultSource] peopleOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
     
-    STAssertTrue([[newGroup members] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
-    STAssertTrue([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup members] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should contain newPerson");
 
     
     //now remove and actually save, still should be removed
-    STAssertTrue([newPerson remove], @"remove person should return true");
-    STAssertTrue([newPerson save], @"save person should return true");
+    XCTAssertTrue([newPerson remove], @"remove person should return true");
+    XCTAssertTrue([newPerson save], @"save person should return true");
     
     //test
-    STAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[_ab peopleOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[_ab peopleOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[_ab peopleOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[_ab peopleOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[_ab peopleOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[_ab peopleOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
     
-    STAssertFalse([[[_ab defaultSource] people] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[[_ab defaultSource] peopleOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[[_ab defaultSource] peopleOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[[_ab defaultSource] peopleOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[[_ab defaultSource] people] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[[_ab defaultSource] peopleOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[[_ab defaultSource] peopleOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[[_ab defaultSource] peopleOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
     
-    STAssertFalse([[newGroup members] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertFalse([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[newGroup members] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[newGroup membersOrderedByFirstName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[newGroup membersOrderedByLastName] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertFalse([[newGroup membersOrderedByUsersPreference] containsObject:newPerson], @"array should not contain newPerson");
 
-    STAssertTrue([newPerson hasBeenRemoved], @"person should report themselves as having been removed");
+    XCTAssertTrue([newPerson hasBeenRemoved], @"person should report themselves as having been removed");
 
     //cleanup
     [_ab removeGroup:newGroup];
@@ -921,15 +921,15 @@
     newPerson.firstName = testName;
     [_ab save];    
     
-    STAssertTrue([[_ab peopleWithName:testName] containsObject:newPerson], @"person should be found by name");
+    XCTAssertTrue([[_ab peopleWithName:testName] containsObject:newPerson], @"person should be found by name");
     
     [newPerson remove];
     
-    STAssertFalse([[_ab peopleWithName:testName] containsObject:newPerson], @"person should not be found by name");
+    XCTAssertFalse([[_ab peopleWithName:testName] containsObject:newPerson], @"person should not be found by name");
     
     [_ab save]; 
     
-    STAssertFalse([[_ab peopleWithName:testName] containsObject:newPerson], @"person should not be found by name");
+    XCTAssertFalse([[_ab peopleWithName:testName] containsObject:newPerson], @"person should not be found by name");
     
     //cleanup
     [_ab removePerson:newPerson];
@@ -939,6 +939,32 @@
     
 }
 
+-(void)testPeopleWithEmail{
+    NSString *testEmail = @"test@me.com";
+    RHPerson *newPerson = [_ab newPersonInDefaultSource];
+    
+    RHMutableMultiStringValue *multi = [[[RHMutableMultiStringValue alloc] initWithType:kABMultiStringPropertyType] autorelease];
+    [multi addValue:testEmail withLabel:@"testLabel"];
+    newPerson.emails = multi;
+    [_ab save];
+    
+    XCTAssertTrue([[_ab peopleWithEmail:testEmail] containsObject:newPerson], @"person should be found by email");
+    
+    [newPerson remove];
+    
+    XCTAssertFalse([[_ab peopleWithEmail:testEmail] containsObject:newPerson], @"person should not be found by email");
+    
+    [_ab save];
+    
+    XCTAssertFalse([[_ab peopleWithEmail:testEmail] containsObject:newPerson], @"person should not be found by email");
+    
+    //cleanup
+    [_ab removePerson:newPerson];
+    [newPerson release];
+    
+    [_ab save];
+    
+}
 
 -(void)testPersonProperties{
     //setup
@@ -951,7 +977,7 @@
     [self validateObject:newPerson UsingDictionary:personDict];
 
     //save
-    STAssertTrue([_ab save], @"save ab should return true");
+    XCTAssertTrue([_ab save], @"save ab should return true");
 
     //test post save
     [self validateObject:newPerson UsingDictionary:personDict];
@@ -966,14 +992,14 @@
     [self validateObject:newPerson UsingDictionary:personDict];
 
     //post save
-    STAssertTrue([_ab save], @"save ab should return true");
+    XCTAssertTrue([_ab save], @"save ab should return true");
     [self validateObject:newPerson UsingDictionary:personDict];
 
     //modify & save
     [self populateObject:newPerson UsingDictionary:personDict2];
 
     //test post save
-    STAssertTrue([_ab save], @"save ab should return true");
+    XCTAssertTrue([_ab save], @"save ab should return true");
     [self validateObject:newPerson UsingDictionary:personDict2];
 
     //cleanup
@@ -986,13 +1012,13 @@
 -(void)testPersonLocalization{
 
     //no match found    
-    STAssertTrue([[RHPerson localizedLabel:@"unit_test"] isEqualToString:@"unit_test"], @"localizedLabel: should return same string if failed to loc.");
+    XCTAssertTrue([[RHPerson localizedLabel:@"unit_test"] isEqualToString:@"unit_test"], @"localizedLabel: should return same string if failed to loc.");
     
     //match found
-    STAssertTrue([[RHPerson localizedLabel:RHPersonPhoneIPhoneLabel] isEqualToString:@"iPhone"], @"localizedLabel: should return localized string.");
+    XCTAssertTrue([[RHPerson localizedLabel:RHPersonPhoneIPhoneLabel] isEqualToString:@"iPhone"], @"localizedLabel: should return localized string.");
 
     //property names
-    STAssertTrue([[RHPerson localizedPropertyName:kABPersonNicknameProperty] isEqualToString:@"Nickname"], @"localizedPropertyName: did failed to return loc. property name");
+    XCTAssertTrue([[RHPerson localizedPropertyName:kABPersonNicknameProperty] isEqualToString:@"Nickname"], @"localizedPropertyName: did failed to return loc. property name");
 }
 
 -(void)testPersonImage{
@@ -1000,32 +1026,32 @@
     RHPerson *newPerson = [_ab newPersonInDefaultSource];    
     
     //should always return an array with self in it.
-    STAssertFalse([newPerson hasImage], @"RHPerson hasImage should be false on init");
-    STAssertNil([newPerson thumbnail], @"RHPerson thumbnail should be nil on init");
-    STAssertNil([newPerson originalImage], @"RHPerson originalImage should be nil on init");
+    XCTAssertFalse([newPerson hasImage], @"RHPerson hasImage should be false on init");
+    XCTAssertNil([newPerson thumbnail], @"RHPerson thumbnail should be nil on init");
+    XCTAssertNil([newPerson originalImage], @"RHPerson originalImage should be nil on init");
 
     
     UIImage *personImage1 = [self imageNamed:@"unit_test_person_image_1.jpg"];  
     UIImage *personImage1Thumb = [self imageNamed:@"unit_test_person_image_1_thumb.jpg"];  
     UIImage *personImage2 = [self imageNamed:@"unit_test_person_image_2.jpg"];  
     UIImage *personImage2Thumb = [self imageNamed:@"unit_test_person_image_2_thumb.jpg"];
-    STAssertNotNil(personImage1, @"Could not find image unit_test_person_image.jpg");
-    STAssertNotNil(personImage1Thumb, @"Could not find image unit_test_person_image.jpg");
-    STAssertNotNil(personImage2, @"Could not find image unit_test_person_image.jpg");
-    STAssertNotNil(personImage2Thumb, @"Could not find image unit_test_person_image.jpg");
+    XCTAssertNotNil(personImage1, @"Could not find image unit_test_person_image.jpg");
+    XCTAssertNotNil(personImage1Thumb, @"Could not find image unit_test_person_image.jpg");
+    XCTAssertNotNil(personImage2, @"Could not find image unit_test_person_image.jpg");
+    XCTAssertNotNil(personImage2Thumb, @"Could not find image unit_test_person_image.jpg");
 
     
     //add an image
-    STAssertTrue([newPerson setImage:personImage1], @"set image returned false");
+    XCTAssertTrue([newPerson setImage:personImage1], @"set image returned false");
 
-    STAssertTrue([personImage1 percentageDifferenceBetweenImage:[newPerson originalImage] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"original image returned from unsaved person does not match");
+    XCTAssertTrue([personImage1 percentageDifferenceBetweenImage:[newPerson originalImage] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"original image returned from unsaved person does not match");
     // only iOS4.1+ supports returning the thumbnail
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40100
     if (SYSTEM_VERSION_GREATER_THAN(@"4.1")){
-        STAssertTrue([personImage1Thumb percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.2f andScaleIfImageSizesMismatched:YES] < 0.2f, @"thumbnail image returned from unsaved person does not match");
+        XCTAssertTrue([personImage1Thumb percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.2f andScaleIfImageSizesMismatched:YES] < 0.2f, @"thumbnail image returned from unsaved person does not match");
     } else{
 #endif
-        STAssertTrue([personImage1 percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.37f andScaleIfImageSizesMismatched:YES] < 0.2f, @"thumbnail image returned from unsaved person does not match");
+        XCTAssertTrue([personImage1 percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.37f andScaleIfImageSizesMismatched:YES] < 0.2f, @"thumbnail image returned from unsaved person does not match");
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40100
     }
 #endif
@@ -1034,30 +1060,30 @@
     //save the image
     [newPerson save];
 
-    STAssertTrue([personImage1 percentageDifferenceBetweenImage:[newPerson originalImage] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"original image returned from unsaved person does not match");
+    XCTAssertTrue([personImage1 percentageDifferenceBetweenImage:[newPerson originalImage] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"original image returned from unsaved person does not match");
     // only iOS4.1+ supports returning the thumbnail
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40100
     if (SYSTEM_VERSION_GREATER_THAN(@"4.1")){
-        STAssertTrue([personImage1Thumb percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.2f andScaleIfImageSizesMismatched:YES] < 0.2f, @"thumbnail image returned from unsaved person does not match");
+        XCTAssertTrue([personImage1Thumb percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.2f andScaleIfImageSizesMismatched:YES] < 0.2f, @"thumbnail image returned from unsaved person does not match");
     } else{
 #endif
-        STAssertTrue([personImage1 percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.37f andScaleIfImageSizesMismatched:YES] < 0.2f, @"thumbnail image returned from unsaved person does not match");
+        XCTAssertTrue([personImage1 percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.37f andScaleIfImageSizesMismatched:YES] < 0.2f, @"thumbnail image returned from unsaved person does not match");
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40100
     }
 #endif
     //[UIImageJPEGRepresentation([newPerson thumbnail], 100) writeToFile:@"out1.jpg" atomically:YES];
     
     //overwrite the image
-    STAssertTrue([newPerson setImage:personImage2], @"set image returned false");
+    XCTAssertTrue([newPerson setImage:personImage2], @"set image returned false");
     
-    STAssertTrue([personImage2 percentageDifferenceBetweenImage:[newPerson originalImage] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"original image returned from unsaved person does not match");
+    XCTAssertTrue([personImage2 percentageDifferenceBetweenImage:[newPerson originalImage] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"original image returned from unsaved person does not match");
     // only iOS4.1+ supports returning the thumbnail
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40100
         if (SYSTEM_VERSION_GREATER_THAN(@"4.1")){
-        STAssertTrue([personImage2Thumb percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"thumbnail image returned from unsaved person does not match");
+        XCTAssertTrue([personImage2Thumb percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"thumbnail image returned from unsaved person does not match");
     } else{
 #endif
-        STAssertTrue([personImage2 percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.2f andScaleIfImageSizesMismatched:YES] < 0.15f, @"thumbnail image returned from unsaved person does not match");
+        XCTAssertTrue([personImage2 percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.2f andScaleIfImageSizesMismatched:YES] < 0.15f, @"thumbnail image returned from unsaved person does not match");
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40100
     }
 #endif
@@ -1067,33 +1093,33 @@
     //save the image
     [newPerson save];
     
-    STAssertTrue([personImage2 percentageDifferenceBetweenImage:[newPerson originalImage] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"original image returned from unsaved person does not match");
+    XCTAssertTrue([personImage2 percentageDifferenceBetweenImage:[newPerson originalImage] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"original image returned from unsaved person does not match");
     // only iOS4.1+ supports returning the thumbnail
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40100
             if (SYSTEM_VERSION_GREATER_THAN(@"4.1")){
-            STAssertTrue([personImage2Thumb percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"thumbnail image returned from unsaved person does not match");
+            XCTAssertTrue([personImage2Thumb percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.1f andScaleIfImageSizesMismatched:YES] < 0.1f, @"thumbnail image returned from unsaved person does not match");
         } else{
 #endif
-            STAssertTrue([personImage2 percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.2f andScaleIfImageSizesMismatched:YES] < 0.15f, @"thumbnail image returned from unsaved person does not match");
+            XCTAssertTrue([personImage2 percentageDifferenceBetweenImage:[newPerson thumbnail] withTolerance:0.2f andScaleIfImageSizesMismatched:YES] < 0.15f, @"thumbnail image returned from unsaved person does not match");
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40100
         }
 #endif
-    STAssertTrue([newPerson hasImage], @"person hasImage should be YES");
+    XCTAssertTrue([newPerson hasImage], @"person hasImage should be YES");
     
     
     //test removing images
     [newPerson removeImage];
     
-    STAssertNil([newPerson originalImage], @"image should be nil after removing image");
-    STAssertNil([newPerson thumbnail], @"image should be nil after removing image");
+    XCTAssertNil([newPerson originalImage], @"image should be nil after removing image");
+    XCTAssertNil([newPerson thumbnail], @"image should be nil after removing image");
     
     //also test after save
     [newPerson save];
     
-    STAssertFalse([newPerson hasImage], @"person hasImage should be NO");
+    XCTAssertFalse([newPerson hasImage], @"person hasImage should be NO");
 
-    STAssertNil([newPerson originalImage], @"image should be nil after removing image");
-    STAssertNil([newPerson thumbnail], @"image should be nil after removing image");
+    XCTAssertNil([newPerson originalImage], @"image should be nil after removing image");
+    XCTAssertNil([newPerson thumbnail], @"image should be nil after removing image");
 
     
     //cleanup
@@ -1109,11 +1135,11 @@
     //if available
     if (ABPersonCopyArrayOfAllLinkedPeople != NULL){
         //should always return an array with self in it.
-        STAssertTrue([[newPerson linkedPeople] containsObject:newPerson], @"self not included in linked people array");
+        XCTAssertTrue([[newPerson linkedPeople] containsObject:newPerson], @"self not included in linked people array");
         //not sure what else we can test here
     } else {
         //not available
-        STAssertNil([newPerson linkedPeople], @"linkedPeople not available, yet we didn't return nil");
+        XCTAssertNil([newPerson linkedPeople], @"linkedPeople not available, yet we didn't return nil");
     }
     
     //cleanup
@@ -1224,58 +1250,58 @@
     //create a new person
     RHPerson *newPerson = nil;
     newPerson = [_ab newPersonInDefaultSource];  
-    STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"7.0.3")) {
-        STAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.1 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"7.1.0")) {
+        XCTAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
     }
     
     //revert the addition
     [_ab revert];
-    STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
-    STAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
+    XCTAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
 
     // re-add the person 
-    STAssertTrue([_ab addPerson:newPerson], @"add person should return true");
-    STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not returned from the cache for the given recordID");
-    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.0.3 hence the conditional)
-    if (SYSTEM_VERSION_GREATER_THAN(@"7.0.3")) {
-        STAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([_ab addPerson:newPerson], @"add person should return true");
+    XCTAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not returned from the cache for the given recordID");
+    //rdar://10898970 AB: created+added personRef is not returned by ABAddressBookCopyArrayOfAllPeople (issue exists on atleast up to 7.1 hence the conditional)
+    if (SYSTEM_VERSION_GREATER_THAN(@"7.1.0")) {
+        XCTAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
     }
     
     //save
-    STAssertTrue([_ab save], @"save ab should return true");
-    STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab personForABRecordID:newPerson.recordID] == newPerson, @"personobject should be returned from the cache for the given recordID");
-    STAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([_ab save], @"save ab should return true");
+    XCTAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab personForABRecordID:newPerson.recordID] == newPerson, @"personobject should be returned from the cache for the given recordID");
+    XCTAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
 
     // remove person 
     //?? should the person be in the cache at this point? i think yes... they wont actually be vended because the ab methods wont return their recordRef
-    STAssertTrue([_ab removePerson:newPerson], @"remove person should return true");
-    STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
-    STAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertTrue([_ab removePerson:newPerson], @"remove person should return true");
+    XCTAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
+    XCTAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
     
     //revert removal
     [_ab revert];
-    STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab personForABRecordID:newPerson.recordID] == newPerson, @"personobject should be returned from the cache for the given recordID");
-    STAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
+    XCTAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab personForABRecordID:newPerson.recordID] == newPerson, @"personobject should be returned from the cache for the given recordID");
+    XCTAssertTrue([[_ab people] containsObject:newPerson], @"array should contain newPerson");
     
     // remove again 
-    STAssertTrue([_ab removePerson:newPerson], @"remove person should return true");
-    STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
-    STAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
-    STAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertTrue([_ab removePerson:newPerson], @"remove person should return true");
+    XCTAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should be returned from the cache for the given recordRef");
+    XCTAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
+    XCTAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
     
     //save
-    STAssertTrue([_ab save], @"save ab should return true");
-    STAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
-    STAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should still be returned from the cache for the given recordRef, as it has a +1 retain count atm");
-    STAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
+    XCTAssertTrue([_ab save], @"save ab should return true");
+    XCTAssertFalse([[_ab people] containsObject:newPerson], @"array should not contain newPerson");
+    XCTAssertTrue([_ab personForABRecordRef:newPerson.recordRef] == newPerson, @"personobject should still be returned from the cache for the given recordRef, as it has a +1 retain count atm");
+    XCTAssertTrue([_ab personForABRecordID:newPerson.recordID] == nil, @"personobject should not be returned from the cache for the given recordID");
 
     //we test to make sure the person is removed from the weak cache in the testWeakLinkedCache test
 
@@ -1434,7 +1460,7 @@
     
     
     //test adding a member from another ab instance, this should fail.
-    STAssertFalse([newGroup addMember:newPerson], @"adding a person from another ab instance should fail");
+    XCTAssertFalse([newGroup addMember:newPerson], @"adding a person from another ab instance should fail");
 
     
     //cleanup
@@ -1464,15 +1490,15 @@
         newGroup.name = @"Unit Test GroupC";
         newPerson = [_ab newPersonInDefaultSource];
     }
-    STAssertTrue([_groups containsObject:newGroup], @"_groups does not contain weak ref to newGroup");
-    STAssertTrue([_people containsObject:newPerson], @"_people does not contain weak ref to newPerson");
+    XCTAssertTrue([_groups containsObject:newGroup], @"_groups does not contain weak ref to newGroup");
+    XCTAssertTrue([_people containsObject:newPerson], @"_people does not contain weak ref to newPerson");
     
     //release group make sure its removed
     [newGroup release];
     [newPerson release];
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate date]];
-    STAssertFalse([_groups containsObject:newGroup], @"_groups still contains weak ref to newGroup after release");
-    STAssertFalse([_people containsObject:newPerson], @"_people still contains weak ref to newPerson after release");
+    XCTAssertFalse([_groups containsObject:newGroup], @"_groups still contains weak ref to newGroup after release");
+    XCTAssertFalse([_people containsObject:newPerson], @"_people still contains weak ref to newPerson after release");
     
     //cleanup
     [_ab revert];
@@ -1494,8 +1520,8 @@
             newGroup.name = @"Unit Test GroupC";
             newPerson = [_ab newPersonInDefaultSource];
         }
-        STAssertTrue(CFDictionaryGetValue(_refToRecordMap, newGroup.recordRef) != NULL, @"_refToRecordMap does not contain weak ref to newGroup");
-        STAssertTrue(CFDictionaryGetValue(_refToRecordMap, newPerson.recordRef) != NULL, @"_refToRecordMap does not contain weak ref to newPerson");
+        XCTAssertTrue(CFDictionaryGetValue(_refToRecordMap, newGroup.recordRef) != NULL, @"_refToRecordMap does not contain weak ref to newGroup");
+        XCTAssertTrue(CFDictionaryGetValue(_refToRecordMap, newPerson.recordRef) != NULL, @"_refToRecordMap does not contain weak ref to newPerson");
         
         //release group make sure its removed from map
         ABRecordRef newGroupRef = newGroup.recordRef;
@@ -1505,8 +1531,8 @@
         [newPerson release];
 
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate date]];
-        STAssertFalse(CFDictionaryGetValue(_refToRecordMap, newGroupRef) != NULL, @"_refToRecordMap still contains weak ref to newGroup");
-        STAssertFalse(CFDictionaryGetValue(_refToRecordMap, newPersonRef) != NULL, @"_refToRecordMap still contains weak ref to newPerson");
+        XCTAssertFalse(CFDictionaryGetValue(_refToRecordMap, newGroupRef) != NULL, @"_refToRecordMap still contains weak ref to newGroup");
+        XCTAssertFalse(CFDictionaryGetValue(_refToRecordMap, newPersonRef) != NULL, @"_refToRecordMap still contains weak ref to newPerson");
     }
     //cleanup
     [_ab revert];
@@ -1554,26 +1580,26 @@
         RHPerson *newPerson = [_ab newPersonInDefaultSource];
         [_ab save];
         
-        STAssertTrue([newGroup addMember:newPerson], @"adding a person should return true");
+        XCTAssertTrue([newGroup addMember:newPerson], @"adding a person should return true");
         [_ab save];
 
         
         
         //sanity vcard methods:
         //ab
-        STAssertNoThrow([_ab addPeopleFromVCardRepresentationToDefaultSource:[NSData data]], @"pre iOS5 this should do nothing");
-        STAssertNoThrow([_ab addPeopleFromVCardRepresentation:[NSData data] toSource:[_ab defaultSource]], @"pre iOS5 this should do nothing");
-        STAssertNil([_ab vCardRepresentationForPeople:[NSArray arrayWithObject:newPerson]], @"pre iOS5 this should return nil");
+        XCTAssertNoThrow([_ab addPeopleFromVCardRepresentationToDefaultSource:[NSData data]], @"pre iOS5 this should do nothing");
+        XCTAssertNoThrow([_ab addPeopleFromVCardRepresentation:[NSData data] toSource:[_ab defaultSource]], @"pre iOS5 this should do nothing");
+        XCTAssertNil([_ab vCardRepresentationForPeople:[NSArray arrayWithObject:newPerson]], @"pre iOS5 this should return nil");
 
         //person
-        STAssertNil([newPerson vCardRepresentation], @"pre iOS5 this should return nil");
-        STAssertNil([RHPerson vCardRepresentationForPeople:[NSArray arrayWithObject:newPerson]], @"pre iOS5 this should return nil");
+        XCTAssertNil([newPerson vCardRepresentation], @"pre iOS5 this should return nil");
+        XCTAssertNil([RHPerson vCardRepresentationForPeople:[NSArray arrayWithObject:newPerson]], @"pre iOS5 this should return nil");
         
         //group
-        STAssertNil([newGroup vCardRepresentationForMembers], @"pre iOS5 this should return nil");
+        XCTAssertNil([newGroup vCardRepresentationForMembers], @"pre iOS5 this should return nil");
 
         //source
-        STAssertNil([[_ab defaultSource] vCardRepresentationForPeople], @"pre iOS5 this should return nil");
+        XCTAssertNil([[_ab defaultSource] vCardRepresentationForPeople], @"pre iOS5 this should return nil");
         [[_ab defaultSource] addPeopleFromVCardRepresentation:[NSData data]];
 
         
@@ -1602,8 +1628,8 @@
 
         
         //sanity social person property
-        STAssertNil([newPerson socialProfiles], @"pre iOS5 this should return nil");
-        STAssertNoThrow([newPerson setSocialProfiles:[[[RHMutableMultiDictionaryValue alloc] initWithType:kABMultiDictionaryPropertyType] autorelease]], @"pre iOS5 this should do nothing");
+        XCTAssertNil([newPerson socialProfiles], @"pre iOS5 this should return nil");
+        XCTAssertNoThrow([newPerson setSocialProfiles:[[[RHMutableMultiDictionaryValue alloc] initWithType:kABMultiDictionaryPropertyType] autorelease]], @"pre iOS5 this should do nothing");
         
         
         
@@ -1629,12 +1655,12 @@
         
         id newValue = [dictionary objectForKey:key];
         
-        STAssertNoThrow([object performSelector:selector withObject:newValue], @"object:%@ failed to set value:%@ for key:%@", object, newValue, key);
+        XCTAssertNoThrow([object performSelector:selector withObject:newValue], @"object:%@ failed to set value:%@ for key:%@", object, newValue, key);
     }
 }
 
 -(void)validateObject:(id)object UsingDictionary:(NSDictionary*)dictionary{
-    STAssertNotNil(object, @"failed to validate nil object");
+    XCTAssertNotNil(object, @"failed to validate nil object");
 
     for (NSString *key in [dictionary allKeys]) {
         SEL selector = NSSelectorFromString(key);
@@ -1642,7 +1668,7 @@
         id expectedValue = [dictionary objectForKey:key];
         id actualValue = [object performSelector:selector];
         
-        STAssertEqualObjects(expectedValue, actualValue, @"object:%@ value:%@ for key:%@ not equal to expected value:%@", object, actualValue, key, expectedValue);
+        XCTAssertEqualObjects(expectedValue, actualValue, @"object:%@ value:%@ for key:%@ not equal to expected value:%@", object, actualValue, key, expectedValue);
         
     }
 }
@@ -1730,7 +1756,7 @@
             
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        srand(time(NULL));
+        srand((unsigned)time(NULL));
     });
     
     NSInteger length = rand()%30;

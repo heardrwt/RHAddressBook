@@ -38,7 +38,7 @@
 @interface RHSource : RHRecord
 
 //properties
-@property (readonly) NSString *name;
+@property (copy, readonly) NSString *name;
 @property (readonly) ABSourceType type;
 
 //access groups in the current source (this method just forwards to the equivalent method on RHAddressBook)

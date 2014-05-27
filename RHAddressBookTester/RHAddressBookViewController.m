@@ -306,7 +306,7 @@
 -(void)configureCell:(UITableViewCell*)cell forGroupAtRow:(NSInteger)row{
     if (row < [_groups count]){
         RHGroup *group = [_groups objectAtIndex:row];
-        cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@ - %i Members",nil), group.compositeName, [[group members] count]];
+        cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@ - %lu Members",nil), group.compositeName, (unsigned long)[[group members] count]];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         
     } else {

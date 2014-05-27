@@ -41,8 +41,8 @@
 +(id)newGroupInSource:(RHSource*)source;
 
 //properties
-@property (readwrite, copy) NSString *name;
-@property (readonly) RHSource *source;
+@property (copy) NSString *name;
+@property (retain, readonly) RHSource *source;
 @property (readonly) NSInteger count;
 
 //add and remove members from this group

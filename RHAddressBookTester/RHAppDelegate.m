@@ -62,19 +62,19 @@
     NSArray *people = [pab people];
     end_time = clock();
     
-    NSLog(@"PERF: First people call took %f seconds. (for %i people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, [people count]);
+    NSLog(@"PERF: First people call took %f seconds. (for %lu people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, (unsigned long)[people count]);
 
     start_time = clock();
     NSArray *people2 = [pab people];
     end_time = clock();
     
-    NSLog(@"PERF: Second people call took %f seconds. (for %i people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, [people2 count]);
+    NSLog(@"PERF: Second people call took %f seconds. (for %lu people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, (unsigned long)[people2 count]);
 
     start_time = clock();
     [pab save];
     end_time = clock();
     
-    NSLog(@"PERF: Save call took %f seconds. (for %i people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, [people2 count]);
+    NSLog(@"PERF: Save call took %f seconds. (for %lu people)", (double)(end_time - start_time) / (double)CLOCKS_PER_SEC, (unsigned long)[people2 count]);
 
 #endif
 
@@ -108,8 +108,6 @@
         [alert show];
         [alert release];
     }
-
-    
     
     return YES;
 }

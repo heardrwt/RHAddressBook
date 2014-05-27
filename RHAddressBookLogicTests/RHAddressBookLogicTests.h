@@ -28,13 +28,13 @@
 //  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import <CoreLocation/CoreLocation.h>
 #import "AddressBook.h"
 #import "UIImage+RHComparingAdditions.h"
 #import "RHARCSupport.h"
 
-@interface RHAddressBookLogicTests : SenTestCase {
+@interface RHAddressBookLogicTests : XCTestCase {
     RHAddressBook *_ab;
 }
 
