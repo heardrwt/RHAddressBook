@@ -67,7 +67,7 @@
 //save (convenience methods.. these just forward up to this records addressbook)
 -(BOOL)save;
 -(BOOL)saveWithError:(NSError**)error;
--(BOOL)hasUnsavedChanges; //addressbook level, not record level
+@property (nonatomic, readonly) BOOL hasUnsavedChanges; //addressbook level, not record level
 -(void)revert;
 
 //misc

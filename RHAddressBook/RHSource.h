@@ -42,14 +42,14 @@
 @property (readonly) ABSourceType type;
 
 //access groups in the current source (this method just forwards to the equivalent method on RHAddressBook)
--(NSArray*)groups;
+@property (nonatomic, readonly, copy) NSArray *groups;
 
 //access people in the current source
--(NSArray*)people;
+@property (nonatomic, readonly, copy) NSArray *people;
 -(NSArray*)peopleOrderedBySortOrdering:(ABPersonSortOrdering)ordering;
--(NSArray*)peopleOrderedByFirstName;
--(NSArray*)peopleOrderedByLastName;
--(NSArray*)peopleOrderedByUsersPreference;
+@property (nonatomic, readonly, copy) NSArray *peopleOrderedByFirstName;
+@property (nonatomic, readonly, copy) NSArray *peopleOrderedByLastName;
+@property (nonatomic, readonly, copy) NSArray *peopleOrderedByUsersPreference;
 
 //add (these methods just fwd to the equivalent convenience methods on RHAddressBook, including adding to the addressbook)
 -(RHPerson*)newPerson; //returns nil on error (eg read only source)

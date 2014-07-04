@@ -59,15 +59,15 @@ typedef RHMutableMultiValue RHMutableMultiDictionaryValue;
 @property (readonly) ABMultiValueRef multiValueRef;
 
 //init
--(id)initWithMultiValueRef:(ABMultiValueRef)multiValueRef; //passing NULL to init is invalid
+-(instancetype)initWithMultiValueRef:(ABMultiValueRef)multiValueRef NS_DESIGNATED_INITIALIZER; //passing NULL to init is invalid
                        
 //accessors
--(ABPropertyType)propertyType;
+@property (nonatomic, readonly) ABPropertyType propertyType;
 
 //values
--(NSUInteger)count; 
+@property (nonatomic, readonly) NSUInteger count; 
 -(id)valueAtIndex:(NSUInteger)index;
--(NSArray*)values;
+@property (nonatomic, readonly, copy) NSArray *values;
 
 //labels
 -(NSString*)labelAtIndex:(NSUInteger)index;
@@ -93,7 +93,7 @@ typedef RHMutableMultiValue RHMutableMultiDictionaryValue;
 @interface RHMutableMultiValue : RHMultiValue
 
 //init
--(id)initWithType:(ABPropertyType)newPropertyType; //a new MultiValue Ref of specified type is created on your behalf.
+-(instancetype)initWithType:(ABPropertyType)newPropertyType; //a new MultiValue Ref of specified type is created on your behalf.
 
 -(ABMultiValueIdentifier)addValue:(id)value withLabel:(NSString *)label; //on failure kABMultiValueInvalidIdentifier
 -(ABMultiValueIdentifier)insertValue:(id)value withLabel:(NSString *)label atIndex:(NSUInteger)index; //on failure kABMultiValueInvalidIdentifier

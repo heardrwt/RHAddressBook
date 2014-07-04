@@ -51,7 +51,7 @@
 @property (assign, readonly) BOOL resultNotFound;
 
 //initializer... only time the ids can be set, auto calculates its address hash
--(id)initWithPersonID:(ABRecordID)personID addressID:(ABMultiValueIdentifier)addressID;
+-(instancetype)initWithPersonID:(ABRecordID)personID addressID:(ABMultiValueIdentifier)addressID NS_DESIGNATED_INITIALIZER;
 
 //used to determine if the stored address hash matches the corresponding address in the current AddressBook
 -(BOOL)isValid;

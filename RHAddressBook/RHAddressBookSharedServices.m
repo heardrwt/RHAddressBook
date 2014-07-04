@@ -106,7 +106,7 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
     return arc_retain([self sharedInstance]);
 }
 
--(id)init {
+-(instancetype)init {
         
     self = [super init];
     if (self) {

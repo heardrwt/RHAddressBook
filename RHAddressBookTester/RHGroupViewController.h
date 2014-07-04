@@ -16,6 +16,6 @@
 
 @property (retain) RHGroup *group;
 
-- (id)initWithGroup:(RHGroup*)group;
+- (instancetype)initWithGroup:(RHGroup*)group NS_DESIGNATED_INITIALIZER;
 
 @end

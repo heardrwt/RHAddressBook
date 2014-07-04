@@ -8,14 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, RHAddressBookViewControllerSections) {
     kRHAddressBookViewControllerSourcesSection,
     kRHAddressBookViewControllerGroupsSection,
     kRHAddressBookViewControllerPeopleSection,
     kRHAddressBookViewControllerLocationSection,
     kRHAddressBookViewControllerInfoSection,
     kRHAddressBookViewControllerNumberOfSections
-} RHAddressBookViewControllerSections;
+} ;
 
 
 #define kRHAddressBookViewControllerInfoCellsCount 2
@@ -38,7 +38,7 @@ typedef enum {
 
 }
 
--(id)initWithAddressBook:(RHAddressBook*)addressBook;
+-(instancetype)initWithAddressBook:(RHAddressBook*)addressBook NS_DESIGNATED_INITIALIZER;
 
 @property (retain, nonatomic) RHAddressBook *addressBook;
 

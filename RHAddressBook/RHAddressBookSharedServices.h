@@ -58,7 +58,7 @@
 //geocode cache processing (addresses are geocoded for future queries and cached locally
 +(BOOL)isPreemptiveGeocodingEnabled;
 +(void)setPreemptiveGeocodingEnabled:(BOOL)enabled;
--(float)preemptiveGeocodingProgress;
+@property (nonatomic, readonly) float preemptiveGeocodingProgress;
 +(BOOL)isGeocodingSupported;
 
 #endif //end Geocoding

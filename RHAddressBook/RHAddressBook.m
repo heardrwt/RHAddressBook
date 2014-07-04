@@ -151,7 +151,7 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
 }
 
 
--(id)init{
+-(instancetype)init{
     self = [super init];
     if (self){
         
@@ -226,7 +226,7 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    dispatch_release(_addressBookQueue); _addressBookQueue = NULL;
+    arc_release((id)_addressBookQueue); _addressBookQueue = NULL;
     
     _sharedServices = nil; //just throw away our pointer (its a singleton)
 
@@ -459,10 +459,10 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
     return arc_autorelease(result);
 }
 
--(long)numberOfGroups{
-    __block long result = 0;
+-(NSUInteger)numberOfGroups{
+    __block NSUInteger result = 0;
     rh_dispatch_sync_for_addressbook(self, ^{
-        result = ABAddressBookGetGroupCount(_addressBookRef);
+        result = (NSUInteger)ABAddressBookGetGroupCount(_addressBookRef);
     });
     return result;
 }
@@ -602,10 +602,10 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
     return arc_autorelease(result);
 }
 
--(long)numberOfPeople{
-    __block long result = 0;
+-(NSUInteger)numberOfPeople{
+    __block NSUInteger result = 0;
     rh_dispatch_sync_for_addressbook(self, ^{
-        result = ABAddressBookGetPersonCount(_addressBookRef);
+        result = (NSUInteger)ABAddressBookGetPersonCount(_addressBookRef);
     });
     return result;
 }

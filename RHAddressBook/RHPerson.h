@@ -49,8 +49,8 @@
 //you can always access the persons associated addressbook object using @property (readonly) RHAddressBook* addressBook; 
 //the addressbook instance is guaranteed to stay alive until its last associated object is dealloc'd.
 //these methods do not automatically add the new object to the source.addressBook, if you want it added you will need do add it yourself. -[RHAddressBook addPerson:];
-+(id)newPersonInSource:(RHSource*)source;
--(id)initWithSource:(RHSource*)source;
++(instancetype)newPersonInSource:(RHSource*)source;
+-(instancetype)initWithSource:(RHSource*)source;
 
 //look up an RHPerson instance for an existing ABRecordRef in a particular addressbook; if the current recordRef does not belong to the given addressbook, the person objects underlying personRef will differ from the passed in value. This is required in-order to maintain thread safety for the underlying AddressBook instance.
 +(RHPerson*)personForABRecordRef:(ABRecordRef)personRef inAddressBook:(RHAddressBook*)addressBook; //equivalent to -[RHAddressBook personForABRecordRef:];
@@ -63,10 +63,10 @@
 
 
 //person is from given source
--(RHSource*)inSource;
+@property (nonatomic, readonly, weak) RHSource *inSource;
 
 //linked people (ie other cards that represent the same person in other sources)
--(NSArray*)linkedPeople;
+@property (nonatomic, readonly, copy) NSArray *linkedPeople;
 
 //image
 
@@ -80,12 +80,12 @@ typedef enum {
 #endif
 
 
--(BOOL)hasImage;
--(UIImage*)thumbnail;
--(UIImage*)originalImage;
+@property (nonatomic, readonly) BOOL hasImage;
+@property (nonatomic, readonly, copy) UIImage *thumbnail;
+@property (nonatomic, readonly, copy) UIImage *originalImage;
 -(UIImage*)imageWithFormat:(ABPersonImageFormat)imageFormat;
--(NSData*)thumbnailData;
--(NSData*)originalImageData;
+@property (nonatomic, readonly, copy) NSData *thumbnailData;
+@property (nonatomic, readonly, copy) NSData *originalImageData;
 -(NSData*)imageDataWithFormat:(ABPersonImageFormat)imageFormat;
 -(BOOL)setImage:(UIImage*)image;
 -(BOOL)removeImage;
@@ -165,7 +165,7 @@ typedef enum {
 
 //remove person from addressBook
 -(BOOL)remove;
--(BOOL)hasBeenRemoved; // we check to see if ABAddressBookGetPersonWithRecordID() returns NULL for self.recordID; This is the recommended approach from the AB docs.
+@property (nonatomic, readonly) BOOL hasBeenRemoved; // we check to see if ABAddressBookGetPersonWithRecordID() returns NULL for self.recordID; This is the recommended approach from the AB docs.
 
 
 //composite name format for this explicit record

@@ -38,7 +38,7 @@
 @interface RHGroup : RHRecord
 
 //once a group object is created using a given source object from an ab instance, its not safe to use that object with any other instance of the addressbook
-+(id)newGroupInSource:(RHSource*)source;
++(instancetype)newGroupInSource:(RHSource*)source;
 
 //properties
 @property (copy) NSString *name;
@@ -51,11 +51,11 @@
 -(void)removeAllMembers;
 
 //access group members
--(NSArray*)members;
+@property (nonatomic, readonly, copy) NSArray *members;
 -(NSArray*)membersOrderedBySortOrdering:(ABPersonSortOrdering)ordering;
--(NSArray*)membersOrderedByFirstName;
--(NSArray*)membersOrderedByLastName;
--(NSArray*)membersOrderedByUsersPreference;
+@property (nonatomic, readonly, copy) NSArray *membersOrderedByFirstName;
+@property (nonatomic, readonly, copy) NSArray *membersOrderedByLastName;
+@property (nonatomic, readonly, copy) NSArray *membersOrderedByUsersPreference;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 //vCard (iOS5+) pre iOS5 this method is a no-op

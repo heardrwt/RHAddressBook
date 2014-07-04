@@ -37,7 +37,7 @@
 
 @implementation RHRecord
 
--(id)initWithAddressBook:(RHAddressBook*)addressBook recordRef:(ABRecordRef)recordRef{
+-(instancetype)initWithAddressBook:(RHAddressBook*)addressBook recordRef:(ABRecordRef)recordRef{
     self = [super init];
     if (self) {
         
