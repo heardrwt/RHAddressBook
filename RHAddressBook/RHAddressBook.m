@@ -1036,9 +1036,13 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
 }
 
 -(BOOL)hasUnsavedChanges{
-    __block BOOL result;
+    __block BOOL result = NO;
     rh_dispatch_sync_for_addressbook(self, ^{
-        result = ABAddressBookHasUnsavedChanges(_addressBookRef);
+        if (_addressBookRef){
+            result = ABAddressBookHasUnsavedChanges(_addressBookRef);
+        } else {
+            RHLog(@"Error: -[RHAddressBook hasUnsavedChanges] called without an _addressBookRef. Assuming not modified and returning NO.");
+        }
     });
     
     return result;
@@ -1046,7 +1050,7 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
 
 -(void)revert{
     rh_dispatch_sync_for_addressbook(self, ^{
-        ABAddressBookRevert(_addressBookRef);
+        if (_addressBookRef) ABAddressBookRevert(_addressBookRef);
     });
 }
 
