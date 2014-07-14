@@ -36,7 +36,7 @@
 @interface RHRecord ()
 
 //init (you should not call init on these objects yourself. instead use the [RHAddressBook newPerson] method)
--(instancetype)initWithAddressBook:(RHAddressBook*)addressBook recordRef:(ABRecordRef)recordRef NS_DESIGNATED_INITIALIZER;
+-(instancetype)initWithAddressBook:(RHAddressBook*)addressBook recordRef:(ABRecordRef)recordRef /* NS_DESIGNATED_INITIALIZER (Xcode5: see http://permalink.gmane.org/gmane.comp.compilers.clang.scm/94822) */;
 
 @end
 
