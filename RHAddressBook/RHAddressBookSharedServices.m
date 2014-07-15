@@ -42,6 +42,7 @@
 
 #import <AddressBook/AddressBook.h>
 #import <CoreLocation/CoreLocation.h>
+#import <float.h>
 
 #define PROCESS_ADDRESS_EVERY_SECONDS 5.0 //seconds between each geocode
 
@@ -392,7 +393,7 @@ static __strong RHAddressBookSharedServices *_sharedInstance = nil;
 
 -(RHAddressBookGeoResult*)geoResultClosestToLocation:(CLLocation*)location distanceOut:(CLLocationDistance*)distanceOut{
 
-    CLLocationDistance distance = DBL_MAX;
+    CLLocationDistance distance = FLT_MAX;
     RHAddressBookGeoResult *result = nil;
 
     for (RHAddressBookGeoResult *entry in _cache) {
