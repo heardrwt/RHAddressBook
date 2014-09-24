@@ -73,10 +73,10 @@
 #if __IPHONE_OS_VERSION_MAX_ALLOWED < 40100
 //iOS4.1 added ABPersonImageFormat, however later versions of the headers think it was added in 4.0
 //running on 4.0 we will always return the full size image
-typedef enum {
+typedef NS_ENUM(NSInteger, ABPersonImageFormat) {
     kABPersonImageFormatThumbnail = 0,      // the square thumbnail
     kABPersonImageFormatOriginalSize = 2    // the original image as set by ABPersonSetImageData
-} ABPersonImageFormat;
+};
 #endif
 
 
