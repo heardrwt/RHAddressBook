@@ -107,6 +107,8 @@ typedef NS_ENUM(NSUInteger, RHAuthorizationStatus) {
 
 -(NSArray*)peopleWithName:(NSString*)name;
 -(NSArray*)peopleWithEmail:(NSString*)email;
+-(NSArray*)peopleWithPhone:(NSString*)phone;
+
 -(RHPerson*)personForABRecordRef:(ABRecordRef)personRef; //returns nil if ref not found in the current ab, eg unsaved record from another ab. if the passed recordRef does not belong to the current addressbook, the returned person objects underlying personRef will differ from the passed in value. This is required in-order to maintain thread safety for the underlying AddressBook instance.
 -(RHPerson*)personForABRecordID:(ABRecordID)personID; //returns nil if not found in the current ab, eg unsaved record from another ab.
 
