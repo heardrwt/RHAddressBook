@@ -145,7 +145,7 @@ Presenting / editing an RHPerson instance in a ABPersonViewController.
 Background geocoding
 
 ```objectivec
-    if ([RHAddressBook isGeocodingSupported){
+    if ([RHAddressBook isGeocodingSupported]){
         [RHAddressBook setPreemptiveGeocodingEnabled:YES]; //class method
     }
     float progress = [_addressBook preemptiveGeocodingProgress]; // 0.0f - 1.0f
