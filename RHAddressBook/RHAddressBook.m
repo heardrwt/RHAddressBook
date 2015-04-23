@@ -645,6 +645,45 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
     return [self peopleOrderedBySortOrdering:kABPersonSortByLastName];
 }
 
+/**
+ *
+ *
+ *  @return NSArray
+ */
+- (NSArray *)peopleUnifiedUsingDefaultSource
+{
+    __block NSArray *result = nil;
+    
+    rh_dispatch_sync_for_addressbook(self, ^{
+        result = arc_retain([self peopleUnifiedUsingSource:[self defaultSource]]);
+    });
+    
+    return arc_autorelease(result);
+}
+
+/**
+ *
+ *
+ *  @param source
+ *
+ *  @return NSArray
+ */
+- (NSArray *)peopleUnifiedUsingSource:(RHSource *)source
+{
+    __block NSArray *result = nil;
+    
+    rh_dispatch_sync_for_addressbook(self, ^{
+        CFArrayRef peopleRefs = ABAddressBookCopyArrayOfAllPeopleInSource(_addressBookRef, source.recordRef);
+        
+        if (peopleRefs) {
+            result = arc_retain([self peopleUnifiedForABRecordRefs:peopleRefs]);
+            CFRelease(peopleRefs);
+        }
+    });
+    
+    return arc_autorelease(result);
+}
+
 -(NSArray*)peopleWithName:(NSString*)name{
     __block NSArray *result = nil;
     rh_dispatch_sync_for_addressbook(self, ^{
@@ -776,6 +815,39 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
         }
     });
     return [NSArray arrayWithArray:people];
+}
+
+/**
+ *
+ *
+ *  @param peopleRefs
+ *  @see http://stackoverflow.com/a/11480352/255463
+ *
+ *  @return NSArray
+ */
+- (NSArray *)peopleUnifiedForABRecordRefs:(CFArrayRef)peopleRefs
+{
+    if (!peopleRefs) return nil;
+    
+    NSMutableSet *people = [NSMutableSet set];
+    
+    rh_dispatch_sync_for_addressbook(self, ^{
+        for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
+            NSMutableSet *contactSet = [NSMutableSet set];
+            ABRecordRef personRef = CFArrayGetValueAtIndex(peopleRefs, i);
+            [contactSet addObject:(__bridge id) personRef];
+            
+            NSArray *linkedRecordsArray = (__bridge NSArray *) ABPersonCopyArrayOfAllLinkedPeople(personRef);
+            [contactSet addObjectsFromArray:linkedRecordsArray];
+            
+            RHPerson *person = [self personForABRecordRef:personRef];
+            if (person) [people addObject:person];
+            
+            CFRelease(personRef);
+        }
+    });
+    
+    return people.allObjects;
 }
 
 -(RHPerson*)personForABRecordID:(ABRecordID)personID{
