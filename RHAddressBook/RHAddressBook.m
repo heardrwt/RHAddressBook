@@ -684,6 +684,22 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
     return arc_autorelease(result);
 }
 
+- (NSArray *)peopleUnified
+{
+    __block NSArray *result = nil;
+    
+    rh_dispatch_sync_for_addressbook(self, ^{
+        CFArrayRef peopleRefs = ABAddressBookCopyArrayOfAllPeople(_addressBookRef);
+        
+        if (peopleRefs) {
+            result = arc_retain([self peopleUnifiedForABRecordRefs:peopleRefs]);
+            CFRelease(peopleRefs);
+        }
+    });
+    
+    return arc_autorelease(result);
+}
+
 -(NSArray*)peopleWithName:(NSString*)name{
     __block NSArray *result = nil;
     rh_dispatch_sync_for_addressbook(self, ^{
@@ -829,25 +845,32 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
 {
     if (!peopleRefs) return nil;
     
-    NSMutableSet *people = [NSMutableSet set];
+    NSMutableSet *unifiedRecordsSet = [NSMutableSet set];
+    NSMutableArray *unifiedPersons = [NSMutableArray array];
     
     rh_dispatch_sync_for_addressbook(self, ^{
         for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
             NSMutableSet *contactSet = [NSMutableSet set];
-            ABRecordRef personRef = CFArrayGetValueAtIndex(peopleRefs, i);
-            [contactSet addObject:(__bridge id) personRef];
+            ABRecordRef record = CFArrayGetValueAtIndex(peopleRefs, i);
+            [contactSet addObject:(__bridge id) record];
             
-            NSArray *linkedRecordsArray = (__bridge NSArray *) ABPersonCopyArrayOfAllLinkedPeople(personRef);
+            NSArray *linkedRecordsArray = (__bridge NSArray *) ABPersonCopyArrayOfAllLinkedPeople(record);
             [contactSet addObjectsFromArray:linkedRecordsArray];
             
-            RHPerson *person = [self personForABRecordRef:personRef];
-            if (person) [people addObject:person];
+            NSSet *unifiedRecord = [NSSet setWithSet:contactSet];
+            [unifiedRecordsSet addObject:unifiedRecord];
             
-            CFRelease(personRef);
+            CFRelease(record);
+        }
+        
+        // to flat records, choose one.
+        for (NSSet *unifiedRecord in unifiedRecordsSet) {
+            RHPerson *person = [self personForABRecordRef:(__bridge ABRecordRef) [unifiedRecord anyObject]];
+            if (person) [unifiedPersons addObject:person];
         }
     });
     
-    return people.allObjects;
+    return unifiedPersons;
 }
 
 -(RHPerson*)personForABRecordID:(ABRecordID)personID{

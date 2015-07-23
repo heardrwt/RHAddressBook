@@ -107,6 +107,7 @@ typedef NS_ENUM(NSUInteger, RHAuthorizationStatus) {
 
 - (NSArray *)peopleUnifiedUsingDefaultSource;
 - (NSArray *)peopleUnifiedUsingSource:(RHSource *)source;
+- (NSArray *)peopleUnified;
 
 -(NSArray*)peopleWithName:(NSString*)name;
 -(NSArray*)peopleWithEmail:(NSString*)email;
