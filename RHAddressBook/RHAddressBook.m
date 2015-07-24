@@ -645,6 +645,61 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
     return [self peopleOrderedBySortOrdering:kABPersonSortByLastName];
 }
 
+/**
+ *
+ *
+ *  @return NSArray
+ */
+- (NSArray *)peopleUnifiedUsingDefaultSource
+{
+    __block NSArray *result = nil;
+    
+    rh_dispatch_sync_for_addressbook(self, ^{
+        result = arc_retain([self peopleUnifiedUsingSource:[self defaultSource]]);
+    });
+    
+    return arc_autorelease(result);
+}
+
+/**
+ *
+ *
+ *  @param source
+ *
+ *  @return NSArray
+ */
+- (NSArray *)peopleUnifiedUsingSource:(RHSource *)source
+{
+    __block NSArray *result = nil;
+    
+    rh_dispatch_sync_for_addressbook(self, ^{
+        CFArrayRef peopleRefs = ABAddressBookCopyArrayOfAllPeopleInSource(_addressBookRef, source.recordRef);
+        
+        if (peopleRefs) {
+            result = arc_retain([self peopleUnifiedForABRecordRefs:peopleRefs]);
+            CFRelease(peopleRefs);
+        }
+    });
+    
+    return arc_autorelease(result);
+}
+
+- (NSArray *)peopleUnified
+{
+    __block NSArray *result = nil;
+    
+    rh_dispatch_sync_for_addressbook(self, ^{
+        CFArrayRef peopleRefs = ABAddressBookCopyArrayOfAllPeople(_addressBookRef);
+        
+        if (peopleRefs) {
+            result = arc_retain([self peopleUnifiedForABRecordRefs:peopleRefs]);
+            CFRelease(peopleRefs);
+        }
+    });
+    
+    return arc_autorelease(result);
+}
+
 -(NSArray*)peopleWithName:(NSString*)name{
     __block NSArray *result = nil;
     rh_dispatch_sync_for_addressbook(self, ^{
@@ -776,6 +831,45 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
         }
     });
     return [NSArray arrayWithArray:people];
+}
+
+/**
+ *
+ *
+ *  @param peopleRefs
+ *  @see http://stackoverflow.com/a/11480352/255463
+ *  @see https://github.com/RigilCorp/ABManager/blob/4abd69d28aef5fa11c6458b694cdc187f469364d/ABManagerExample/ABManager.m#L62
+ *
+ *  @return NSArray
+ */
+- (NSArray *)peopleUnifiedForABRecordRefs:(CFArrayRef)peopleRefs
+{
+    if (!peopleRefs) return nil;
+    
+    NSMutableSet *unifiedRecordsSet = [NSMutableSet set];
+    
+    rh_dispatch_sync_for_addressbook(self, ^{
+        NSMutableSet *linkedPersonsToSkip = [NSMutableSet set];
+        
+        for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
+            ABRecordRef record = CFArrayGetValueAtIndex(peopleRefs, i);
+            
+            if ([linkedPersonsToSkip containsObject:(__bridge id) record]) {
+                continue;
+            }
+            
+            NSArray *linkedRecordsArray = (__bridge NSArray *) ABPersonCopyArrayOfAllLinkedPeople(record);
+            
+            if (linkedRecordsArray.count > 1) {
+                [linkedPersonsToSkip addObjectsFromArray:linkedRecordsArray];
+            }
+            
+            RHPerson *person = [self personForABRecordRef:record];
+            if (person) [unifiedRecordsSet addObject:person];
+        }
+    });
+    
+    return unifiedRecordsSet.allObjects;
 }
 
 -(RHPerson*)personForABRecordID:(ABRecordID)personID{
