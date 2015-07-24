@@ -838,6 +838,7 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
  *
  *  @param peopleRefs
  *  @see http://stackoverflow.com/a/11480352/255463
+ *  @see https://github.com/RigilCorp/ABManager/blob/4abd69d28aef5fa11c6458b694cdc187f469364d/ABManagerExample/ABManager.m#L62
  *
  *  @return NSArray
  */
@@ -846,31 +847,29 @@ BOOL rh_dispatch_is_current_queue_for_addressbook(RHAddressBook *addressBook){
     if (!peopleRefs) return nil;
     
     NSMutableSet *unifiedRecordsSet = [NSMutableSet set];
-    NSMutableArray *unifiedPersons = [NSMutableArray array];
     
     rh_dispatch_sync_for_addressbook(self, ^{
+        NSMutableSet *linkedPersonsToSkip = [NSMutableSet set];
+        
         for (CFIndex i = 0; i < CFArrayGetCount(peopleRefs); i++) {
-            NSMutableSet *contactSet = [NSMutableSet set];
             ABRecordRef record = CFArrayGetValueAtIndex(peopleRefs, i);
-            [contactSet addObject:(__bridge id) record];
+            
+            if ([linkedPersonsToSkip containsObject:(__bridge id) record]) {
+                continue;
+            }
             
             NSArray *linkedRecordsArray = (__bridge NSArray *) ABPersonCopyArrayOfAllLinkedPeople(record);
-            [contactSet addObjectsFromArray:linkedRecordsArray];
             
-            NSSet *unifiedRecord = [NSSet setWithSet:contactSet];
-            [unifiedRecordsSet addObject:unifiedRecord];
+            if (linkedRecordsArray.count > 1) {
+                [linkedPersonsToSkip addObjectsFromArray:linkedRecordsArray];
+            }
             
-            CFRelease(record);
-        }
-        
-        // to flat records, choose one.
-        for (NSSet *unifiedRecord in unifiedRecordsSet) {
-            RHPerson *person = [self personForABRecordRef:(__bridge ABRecordRef) [unifiedRecord anyObject]];
-            if (person) [unifiedPersons addObject:person];
+            RHPerson *person = [self personForABRecordRef:record];
+            if (person) [unifiedRecordsSet addObject:person];
         }
     });
     
-    return unifiedPersons;
+    return unifiedRecordsSet.allObjects;
 }
 
 -(RHPerson*)personForABRecordID:(ABRecordID)personID{
